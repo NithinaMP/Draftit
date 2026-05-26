@@ -1,0 +1,59 @@
+# =============================================
+# DraftIt - Professional .gitignore
+# =============================================
+
+# Secrets & API Keys (MOST IMPORTANT)
+env.json
+.env
+keys_backup.txt
+secrets.dart
+
+# Firebase Config (Never commit)
+google-services.json
+GoogleService-Info.plist
+lib/firebase_options.dart
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+**/doc/api/
+*.g.dart
+
+# Android / iOS
+/android/app/debug
+/android/app/profile
+/android/app/release
+/ios/Flutter/.last_build_id
+
+# IDE & Editors
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+*.class
+*.log
+*.swp
+
+# OS Generated
+.DS_Store
+Thumbs.db
+.atom/
+.history
+
+# Misc
+*.pyc
+*.log
+.migrate_working_dir/
+
+# =============================================
+# Optional: Add these if needed later
+# =============================================
+# coverage/
+# *.jks
+# *.keystore
