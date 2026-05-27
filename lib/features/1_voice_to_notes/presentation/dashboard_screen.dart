@@ -189,7 +189,11 @@ class _DashboardScreenState extends State<DashboardScreen>
             ),
           ),
           const Spacer(),
-
+          IconButton(
+            icon: const Icon(Icons.psychology_rounded, color: AppTheme.textSecondary),
+            tooltip: 'Exam Predictor',
+            onPressed: () => Navigator.pushNamed(context, AppRouter.studyBuddy),
+          ),
           _ProfileMenu(),
         ],
       ),
