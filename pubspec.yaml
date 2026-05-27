@@ -27,6 +27,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+
   # State Management
   provider: ^6.1.2
 
@@ -59,7 +60,8 @@ dependencies:
   uuid: ^4.3.3
   shared_preferences: ^2.2.3
 
-  flutter_dotenv: ^5.1.0   # Latest stable
+  # Env file loader — reads .env at runtime (safe for git if .env is gitignored)
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -68,13 +70,13 @@ dev_dependencies:
   build_runner: ^2.4.8
   flutter_lints: ^3.0.0
 
-
-# Force record_linux off the broken 0.7.2 and onto the compatible 1.x line
 dependency_overrides:
   record_linux: ^1.1.0
 
 flutter:
   uses-material-design: true
+  assets:
+    - .env
 
 
 #flutter:
