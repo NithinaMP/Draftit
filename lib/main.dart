@@ -16,27 +16,24 @@ import 'features/1_voice_to_notes/providers/lectures_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load .env file FIRST — everything else depends on this
+  // Load .env FIRST
   await dotenv.load(fileName: '.env');
 
-  // Validate key immediately so we know early
   if (!AppConstants.isKeyValid) {
     debugPrint(
       '\n══════════════════════════════════════════\n'
-          '⚠️  HuggingFace API key missing or invalid!\n'
-          '   Open your .env file and set:\n'
-          '   HF_API_KEY=hf_your_actual_key_here\n'
-          '   Get a key at: huggingface.co/settings/tokens\n'
+          '⚠️  Groq API key missing or invalid!\n'
+          '   Open .env and set:\n'
+          '   GROQ_API_KEY=gsk_your_actual_key_here\n'
+          '   Get a free key at: console.groq.com\n'
           '══════════════════════════════════════════\n',
     );
   } else {
-    debugPrint('✅ HuggingFace key loaded: ${AppConstants.huggingFaceApiKey.substring(0, 8)}...');
+    debugPrint('✅ Groq key loaded: ${AppConstants.groqApiKey.substring(0, 8)}...');
   }
 
-  // Firebase
   await Firebase.initializeApp();
 
-  // Hive
   await Hive.initFlutter();
   Hive.registerAdapter(LectureModelAdapter());
 

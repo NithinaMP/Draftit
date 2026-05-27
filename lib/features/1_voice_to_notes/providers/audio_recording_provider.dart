@@ -16,7 +16,6 @@ class AudioRecordingProvider extends ChangeNotifier {
   Timer? _timer;
   List<double> _waveformBars = List.filled(30, 0.05);
 
-  // ── Getters ────────────────────────────────────────────────────────────────
   RecordingState get state => _state;
   String? get currentLectureId => _currentLectureId;
   String? get currentFilePath => _currentFilePath;
@@ -24,8 +23,8 @@ class AudioRecordingProvider extends ChangeNotifier {
   List<double> get waveformBars => _waveformBars;
 
   bool get isRecording => _state == RecordingState.recording;
-  bool get isStopping => _state == RecordingState.stopping;
-  bool get isIdle => _state == RecordingState.idle;
+  bool get isStopping  => _state == RecordingState.stopping;
+  bool get isIdle      => _state == RecordingState.idle;
 
   String get formattedElapsed {
     final m = _elapsed.inMinutes.remainder(60).toString().padLeft(2, '0');
@@ -33,19 +32,20 @@ class AudioRecordingProvider extends ChangeNotifier {
     return '$m:$s';
   }
 
-  // ── Start recording ────────────────────────────────────────────────────────
   Future<bool> startRecording() async {
     if (!await _recorder.hasPermission()) return false;
 
     _currentLectureId = const Uuid().v4();
     final dir = await getApplicationDocumentsDirectory();
-    _currentFilePath = '${dir.path}/$_currentLectureId.aac';
+
+    // Save as .m4a — Groq accepts m4a (AAC in MPEG-4 container)
+    _currentFilePath = '${dir.path}/$_currentLectureId.m4a';
 
     await _recorder.start(
       const RecordConfig(
-        encoder: AudioEncoder.aacLc,
+        encoder: AudioEncoder.aacLc,   // AAC codec inside .m4a container
         bitRate: 128000,
-        sampleRate: 44100,
+        sampleRate: 16000,             // 16kHz is optimal for speech recognition
       ),
       path: _currentFilePath!,
     );
@@ -57,7 +57,6 @@ class AudioRecordingProvider extends ChangeNotifier {
     return true;
   }
 
-  // ── Stop recording → returns file path ────────────────────────────────────
   Future<String?> stopRecording() async {
     _state = RecordingState.stopping;
     notifyListeners();
@@ -73,7 +72,6 @@ class AudioRecordingProvider extends ChangeNotifier {
     return path;
   }
 
-  // ── Timer for elapsed display + waveform animation ─────────────────────────
   void _startTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
@@ -85,11 +83,9 @@ class AudioRecordingProvider extends ChangeNotifier {
 
   void _updateWaveform() {
     final newBars = List<double>.from(_waveformBars);
-    // Shift left and add a new bar
     for (int i = 0; i < newBars.length - 1; i++) {
       newBars[i] = newBars[i + 1];
     }
-    // Random-ish amplitude based on time to simulate live audio
     final t = _elapsed.inMilliseconds / 100.0;
     final bar = (0.1 +
         0.6 *
@@ -102,7 +98,6 @@ class AudioRecordingProvider extends ChangeNotifier {
   }
 
   double _sin(double x) {
-    // Approximation of sin for waveform — avoids dart:math import
     x = x % (2 * 3.141592653589793);
     return x - (x * x * x) / 6 + (x * x * x * x * x) / 120;
   }

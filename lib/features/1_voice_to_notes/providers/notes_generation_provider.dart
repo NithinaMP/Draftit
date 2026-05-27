@@ -41,12 +41,13 @@ class NotesGenerationProvider extends ChangeNotifier {
     _errorMessage = null;
 
     try {
-      // Step 1 — Read file and transcribe
+      // Step 1 — Read and transcribe
       _setStatus(NotesStatus.transcribing);
       final file = File(audioPath);
       if (!file.existsSync()) {
         throw Exception('AUDIO_FILE_MISSING: File not found at $audioPath');
       }
+
       final Uint8List audioBytes = await file.readAsBytes();
       debugPrint('📁 Audio file size: ${audioBytes.length} bytes');
 
@@ -61,7 +62,7 @@ class NotesGenerationProvider extends ChangeNotifier {
         throw Exception('NO_SPEECH: No speech detected in recording');
       }
 
-      // Step 2 — Structure with Mistral
+      // Step 2 — Structure
       _setStatus(NotesStatus.structuring);
       final structured = await _aiService.structureTranscript(transcript);
 
@@ -102,28 +103,25 @@ class NotesGenerationProvider extends ChangeNotifier {
 
   String _friendlyMessage(String raw) {
     if (raw.contains('AUTH_ERROR')) {
-      return '❌ API Key Error\n\nOpen your .env file and make sure it contains:\nHF_API_KEY=hf_yourkey\n\nGet a free key at huggingface.co/settings/tokens';
-    }
-    if (raw.contains('MODEL_LOADING')) {
-      return '⏳ AI model is warming up\n\nWait 30 seconds and try again.';
+      return '❌ API Key Error\n\nOpen your .env file and set:\nGROQ_API_KEY=gsk_yourkey\n\nGet a free key at console.groq.com';
     }
     if (raw.contains('RATE_LIMIT')) {
       return '⏱ Too many requests\n\nWait 1 minute and try again.';
     }
     if (raw.contains('TIMEOUT')) {
-      return '⏰ Request timed out\n\nCheck your internet connection and try again.';
+      return '⏰ Request timed out\n\nCheck your internet and try again.';
     }
     if (raw.contains('NO_SPEECH')) {
-      return '🎤 No speech detected\n\nSpeak clearly into the microphone and try again.';
+      return '🎤 No speech detected\n\nSpeak clearly and try again.';
     }
     if (raw.contains('AUDIO_FILE_MISSING') || raw.contains('AUDIO_EMPTY')) {
-      return '🎙 Recording error\n\nThe audio file was not saved. Try recording again.';
+      return '🎙 Recording error\n\nThe audio was not saved. Try recording again.';
     }
     if (raw.contains('JSON_PARSE_ERROR')) {
-      return '🤖 AI response error\n\nThe AI returned an unexpected format. Try again.';
+      return '🤖 AI response error\n\nTry recording again.';
     }
-    if (raw.contains('NETWORK_ERROR')) {
-      return '🌐 Network error\n\nCannot reach HuggingFace servers. Check your internet connection.';
+    if (raw.contains('NETWORK_ERROR') || raw.contains('SERVICE_DOWN')) {
+      return '🌐 Cannot reach Groq servers\n\nCheck your internet connection and try again.';
     }
     return '❌ Error: $raw';
   }
