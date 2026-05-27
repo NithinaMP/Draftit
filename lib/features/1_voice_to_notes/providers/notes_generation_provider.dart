@@ -51,8 +51,10 @@ class NotesGenerationProvider extends ChangeNotifier {
       final Uint8List audioBytes = await file.readAsBytes();
       debugPrint('📁 Audio file size: ${audioBytes.length} bytes');
 
-      if (audioBytes.isEmpty) {
-        throw Exception('AUDIO_EMPTY: Recorded file is empty');
+      // Reject if file is too small — less than ~3 seconds of audio
+      // 16kHz AAC at 128kbps ≈ 16000 bytes/sec minimum
+      if (audioBytes.isEmpty || audioBytes.length < 10000) {
+        throw Exception('TOO_SHORT: Recording is too short. Please speak for at least 3 seconds.');
       }
 
       final transcript = await _aiService.transcribeAudio(audioBytes);
@@ -113,6 +115,9 @@ class NotesGenerationProvider extends ChangeNotifier {
     }
     if (raw.contains('NO_SPEECH')) {
       return '🎤 No speech detected\n\nSpeak clearly and try again.';
+    }
+    if (raw.contains('TOO_SHORT')) {
+      return '⏱ Recording too short\n\nPlease speak for at least 3 seconds and try again.';
     }
     if (raw.contains('AUDIO_FILE_MISSING') || raw.contains('AUDIO_EMPTY')) {
       return '🎙 Recording error\n\nThe audio was not saved. Try recording again.';
