@@ -1,70 +1,197 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<!--&lt;!&ndash;<manifest xmlns:android="http://schemas.android.com/apk/res/android">&ndash;&gt;-->
 
-    <!-- android/app/src/main/AndroidManifest.xml -->
-    <!-- Add these lines INSIDE the <manifest> tag, ABOVE <application> -->
+<!--&lt;!&ndash;    &lt;!&ndash; android/app/src/main/AndroidManifest.xml &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;    &lt;!&ndash; Add these lines INSIDE the <manifest> tag, ABOVE <application> &ndash;&gt;&ndash;&gt;-->
 
-    <!--
-        REQUIRED PERMISSIONS for DraftIt Phase 1
-        Paste these into your AndroidManifest.xml
-    -->
+<!--&lt;!&ndash;    &lt;!&ndash;&ndash;&gt;-->
+<!--&lt;!&ndash;        REQUIRED PERMISSIONS for DraftIt Phase 1&ndash;&gt;-->
+<!--&lt;!&ndash;        Paste these into your AndroidManifest.xml&ndash;&gt;-->
+<!--&lt;!&ndash;    &ndash;&gt;&ndash;&gt;-->
 
-    <!-- Microphone: required for voice recording -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+<!--&lt;!&ndash;    &lt;!&ndash; Microphone: required for voice recording &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;    <uses-permission android:name="android.permission.RECORD_AUDIO" />&ndash;&gt;-->
 
-    <!-- Internet: required for HuggingFace API + Firebase -->
+<!--&lt;!&ndash;    &lt;!&ndash; Internet: required for HuggingFace API + Firebase &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;    <uses-permission android:name="android.permission.INTERNET" />&ndash;&gt;-->
+
+<!--&lt;!&ndash;    &lt;!&ndash; Foreground service: keeps recording alive when app is backgrounded &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />&ndash;&gt;-->
+<!--&lt;!&ndash;    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />&ndash;&gt;-->
+
+<!--&lt;!&ndash;    &lt;!&ndash;&ndash;&gt;-->
+<!--&lt;!&ndash;        Also add this INSIDE <application> to declare the foreground service&ndash;&gt;-->
+<!--&lt;!&ndash;        used by the `record` package:&ndash;&gt;-->
+<!--&lt;!&ndash;    &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;    &lt;!&ndash;&ndash;&gt;-->
+<!--&lt;!&ndash;    <service&ndash;&gt;-->
+<!--&lt;!&ndash;        android:name="com.llfbandit.record.service.RecordForegroundService"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:foregroundServiceType="microphone"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:exported="false" />&ndash;&gt;-->
+<!--&lt;!&ndash;    &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;    <application&ndash;&gt;-->
+<!--&lt;!&ndash;        android:label="draftit"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:name="${applicationName}"&ndash;&gt;-->
+<!--&lt;!&ndash;        android:icon="@mipmap/ic_launcher">&ndash;&gt;-->
+<!--&lt;!&ndash;        <activity&ndash;&gt;-->
+<!--&lt;!&ndash;            android:name=".MainActivity"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:exported="true"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:launchMode="singleTop"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:taskAffinity=""&ndash;&gt;-->
+<!--&lt;!&ndash;            android:theme="@style/LaunchTheme"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:hardwareAccelerated="true"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:windowSoftInputMode="adjustResize">&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash; Specifies an Android theme to apply to this Activity as soon as&ndash;&gt;-->
+<!--&lt;!&ndash;                 the Android process has started. This theme is visible to the user&ndash;&gt;-->
+<!--&lt;!&ndash;                 while the Flutter UI initializes. After that, this theme continues&ndash;&gt;-->
+<!--&lt;!&ndash;                 to determine the Window background behind the Flutter UI. &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            <meta-data&ndash;&gt;-->
+<!--&lt;!&ndash;              android:name="io.flutter.embedding.android.NormalTheme"&ndash;&gt;-->
+<!--&lt;!&ndash;              android:resource="@style/NormalTheme"&ndash;&gt;-->
+<!--&lt;!&ndash;              />&ndash;&gt;-->
+<!--&lt;!&ndash;            <intent-filter>&ndash;&gt;-->
+<!--&lt;!&ndash;                <action android:name="android.intent.action.MAIN"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                <category android:name="android.intent.category.LAUNCHER"/>&ndash;&gt;-->
+<!--&lt;!&ndash;            </intent-filter>&ndash;&gt;-->
+<!--&lt;!&ndash;        </activity>&ndash;&gt;-->
+<!--&lt;!&ndash;        &lt;!&ndash; Don't delete the meta-data below.&ndash;&gt;-->
+<!--&lt;!&ndash;             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        <meta-data&ndash;&gt;-->
+<!--&lt;!&ndash;            android:name="flutterEmbedding"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:value="2" />&ndash;&gt;-->
+<!--&lt;!&ndash;    </application>&ndash;&gt;-->
+<!--&lt;!&ndash;    &lt;!&ndash; Required to query activities that can process text, see:&ndash;&gt;-->
+<!--&lt;!&ndash;         https://developer.android.com/training/package-visibility and&ndash;&gt;-->
+<!--&lt;!&ndash;         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.&ndash;&gt;-->
+
+<!--&lt;!&ndash;         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;    <queries>&ndash;&gt;-->
+<!--&lt;!&ndash;        <intent>&ndash;&gt;-->
+<!--&lt;!&ndash;            <action android:name="android.intent.action.PROCESS_TEXT"/>&ndash;&gt;-->
+<!--&lt;!&ndash;            <data android:mimeType="text/plain"/>&ndash;&gt;-->
+<!--&lt;!&ndash;        </intent>&ndash;&gt;-->
+<!--&lt;!&ndash;    </queries>&ndash;&gt;-->
+
+<!--&lt;!&ndash;</manifest>&ndash;&gt;-->
+
+
+
+
+<!--<manifest xmlns:android="http://schemas.android.com/apk/res/android">-->
+
+<!--    &lt;!&ndash; ==================== PERMISSIONS ==================== &ndash;&gt;-->
+
+<!--    &lt;!&ndash; Microphone: Required for voice recording &ndash;&gt;-->
+<!--    <uses-permission android:name="android.permission.RECORD_AUDIO" />-->
+
+<!--    &lt;!&ndash; Internet: Required for HuggingFace API + Firebase &ndash;&gt;-->
+<!--    <uses-permission android:name="android.permission.INTERNET" />-->
+
+<!--    &lt;!&ndash; Network State: Helps with connection handling &ndash;&gt;-->
+<!--    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+
+<!--    &lt;!&ndash; Foreground Service: Needed for background recording &ndash;&gt;-->
+<!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />-->
+<!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />-->
+
+<!--    <application-->
+<!--        android:label="draftit"-->
+<!--        android:name="${applicationName}"-->
+<!--        android:icon="@mipmap/ic_launcher">-->
+
+<!--        <activity-->
+<!--            android:name=".MainActivity"-->
+<!--            android:exported="true"-->
+<!--            android:launchMode="singleTop"-->
+<!--            android:taskAffinity=""-->
+<!--            android:theme="@style/LaunchTheme"-->
+<!--            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"-->
+<!--            android:hardwareAccelerated="true"-->
+<!--            android:windowSoftInputMode="adjustResize">-->
+
+<!--            <meta-data-->
+<!--                android:name="io.flutter.embedding.android.NormalTheme"-->
+<!--                android:resource="@style/NormalTheme" />-->
+
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN"/>-->
+<!--                <category android:name="android.intent.category.LAUNCHER"/>-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
+
+<!--        &lt;!&ndash; Meta-data for Flutter &ndash;&gt;-->
+<!--        <meta-data-->
+<!--            android:name="flutterEmbedding"-->
+<!--            android:value="2" />-->
+
+<!--        &lt;!&ndash; Foreground Service for Recording (Important for record package) &ndash;&gt;-->
+<!--        <service-->
+<!--            android:name="com.llfbandit.record.service.RecordForegroundService"-->
+<!--            android:foregroundServiceType="microphone"-->
+<!--            android:exported="false" />-->
+
+<!--    </application>-->
+
+<!--    &lt;!&ndash; For Process Text (Flutter internal) &ndash;&gt;-->
+<!--    <queries>-->
+<!--        <intent>-->
+<!--            <action android:name="android.intent.action.PROCESS_TEXT"/>-->
+<!--            <data android:mimeType="text/plain"/>-->
+<!--        </intent>-->
+<!--    </queries>-->
+
+<!--</manifest>-->
+
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.draftit">
+
+    <!-- ==================== PERMISSIONS ==================== -->
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- Foreground service: keeps recording alive when app is backgrounded -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
-    <!--
-        Also add this INSIDE <application> to declare the foreground service
-        used by the `record` package:
-    -->
-    <!--
-    <service
-        android:name="com.llfbandit.record.service.RecordForegroundService"
-        android:foregroundServiceType="microphone"
-        android:exported="false" />
-    -->
     <application
         android:label="draftit"
-        android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:name="${applicationName}">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:taskAffinity=""
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
-            <!-- Specifies an Android theme to apply to this Activity as soon as
-                 the Android process has started. This theme is visible to the user
-                 while the Flutter UI initializes. After that, this theme continues
-                 to determine the Window background behind the Flutter UI. -->
+
             <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <!-- Don't delete the meta-data below.
-             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+
+        <!-- Flutter Engine -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-    </application>
-    <!-- Required to query activities that can process text, see:
-         https://developer.android.com/training/package-visibility and
-         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
 
-         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+        <!-- Recording Foreground Service -->
+        <service
+            android:name="com.llfbandit.record.service.RecordForegroundService"
+            android:foregroundServiceType="microphone"
+            android:exported="false" />
+
+    </application>
+
+    <!-- For Flutter Process Text -->
     <queries>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
@@ -73,7 +200,3 @@
     </queries>
 
 </manifest>
-
-
-
-
