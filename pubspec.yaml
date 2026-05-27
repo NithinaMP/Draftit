@@ -32,9 +32,9 @@ dependencies:
   provider: ^6.1.2
 
   # Firebase
-  firebase_core: ^2.27.1
-  firebase_auth: ^4.17.4
-  cloud_firestore: ^4.15.4
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.6.12
 
   # Google Sign-In
   google_sign_in: ^6.2.1
@@ -48,8 +48,14 @@ dependencies:
   # HTTP
   dio: ^5.4.3
 
-  # Local Cache
+  # Local Cache (Phase 1 + 2)
   hive_flutter: ^1.1.0
+
+  # File picker — for syllabus PDF import
+  file_picker: ^8.1.2
+
+  # Env
+  flutter_dotenv: ^5.1.0
 
   # UI
   flutter_markdown: ^0.6.22
@@ -59,9 +65,6 @@ dependencies:
   # Utils
   uuid: ^4.3.3
   shared_preferences: ^2.2.3
-
-  # Env file loader — reads .env at runtime (safe for git if .env is gitignored)
-  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
