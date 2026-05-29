@@ -84,18 +84,38 @@ class SyllabusProvider extends ChangeNotifier {
       debugPrint(text.substring(0, text.length > 500 ? 500 : text.length));
 
       await _parseAndSaveSyllabusText(text);
-    } catch (e) {
-      debugPrint('IMPORT ERROR: $e');
-
+    }catch (e) {
       final msg = e.toString()
           .replaceAll('Exception: ', '')
           .replaceAll('SCANNED_PDF: ', '')
           .replaceAll('PDF_READ_ERROR: ', '');
 
-      _error = msg;
+      if (msg.contains('scanned image')) {
+        _error =
+        'This PDF cannot be imported automatically because it contains scanned images instead of selectable text.\n\n'
+            'Try one of the following:\n'
+            '• Upload the original digital syllabus PDF\n'
+            '• Copy and paste the syllabus text manually\n'
+            '• Add units manually using the Add Unit button';
+      } else {
+        _error = msg;
+      }
+
       _status = SyllabusStatus.error;
       notifyListeners();
     }
+    // catch (e) {
+    //   debugPrint('IMPORT ERROR: $e');
+    //
+    //   final msg = e.toString()
+    //       .replaceAll('Exception: ', '')
+    //       .replaceAll('SCANNED_PDF: ', '')
+    //       .replaceAll('PDF_READ_ERROR: ', '');
+    //
+    //   _error = msg;
+    //   _status = SyllabusStatus.error;
+    //   notifyListeners();
+    // }
   }
   /// Import syllabus from manually typed text
   Future<void> importFromText(String rawText) async {
