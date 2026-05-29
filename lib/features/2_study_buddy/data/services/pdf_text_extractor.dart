@@ -1,55 +1,57 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart' as sf;
 
 class PdfTextExtractor {
-  /// Extract raw text from a PDF file at [filePath].
-  /// Uses syncfusion_flutter_pdf for local extraction — no upload needed.
+  /// Extract all text from a PDF file using Syncfusion.
+  /// Works on compressed, modern PDFs — fully local, no upload needed.
   Future<String> extractText(String filePath) async {
+    final file = File(filePath);
+    if (!file.existsSync()) {
+      throw Exception('PDF file not found at $filePath');
+    }
+
+    final bytes = await file.readAsBytes();
+    debugPrint('📄 PDF size: ${bytes.length} bytes');
+
     try {
-      final file = File(filePath);
-      if (!file.existsSync()) {
-        throw Exception('PDF file not found at $filePath');
+      final document = sf.PdfDocument(inputBytes: bytes);
+      final extractor = sf.PdfTextExtractor(document);
+
+      final buffer = StringBuffer();
+
+      for (int i = 0; i < document.pages.count; i++) {
+        final pageText = extractor.extractText(
+          startPageIndex: i,
+          endPageIndex: i,
+        );
+        if (pageText.trim().isNotEmpty) {
+          buffer.writeln(pageText.trim());
+          buffer.writeln(); // blank line between pages
+        }
       }
 
-      // Read raw bytes
-      final bytes = await file.readAsBytes();
-      debugPrint('📄 PDF size: ${bytes.length} bytes');
+      document.dispose();
 
-      // We use a lightweight pure-Dart PDF text extraction approach
-      // by reading the raw PDF stream for text objects
-      final text = _extractTextFromBytes(bytes);
-      debugPrint('📄 Extracted ${text.length} characters from PDF');
-      return text;
+      final result = buffer.toString().trim();
+      debugPrint('📄 Extracted ${result.length} characters from ${document.pages.count} pages');
+
+      if (result.length < 30) {
+        throw Exception(
+          'SCANNED_PDF: This PDF appears to be a scanned image — '
+              'no readable text found. Please type your syllabus manually.',
+        );
+      }
+
+      return result;
     } catch (e) {
-      debugPrint('❌ PDF extraction error: $e');
-      throw Exception('PDF_READ_ERROR: $e');
+      final msg = e.toString();
+      if (msg.contains('SCANNED_PDF')) rethrow;
+      debugPrint('❌ PDF read error: $e');
+      throw Exception(
+        'PDF_READ_ERROR: Could not read this PDF ($e). '
+            'Try a different PDF or type manually.',
+      );
     }
-  }
-
-  /// Simple PDF text extraction by scanning for text stream markers.
-  /// Works for most text-based PDFs. For scanned PDFs, user should type manually.
-  String _extractTextFromBytes(List<int> bytes) {
-    final raw = String.fromCharCodes(bytes.where((b) => b < 128).toList());
-
-    final buffer = StringBuffer();
-    final regex = RegExp(r'\(([^)]{2,})\)\s*Tj');
-    final matches = regex.allMatches(raw);
-
-    for (final m in matches) {
-      final text = m.group(1) ?? '';
-      // Filter out binary garbage — keep only printable ASCII
-      final clean = text.replaceAll(RegExp(r'[^\x20-\x7E]'), ' ').trim();
-      if (clean.length > 2) {
-        buffer.write('$clean ');
-      }
-    }
-
-    final result = buffer.toString().trim();
-
-    // If extraction yielded nothing useful, return a helpful message
-    if (result.length < 50) {
-      return '';
-    }
-    return result;
   }
 }
