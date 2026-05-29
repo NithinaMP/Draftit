@@ -53,6 +53,8 @@ dependencies:
 
   # File picker — for syllabus PDF import
   file_picker: ^8.1.2
+  # PDF text extraction
+  syncfusion_flutter_pdf: ^27.1.48
 
   # Env
   flutter_dotenv: ^5.1.0

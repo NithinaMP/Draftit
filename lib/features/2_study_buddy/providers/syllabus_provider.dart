@@ -57,13 +57,13 @@ class SyllabusProvider extends ChangeNotifier {
 
     try {
       final text = await _pdfExtractor.extractText(filePath);
-      if (text.isEmpty) {
-        throw Exception('Could not extract text from this PDF. '
-            'Please type your syllabus manually.');
-      }
       await _parseAndSaveSyllabusText(text);
     } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
+      final msg = e.toString()
+          .replaceAll('Exception: ', '')
+          .replaceAll('SCANNED_PDF: ', '')
+          .replaceAll('PDF_READ_ERROR: ', '');
+      _error = msg;
       _status = SyllabusStatus.error;
       notifyListeners();
     }
