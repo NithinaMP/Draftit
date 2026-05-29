@@ -50,25 +50,53 @@ class SyllabusProvider extends ChangeNotifier {
   }
 
   /// Import syllabus from a PDF file (local only — no upload)
+  // Future<void> importFromPdf(String filePath) async {
+  //   _status = SyllabusStatus.importing;
+  //   _error = null;
+  //   notifyListeners();
+  //
+  //   try {
+  //     final text = await _pdfExtractor.extractText(filePath);
+  //     await _parseAndSaveSyllabusText(text);
+  //   } catch (e) {
+  //     final msg = e.toString()
+  //         .replaceAll('Exception: ', '')
+  //         .replaceAll('SCANNED_PDF: ', '')
+  //         .replaceAll('PDF_READ_ERROR: ', '');
+  //     _error = msg;
+  //     _status = SyllabusStatus.error;
+  //     notifyListeners();
+  //   }
+  // }
+
   Future<void> importFromPdf(String filePath) async {
+    debugPrint('PDF PATH: $filePath');
+
     _status = SyllabusStatus.importing;
     _error = null;
     notifyListeners();
 
     try {
       final text = await _pdfExtractor.extractText(filePath);
+
+      debugPrint('TEXT LENGTH: ${text.length}');
+      debugPrint('FIRST 500 CHARS:');
+      debugPrint(text.substring(0, text.length > 500 ? 500 : text.length));
+
       await _parseAndSaveSyllabusText(text);
     } catch (e) {
+      debugPrint('IMPORT ERROR: $e');
+
       final msg = e.toString()
           .replaceAll('Exception: ', '')
           .replaceAll('SCANNED_PDF: ', '')
           .replaceAll('PDF_READ_ERROR: ', '');
+
       _error = msg;
       _status = SyllabusStatus.error;
       notifyListeners();
     }
   }
-
   /// Import syllabus from manually typed text
   Future<void> importFromText(String rawText) async {
     _status = SyllabusStatus.importing;
