@@ -187,10 +187,10 @@ class ResumePdfService {
                   pw.SizedBox(height: 14),
                   _buildSoftSkillsSection(profile, f),
                 ],
-                if (job.matchedSkills.isNotEmpty) ...[
-                  pw.SizedBox(height: 14),
-                  _buildMatchedSection(job, f),
-                ],
+                // if (job.matchedSkills.isNotEmpty) ...[
+                //   pw.SizedBox(height: 14),
+                //   _buildMatchedSection(job, f),
+                // ],
               ],
             ),
           ),
@@ -492,25 +492,25 @@ class ResumePdfService {
   }
 
   // ── Matched keywords ───────────────────────────────────────────────────────
-  pw.Widget _buildMatchedSection(JobApplication job, _Fonts f) {
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        _sideTitle('ATS MATCH', f),
-        pw.SizedBox(height: 4),
-        pw.Text(
-          '${job.matchScore}% match for ${job.roleTitle}',
-          style: pw.TextStyle(
-            font: f.semiBold,
-            fontSize: 8,
-            color: job.matchScore >= 70
-                ? const PdfColor.fromInt(0xFF4CAF82)
-                : const PdfColor.fromInt(0xFFFFB830),
-          ),
-        ),
-      ],
-    );
-  }
+  // pw.Widget _buildMatchedSection(JobApplication job, _Fonts f) {
+  //   return pw.Column(
+  //     crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //     children: [
+  //       _sideTitle('ATS MATCH', f),
+  //       pw.SizedBox(height: 4),
+  //       pw.Text(
+  //         '${job.matchScore}% match for ${job.roleTitle}',
+  //         style: pw.TextStyle(
+  //           font: f.semiBold,
+  //           fontSize: 8,
+  //           color: job.matchScore >= 70
+  //               ? const PdfColor.fromInt(0xFF4CAF82)
+  //               : const PdfColor.fromInt(0xFFFFB830),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   pw.Widget _sectionTitle(String title, _Fonts f) {
