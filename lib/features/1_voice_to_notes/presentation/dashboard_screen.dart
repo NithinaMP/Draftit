@@ -189,10 +189,17 @@ class _DashboardScreenState extends State<DashboardScreen>
             ),
           ),
           const Spacer(),
+          // Study Buddy entry point
           IconButton(
             icon: const Icon(Icons.psychology_rounded, color: AppTheme.textSecondary),
             tooltip: 'Exam Predictor',
             onPressed: () => Navigator.pushNamed(context, AppRouter.studyBuddy),
+          ),
+          // Career Builder entry point
+          IconButton(
+            icon: const Icon(Icons.work_outline_rounded, color: AppTheme.textSecondary),
+            tooltip: 'Career Architect',
+            onPressed: () => Navigator.pushNamed(context, AppRouter.careerBuilder),
           ),
           _ProfileMenu(),
         ],
