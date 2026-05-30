@@ -56,6 +56,10 @@ dependencies:
   # PDF text extraction
   syncfusion_flutter_pdf: ^27.1.48
 
+  # PDF GENERATION — ATS-friendly structured resume
+  pdf: ^3.11.1
+  printing: ^5.13.1
+
   # Env
   flutter_dotenv: ^5.1.0
 

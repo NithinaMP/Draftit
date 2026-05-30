@@ -6,42 +6,32 @@ part 'master_profile_model.g.dart';
 class MasterProfile extends HiveObject {
   @HiveField(0)
   String fullName;
-
   @HiveField(1)
   String email;
-
   @HiveField(2)
   String phone;
-
   @HiveField(3)
   String location;
-
   @HiveField(4)
-  String summary; // professional summary
-
+  String summary;
   @HiveField(5)
   List<EducationEntry> education;
-
   @HiveField(6)
-  List<ExperienceEntry> experiences; // internships, jobs, projects, volunteering
-
+  List<ExperienceEntry> experiences;
   @HiveField(7)
-  List<String> skills; // manual + auto-extracted from Phase 1 lectures
-
+  List<String> skills; // technical skills
   @HiveField(8)
   List<String> certifications;
-
   @HiveField(9)
   List<String> languages;
-
   @HiveField(10)
   String? linkedIn;
-
   @HiveField(11)
   String? github;
-
   @HiveField(12)
   String? portfolio;
+  @HiveField(13)
+  List<String> softSkills; // NEW
 
   MasterProfile({
     this.fullName = '',
@@ -57,11 +47,13 @@ class MasterProfile extends HiveObject {
     this.linkedIn,
     this.github,
     this.portfolio,
+    List<String>? softSkills,
   })  : education = education ?? [],
         experiences = experiences ?? [],
         skills = skills ?? [],
         certifications = certifications ?? [],
-        languages = languages ?? [];
+        languages = languages ?? [],
+        softSkills = softSkills ?? [];
 
   bool get isComplete =>
       fullName.isNotEmpty && email.isNotEmpty && skills.isNotEmpty;
@@ -80,21 +72,18 @@ class MasterProfile extends HiveObject {
     'linked_in': linkedIn,
     'github': github,
     'portfolio': portfolio,
+    'soft_skills': softSkills,
   };
 }
 
-// ─── Education Entry ──────────────────────────────────────────────────────────
 @HiveType(typeId: 4)
 class EducationEntry extends HiveObject {
   @HiveField(0)
   String degree;
-
   @HiveField(1)
   String institution;
-
   @HiveField(2)
   String year;
-
   @HiveField(3)
   String? grade;
 
@@ -113,33 +102,24 @@ class EducationEntry extends HiveObject {
   };
 }
 
-// ─── Experience Entry ─────────────────────────────────────────────────────────
 @HiveType(typeId: 5)
 class ExperienceEntry extends HiveObject {
   @HiveField(0)
   String id;
-
   @HiveField(1)
   String title;
-
   @HiveField(2)
   String organization;
-
   @HiveField(3)
-  String duration; // e.g. "Jun 2024 – Aug 2024"
-
+  String duration;
   @HiveField(4)
-  String rawDescription; // what the student typed
-
+  String rawDescription;
   @HiveField(5)
-  String professionalDescription; // AI-translated version
-
+  String professionalDescription;
   @HiveField(6)
   List<String> toolsUsed;
-
   @HiveField(7)
-  String type; // 'internship' | 'project' | 'volunteering' | 'freelance'
-
+  String type;
   @HiveField(8)
   String? proofLink;
 

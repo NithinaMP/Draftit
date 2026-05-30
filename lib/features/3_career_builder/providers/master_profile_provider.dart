@@ -137,10 +137,43 @@ class MasterProfileProvider extends ChangeNotifier {
     }
   }
 
+  // Future<void> removeCertification(int index) async {
+  //   _profile.certifications.removeAt(index);
+  //   await _persist();
+  // }
+
   Future<void> removeCertification(int index) async {
     _profile.certifications.removeAt(index);
     await _persist();
   }
+
+  Future<void> addSoftSkill(String skill) async {
+    final trimmed = skill.trim();
+    if (trimmed.isNotEmpty && !_profile.softSkills.contains(trimmed)) {
+      _profile.softSkills.add(trimmed);
+      await _persist();
+    }
+  }
+
+  Future<void> removeSoftSkill(String skill) async {
+    _profile.softSkills.remove(skill);
+    await _persist();
+  }
+
+  Future<void> addLanguage(String lang) async {
+    final trimmed = lang.trim();
+    if (trimmed.isNotEmpty && !_profile.languages.contains(trimmed)) {
+      _profile.languages.add(trimmed);
+      await _persist();
+    }
+  }
+
+  Future<void> removeLanguage(String lang) async {
+    _profile.languages.remove(lang);
+    await _persist();
+  }
+
+
 
   ExperienceEntry buildExperience({
     required String title,

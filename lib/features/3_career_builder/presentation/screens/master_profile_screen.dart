@@ -24,7 +24,7 @@ class _MasterProfileScreenState extends State<MasterProfileScreen>
   @override
   void initState() {
     super.initState();
-    _tabCtrl = TabController(length: 4, vsync: this);
+    _tabCtrl = TabController(length: 5, vsync: this);
   }
 
   @override
@@ -47,8 +47,7 @@ class _MasterProfileScreenState extends State<MasterProfileScreen>
                 builder: (_, provider, __) {
                   if (provider.isLoading) {
                     return const Center(
-                        child: CircularProgressIndicator(
-                            color: AppTheme.accent));
+                        child: CircularProgressIndicator(color: AppTheme.accent));
                   }
                   return TabBarView(
                     controller: _tabCtrl,
@@ -57,6 +56,7 @@ class _MasterProfileScreenState extends State<MasterProfileScreen>
                       _SkillsTab(provider: provider),
                       _ExperienceTab(provider: provider),
                       _EducationTab(provider: provider),
+                      _ExtrasTab(provider: provider),
                     ],
                   );
                 },
@@ -84,7 +84,7 @@ class _MasterProfileScreenState extends State<MasterProfileScreen>
               children: [
                 Text('Master Profile',
                     style: Theme.of(context).textTheme.titleLarge),
-                Text('Set up once, generate unlimited resumes',
+                Text('Set up once, generate unlimited targeted resumes',
                     style: Theme.of(context).textTheme.bodyMedium),
               ],
             ),
@@ -106,10 +106,11 @@ class _MasterProfileScreenState extends State<MasterProfileScreen>
         ),
         child: TabBar(
           controller: _tabCtrl,
+          isScrollable: true,
+          tabAlignment: TabAlignment.start,
           indicator: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
-            ),
+                colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)]),
             borderRadius: BorderRadius.circular(10),
           ),
           indicatorSize: TabBarIndicatorSize.tab,
@@ -123,6 +124,7 @@ class _MasterProfileScreenState extends State<MasterProfileScreen>
             Tab(text: 'Skills'),
             Tab(text: 'Experience'),
             Tab(text: 'Education'),
+            Tab(text: 'Extras'),
           ],
         ),
       ),
@@ -165,9 +167,7 @@ class _BasicInfoTabState extends State<_BasicInfoTab> {
   @override
   void dispose() {
     for (final c in [_nameCtrl, _emailCtrl, _phoneCtrl, _locationCtrl,
-      _linkedInCtrl, _githubCtrl, _portfolioCtrl]) {
-      c.dispose();
-    }
+      _linkedInCtrl, _githubCtrl, _portfolioCtrl]) c.dispose();
     super.dispose();
   }
 
@@ -185,31 +185,13 @@ class _BasicInfoTabState extends State<_BasicInfoTab> {
           _field(_locationCtrl, 'Location (City, Country)',
               Icons.location_on_outlined),
           const SizedBox(height: 8),
-          _divider('Online Presence (Optional)'),
+          _dividerLabel('Online Presence (Optional)'),
           _field(_linkedInCtrl, 'LinkedIn URL', Icons.link_rounded),
           _field(_githubCtrl, 'GitHub URL', Icons.code_rounded),
           _field(_portfolioCtrl, 'Portfolio URL', Icons.web_rounded),
           const SizedBox(height: 20),
           if (_saved)
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppTheme.success.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.check_circle_rounded,
-                      color: AppTheme.success, size: 16),
-                  const SizedBox(width: 6),
-                  Text('Profile saved!',
-                      style: GoogleFonts.spaceGrotesk(
-                          color: AppTheme.success,
-                          fontWeight: FontWeight.w600)),
-                ],
-              ),
-            ),
+            _successBanner('Profile saved!'),
           const SizedBox(height: 12),
           GradientButton(
             label: 'Save Info',
@@ -220,16 +202,13 @@ class _BasicInfoTabState extends State<_BasicInfoTab> {
                 email: _emailCtrl.text.trim(),
                 phone: _phoneCtrl.text.trim(),
                 location: _locationCtrl.text.trim(),
-                linkedIn: _linkedInCtrl.text.trim().isEmpty
-                    ? null : _linkedInCtrl.text.trim(),
-                github: _githubCtrl.text.trim().isEmpty
-                    ? null : _githubCtrl.text.trim(),
-                portfolio: _portfolioCtrl.text.trim().isEmpty
-                    ? null : _portfolioCtrl.text.trim(),
+                linkedIn: _linkedInCtrl.text.trim().isEmpty ? null : _linkedInCtrl.text.trim(),
+                github: _githubCtrl.text.trim().isEmpty ? null : _githubCtrl.text.trim(),
+                portfolio: _portfolioCtrl.text.trim().isEmpty ? null : _portfolioCtrl.text.trim(),
               );
               setState(() => _saved = true);
               Future.delayed(const Duration(seconds: 2),
-                      () => setState(() => _saved = false));
+                      () { if (mounted) setState(() => _saved = false); });
             },
           ),
           const SizedBox(height: 40),
@@ -253,23 +232,6 @@ class _BasicInfoTabState extends State<_BasicInfoTab> {
       ),
     );
   }
-
-  Widget _divider(String label) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          const Expanded(child: Divider(color: AppTheme.border)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Text(label,
-                style: Theme.of(context).textTheme.labelMedium),
-          ),
-          const Expanded(child: Divider(color: AppTheme.border)),
-        ],
-      ),
-    );
-  }
 }
 
 // ─── Skills Tab ───────────────────────────────────────────────────────────────
@@ -282,11 +244,11 @@ class _SkillsTab extends StatefulWidget {
 }
 
 class _SkillsTabState extends State<_SkillsTab> {
-  final _skillCtrl = TextEditingController();
+  final _ctrl = TextEditingController();
 
   @override
   void dispose() {
-    _skillCtrl.dispose();
+    _ctrl.dispose();
     super.dispose();
   }
 
@@ -301,97 +263,92 @@ class _SkillsTabState extends State<_SkillsTab> {
           // Sync from lectures
           Consumer<LecturesProvider>(
             builder: (_, lectures, __) {
-              final allSkills = lectures.lectures
+              final all = lectures.lectures
                   .expand((l) => l.extractedSkills)
                   .toSet()
                   .toList();
-              if (allSkills.isEmpty) return const SizedBox.shrink();
+              if (all.isEmpty) return const SizedBox.shrink();
               return GestureDetector(
-                onTap: () => widget.provider.syncLectureSkills(allSkills),
+                onTap: () => widget.provider.syncLectureSkills(all),
                 child: Container(
                   padding: const EdgeInsets.all(14),
-                  margin: const EdgeInsets.only(bottom: 20),
+                  margin: const EdgeInsets.only(bottom: 16),
                   decoration: BoxDecoration(
                     color: AppTheme.accent.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                        color: AppTheme.accent.withOpacity(0.25)),
+                    border: Border.all(color: AppTheme.accent.withOpacity(0.25)),
                   ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.sync_rounded,
-                          color: AppTheme.accentLight, size: 18),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          'Sync ${allSkills.length} skills from your lectures',
-                          style: GoogleFonts.spaceGrotesk(
-                              color: AppTheme.accentLight,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500),
-                        ),
+                  child: Row(children: [
+                    const Icon(Icons.sync_rounded,
+                        color: AppTheme.accentLight, size: 18),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Sync ${all.length} skills from your lecture notes',
+                        style: GoogleFonts.spaceGrotesk(
+                            color: AppTheme.accentLight,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500),
                       ),
-                      const Icon(Icons.add_rounded,
-                          color: AppTheme.accentLight, size: 18),
-                    ],
-                  ),
+                    ),
+                    const Icon(Icons.add_rounded,
+                        color: AppTheme.accentLight, size: 18),
+                  ]),
                 ),
               );
             },
           ),
 
-          // Add skill input
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _skillCtrl,
-                  style: const TextStyle(color: AppTheme.textPrimary),
-                  decoration: const InputDecoration(
-                    labelText: 'Add a skill',
-                    hintText: 'e.g. Python, Excel, Public Speaking',
-                    prefixIcon:
-                    Icon(Icons.add_circle_outline_rounded, size: 18),
-                  ),
-                  onSubmitted: (v) {
-                    widget.provider.addSkill(v);
-                    _skillCtrl.clear();
-                  },
+          // Add skill input — supports comma-separated bulk add
+          Row(children: [
+            Expanded(
+              child: TextField(
+                controller: _ctrl,
+                style: const TextStyle(color: AppTheme.textPrimary),
+                decoration: const InputDecoration(
+                  labelText: 'Add skills',
+                  hintText: 'Flutter, Firebase, Python...',
+                  prefixIcon: Icon(Icons.add_circle_outline_rounded, size: 18),
                 ),
+                onSubmitted: _addSkills,
               ),
-              const SizedBox(width: 10),
-              GestureDetector(
-                onTap: () {
-                  widget.provider.addSkill(_skillCtrl.text);
-                  _skillCtrl.clear();
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                        colors: [AppTheme.accent, Color(0xFF9D40FF)]),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(Icons.add_rounded, color: Colors.white),
+            ),
+            const SizedBox(width: 10),
+            GestureDetector(
+              onTap: () => _addSkills(_ctrl.text),
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                      colors: [AppTheme.accent, Color(0xFF9D40FF)]),
+                  borderRadius: BorderRadius.circular(12),
                 ),
+                child: const Icon(Icons.add_rounded, color: Colors.white),
               ),
-            ],
-          ),
-          const SizedBox(height: 20),
+            ),
+          ]),
+          const SizedBox(height: 8),
+          Text('Tip: separate multiple skills with commas',
+              style: Theme.of(context).textTheme.bodyMedium),
+          const SizedBox(height: 16),
 
           if (skills.isEmpty)
-            Text(
-              'No skills added yet. Add manually or sync from your lectures above.',
-              style: Theme.of(context).textTheme.bodyMedium,
-            )
+            Text('No skills yet. Add manually or sync from lectures.',
+                style: Theme.of(context).textTheme.bodyMedium)
           else
+          // FIX: use Wrap properly — each chip has constrained width
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: skills
-                  .map((s) => _RemovableChip(
-                label: s,
-                onRemove: () => widget.provider.removeSkill(s),
+                  .map((s) => ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width - 48,
+                ),
+                child: _RemovableChip(
+                  label: s,
+                  onRemove: () => widget.provider.removeSkill(s),
+                ),
               ))
                   .toList(),
             ),
@@ -399,6 +356,14 @@ class _SkillsTabState extends State<_SkillsTab> {
         ],
       ),
     );
+  }
+
+  void _addSkills(String text) {
+    final parts = text.split(',');
+    for (final p in parts) {
+      widget.provider.addSkill(p.trim());
+    }
+    _ctrl.clear();
   }
 }
 
@@ -409,25 +374,24 @@ class _ExperienceTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final experiences = provider.profile.experiences;
+    final exps = provider.profile.experiences;
     return Column(
       children: [
         Expanded(
-          child: experiences.isEmpty
+          child: exps.isEmpty
               ? Center(
-            child: Text(
-              'No experiences yet.\nTap + to add projects, internships, etc.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          )
+              child: Text(
+                'No experiences yet.\nTap + to add.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ))
               : ListView.builder(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
-            itemCount: experiences.length,
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+            itemCount: exps.length,
             itemBuilder: (_, i) => _ExperienceCard(
-              exp: experiences[i],
+              exp: exps[i],
               provider: provider,
-              onDelete: () => provider.removeExperience(experiences[i].id),
+              onDelete: () => provider.removeExperience(exps[i].id),
             ),
           ),
         ),
@@ -436,14 +400,14 @@ class _ExperienceTab extends StatelessWidget {
           child: GradientButton(
             label: 'Add Experience',
             icon: Icons.add_rounded,
-            onPressed: () => _showAddExperienceSheet(context, provider),
+            onPressed: () => _showAddSheet(context, provider),
           ),
         ),
       ],
     );
   }
 
-  static void _showAddExperienceSheet(
+  static void _showAddSheet(
       BuildContext context, MasterProfileProvider provider) {
     final titleCtrl = TextEditingController();
     final orgCtrl = TextEditingController();
@@ -458,8 +422,7 @@ class _ExperienceTab extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: AppTheme.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setModal) => Padding(
           padding: EdgeInsets.only(
@@ -473,8 +436,7 @@ class _ExperienceTab extends StatelessWidget {
               children: [
                 Text('Add Experience',
                     style: Theme.of(context).textTheme.headlineMedium),
-                const SizedBox(height: 16),
-                // Type selector
+                const SizedBox(height: 12),
                 Wrap(
                   spacing: 8,
                   children: ['project', 'internship', 'volunteering', 'freelance']
@@ -492,35 +454,30 @@ class _ExperienceTab extends StatelessWidget {
                   ))
                       .toList(),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
                 _tf(titleCtrl, 'Title (e.g. Flutter Developer)'),
                 _tf(orgCtrl, 'Organization / Company'),
                 _tf(durationCtrl, 'Duration (e.g. Jun 2024 – Aug 2024)'),
-                _tf(descCtrl, 'Describe what you did', maxLines: 4),
-                _tf(toolsCtrl,
-                    'Tools Used (comma separated: Flutter, Firebase)'),
-                _tf(proofCtrl, 'Proof Link (GitHub, Drive) — Optional'),
+                _tf(descCtrl, 'What did you do?', maxLines: 4),
+                _tf(toolsCtrl, 'Tools Used (Flutter, Firebase, Python...)'),
+                _tf(proofCtrl, 'Proof Link — Optional'),
                 const SizedBox(height: 16),
                 GradientButton(
                   label: 'Add Experience',
                   onPressed: () {
                     if (titleCtrl.text.trim().isEmpty) return;
-                    final exp = provider.buildExperience(
+                    provider.addExperience(provider.buildExperience(
                       title: titleCtrl.text.trim(),
                       organization: orgCtrl.text.trim(),
                       duration: durationCtrl.text.trim(),
                       rawDescription: descCtrl.text.trim(),
                       toolsUsed: toolsCtrl.text
-                          .split(',')
-                          .map((s) => s.trim())
-                          .where((s) => s.isNotEmpty)
-                          .toList(),
+                          .split(',').map((s) => s.trim())
+                          .where((s) => s.isNotEmpty).toList(),
                       type: selectedType,
                       proofLink: proofCtrl.text.trim().isEmpty
-                          ? null
-                          : proofCtrl.text.trim(),
-                    );
-                    provider.addExperience(exp);
+                          ? null : proofCtrl.text.trim(),
+                    ));
                     Navigator.pop(ctx);
                   },
                 ),
@@ -532,8 +489,7 @@ class _ExperienceTab extends StatelessWidget {
     );
   }
 
-  static Widget _tf(TextEditingController c, String label,
-      {int maxLines = 1}) {
+  static Widget _tf(TextEditingController c, String label, {int maxLines = 1}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextField(
@@ -558,12 +514,8 @@ class _EducationTab extends StatelessWidget {
       children: [
         Expanded(
           child: edu.isEmpty
-              ? Center(
-            child: Text(
-              'No education added yet.',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          )
+              ? Center(child: Text('No education added.',
+              style: Theme.of(context).textTheme.bodyMedium))
               : ListView.builder(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
             itemCount: edu.length,
@@ -575,32 +527,28 @@ class _EducationTab extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: AppTheme.border),
               ),
-              child: Row(
-                children: [
-                  const Icon(Icons.school_outlined,
-                      color: AppTheme.accent, size: 22),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(edu[i].degree,
-                            style:
-                            Theme.of(context).textTheme.titleMedium),
-                        Text(
-                            '${edu[i].institution} • ${edu[i].year}${edu[i].grade != null ? " • ${edu[i].grade}" : ""}',
-                            style:
-                            Theme.of(context).textTheme.bodyMedium),
-                      ],
-                    ),
+              child: Row(children: [
+                const Icon(Icons.school_outlined,
+                    color: AppTheme.accent, size: 22),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(edu[i].degree,
+                          style: Theme.of(context).textTheme.titleMedium),
+                      Text(
+                          '${edu[i].institution} • ${edu[i].year}${edu[i].grade != null ? " • ${edu[i].grade}" : ""}',
+                          style: Theme.of(context).textTheme.bodyMedium),
+                    ],
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline,
-                        color: AppTheme.error, size: 18),
-                    onPressed: () => provider.removeEducation(i),
-                  ),
-                ],
-              ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete_outline,
+                      color: AppTheme.error, size: 18),
+                  onPressed: () => provider.removeEducation(i),
+                ),
+              ]),
             ),
           ),
         ),
@@ -609,122 +557,309 @@ class _EducationTab extends StatelessWidget {
           child: GradientButton(
             label: 'Add Education',
             icon: Icons.add_rounded,
-            onPressed: () => _showAddEduSheet(context, provider),
+            onPressed: () => _showAddSheet(context, provider),
           ),
         ),
       ],
     );
   }
 
-  void _showAddEduSheet(BuildContext context, MasterProfileProvider provider) {
+  void _showAddSheet(BuildContext context, MasterProfileProvider provider) {
     final degreeCtrl = TextEditingController();
     final instCtrl = TextEditingController();
     final yearCtrl = TextEditingController();
     final gradeCtrl = TextEditingController();
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: AppTheme.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (ctx) => Padding(
         padding: EdgeInsets.only(
           left: 20, right: 20, top: 20,
           bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Add Education',
-                style: Theme.of(context).textTheme.headlineMedium),
-            const SizedBox(height: 16),
-            TextField(
-              controller: degreeCtrl,
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text('Add Education',
+              style: Theme.of(context).textTheme.headlineMedium),
+          const SizedBox(height: 16),
+          TextField(controller: degreeCtrl,
               style: const TextStyle(color: AppTheme.textPrimary),
               decoration: const InputDecoration(
-                  labelText: 'Degree (e.g. B.Tech Computer Science)'),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: instCtrl,
+                  labelText: 'Degree (e.g. B.Tech Computer Science)')),
+          const SizedBox(height: 12),
+          TextField(controller: instCtrl,
+              style: const TextStyle(color: AppTheme.textPrimary),
+              decoration: const InputDecoration(labelText: 'Institution')),
+          const SizedBox(height: 12),
+          TextField(controller: yearCtrl,
               style: const TextStyle(color: AppTheme.textPrimary),
               decoration:
-              const InputDecoration(labelText: 'Institution Name'),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: yearCtrl,
+              const InputDecoration(labelText: 'Year (2021 – 2025)')),
+          const SizedBox(height: 12),
+          TextField(controller: gradeCtrl,
               style: const TextStyle(color: AppTheme.textPrimary),
               decoration: const InputDecoration(
-                  labelText: 'Year (e.g. 2021 – 2025)'),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: gradeCtrl,
-              style: const TextStyle(color: AppTheme.textPrimary),
-              decoration: const InputDecoration(
-                  labelText: 'Grade/GPA (Optional)'),
-            ),
-            const SizedBox(height: 20),
-            GradientButton(
-              label: 'Add',
-              onPressed: () {
-                if (degreeCtrl.text.trim().isEmpty) return;
-                provider.addEducation(EducationEntry(
-                  degree: degreeCtrl.text.trim(),
-                  institution: instCtrl.text.trim(),
-                  year: yearCtrl.text.trim(),
-                  grade: gradeCtrl.text.trim().isEmpty
-                      ? null
-                      : gradeCtrl.text.trim(),
-                ));
-                Navigator.pop(ctx);
-              },
-            ),
-          ],
-        ),
+                  labelText: 'Grade / GPA (Optional)')),
+          const SizedBox(height: 20),
+          GradientButton(
+            label: 'Add',
+            onPressed: () {
+              if (degreeCtrl.text.trim().isEmpty) return;
+              provider.addEducation(EducationEntry(
+                degree: degreeCtrl.text.trim(),
+                institution: instCtrl.text.trim(),
+                year: yearCtrl.text.trim(),
+                grade: gradeCtrl.text.trim().isEmpty
+                    ? null : gradeCtrl.text.trim(),
+              ));
+              Navigator.pop(ctx);
+            },
+          ),
+        ]),
       ),
     );
   }
 }
 
-// ─── Small shared widgets ─────────────────────────────────────────────────────
-class _RemovableChip extends StatelessWidget {
-  final String label;
-  final VoidCallback onRemove;
-  const _RemovableChip({required this.label, required this.onRemove});
+// ─── Extras Tab — certifications, languages, soft skills ──────────────────────
+class _ExtrasTab extends StatefulWidget {
+  final MasterProfileProvider provider;
+  const _ExtrasTab({required this.provider});
+
+  @override
+  State<_ExtrasTab> createState() => _ExtrasTabState();
+}
+
+class _ExtrasTabState extends State<_ExtrasTab> {
+  final _certCtrl = TextEditingController();
+  final _langCtrl = TextEditingController();
+  final _softCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _certCtrl.dispose();
+    _langCtrl.dispose();
+    _softCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: AppTheme.accent.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.accent.withOpacity(0.3)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+    final p = widget.provider.profile;
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
-              style: GoogleFonts.spaceGrotesk(
-                  fontSize: 12, color: AppTheme.accentLight)),
-          const SizedBox(width: 4),
-          GestureDetector(
-            onTap: onRemove,
-            child: const Icon(Icons.close_rounded,
-                size: 14, color: AppTheme.textSecondary),
+
+          // ── Certifications ──
+          _sectionLabel('Certifications', Icons.verified_outlined, AppTheme.success),
+          const SizedBox(height: 10),
+          _addRow(_certCtrl, 'e.g. AWS Certified, Google Analytics',
+                  () async {
+                if (_certCtrl.text.trim().isNotEmpty) {
+                  await widget.provider.addCertification(_certCtrl.text.trim());
+                  _certCtrl.clear();
+                }
+              }),
+          const SizedBox(height: 10),
+          if (p.certifications.isEmpty)
+            _emptyHint('No certifications added')
+          else
+            _chipWrap(p.certifications, AppTheme.success,
+                    (c) => widget.provider.removeCertification(
+                    p.certifications.indexOf(c))),
+
+          const SizedBox(height: 24),
+          const Divider(color: AppTheme.border),
+          const SizedBox(height: 16),
+
+          // ── Languages ──
+          _sectionLabel('Languages Known', Icons.translate_rounded, AppTheme.amber),
+          const SizedBox(height: 10),
+          _addRow(_langCtrl, 'e.g. English, Malayalam, Hindi',
+                  () async {
+                final parts = _langCtrl.text.split(',');
+                for (final p in parts) {
+                  await widget.provider.addLanguage(p.trim());
+                }
+                _langCtrl.clear();
+              }),
+          const SizedBox(height: 10),
+          if (p.languages.isEmpty)
+            _emptyHint('No languages added')
+          else
+            _chipWrap(p.languages, AppTheme.amber,
+                    (l) => widget.provider.removeLanguage(l)),
+
+          const SizedBox(height: 24),
+          const Divider(color: AppTheme.border),
+          const SizedBox(height: 16),
+
+          // ── Soft Skills ──
+          _sectionLabel('Soft Skills', Icons.psychology_outlined, AppTheme.accentLight),
+          const SizedBox(height: 6),
+          Text(
+            'These appear in the PDF right column and show recruiters your personality.',
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
+          const SizedBox(height: 10),
+          _addRow(_softCtrl, 'e.g. Leadership, Communication, Problem Solving',
+                  () async {
+                final parts = _softCtrl.text.split(',');
+                for (final s in parts) {
+                  await widget.provider.addSoftSkill(s.trim());
+                }
+                _softCtrl.clear();
+              }),
+          const SizedBox(height: 10),
+          if (p.softSkills.isEmpty)
+            _emptyHint('No soft skills added')
+          else
+            _chipWrap(p.softSkills, AppTheme.accentLight,
+                    (s) => widget.provider.removeSoftSkill(s)),
+
+          const SizedBox(height: 40),
         ],
       ),
     );
   }
+
+  Widget _sectionLabel(String label, IconData icon, Color color) {
+    return Row(children: [
+      Icon(icon, color: color, size: 20),
+      const SizedBox(width: 8),
+      Text(label,
+          style: GoogleFonts.spaceGrotesk(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.textPrimary)),
+    ]);
+  }
+
+  Widget _addRow(
+      TextEditingController ctrl, String hint, VoidCallback onAdd) {
+    return Row(children: [
+      Expanded(
+        child: TextField(
+          controller: ctrl,
+          style: const TextStyle(color: AppTheme.textPrimary),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: GoogleFonts.dmSans(
+                color: AppTheme.textSecondary, fontSize: 13),
+            contentPadding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: AppTheme.border)),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: AppTheme.border)),
+          ),
+          onSubmitted: (_) => onAdd(),
+        ),
+      ),
+      const SizedBox(width: 10),
+      GestureDetector(
+        onTap: onAdd,
+        child: Container(
+          padding: const EdgeInsets.all(13),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+                colors: [AppTheme.accent, Color(0xFF9D40FF)]),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: const Icon(Icons.add_rounded, color: Colors.white, size: 20),
+        ),
+      ),
+    ]);
+  }
+
+  Widget _emptyHint(String msg) {
+    return Text(msg,
+        style: GoogleFonts.dmSans(
+            color: AppTheme.textSecondary, fontSize: 13));
+  }
+
+  Widget _chipWrap(
+      List<String> items, Color color, Function(String) onRemove) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: items.map((item) {
+        return Container(
+          constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width - 48),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: color.withOpacity(0.35)),
+          ),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Flexible(
+              child: Text(
+                item,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.spaceGrotesk(
+                    fontSize: 12,
+                    color: color,
+                    fontWeight: FontWeight.w500),
+              ),
+            ),
+            const SizedBox(width: 5),
+            GestureDetector(
+              onTap: () => onRemove(item),
+              child: const Icon(Icons.close_rounded,
+                  size: 14, color: AppTheme.textSecondary),
+            ),
+          ]),
+        );
+      }).toList(),
+    );
+  }
 }
 
+// ─── Divider helpers ──────────────────────────────────────────────────────────
+Widget _dividerLabel(String label) {
+  return Builder(builder: (ctx) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    child: Row(children: [
+      const Expanded(child: Divider(color: AppTheme.border)),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Text(label,
+            style: Theme.of(ctx).textTheme.labelMedium),
+      ),
+      const Expanded(child: Divider(color: AppTheme.border)),
+    ]),
+  ));
+}
+
+Widget _successBanner(String msg) {
+  return Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: AppTheme.success.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      const Icon(Icons.check_circle_rounded,
+          color: AppTheme.success, size: 16),
+      const SizedBox(width: 6),
+      Text(msg,
+          style: GoogleFonts.spaceGrotesk(
+              color: AppTheme.success, fontWeight: FontWeight.w600)),
+    ]),
+  );
+}
+
+// ─── Experience Card ──────────────────────────────────────────────────────────
 class _ExperienceCard extends StatelessWidget {
-  final dynamic exp;
+  final ExperienceEntry exp;
   final MasterProfileProvider provider;
   final VoidCallback onDelete;
 
@@ -751,86 +886,105 @@ class _ExperienceCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppTheme.border),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  (exp.type as String)[0].toUpperCase() +
-                      (exp.type as String).substring(1),
-                  style: GoogleFonts.spaceGrotesk(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: color),
-                ),
-              ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.delete_outline,
-                    color: AppTheme.error, size: 18),
-                onPressed: onDelete,
-                padding: EdgeInsets.zero,
-              ),
-            ],
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              exp.type[0].toUpperCase() + exp.type.substring(1),
+              style: GoogleFonts.spaceGrotesk(
+                  fontSize: 11, fontWeight: FontWeight.w600, color: color),
+            ),
           ),
-          const SizedBox(height: 8),
-          Text(exp.title as String,
-              style: Theme.of(context).textTheme.titleMedium),
-          Text('${exp.organization} • ${exp.duration}',
-              style: Theme.of(context).textTheme.bodyMedium),
-          const SizedBox(height: 8),
-          // Show professional version if exists, otherwise raw
-          Text(
-            (exp.professionalDescription as String).isNotEmpty
-                ? exp.professionalDescription as String
-                : exp.rawDescription as String,
-            style: GoogleFonts.dmSans(
-                fontSize: 13,
-                color: AppTheme.textSecondary,
-                height: 1.5),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
+          const Spacer(),
+          IconButton(
+            icon: const Icon(Icons.delete_outline,
+                color: AppTheme.error, size: 18),
+            onPressed: onDelete,
+            padding: EdgeInsets.zero,
           ),
-          const SizedBox(height: 10),
-          // AI Translate button
-          if ((exp.professionalDescription as String).isEmpty)
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: isTranslating
-                    ? null
-                    : () => provider.translateExperience(
-                  experienceId: exp.id as String,
-                  companyTone: 'corporate',
-                ),
-                icon: isTranslating
-                    ? const SizedBox(
-                    width: 14,
-                    height: 14,
-                    child: CircularProgressIndicator(
-                        strokeWidth: 2, color: AppTheme.accent))
-                    : const Icon(Icons.auto_awesome_rounded, size: 15),
-                label: Text(isTranslating
-                    ? 'Translating...'
-                    : 'AI Professional Translate'),
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: AppTheme.accent.withOpacity(0.4)),
-                  foregroundColor: AppTheme.accentLight,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                ),
+        ]),
+        const SizedBox(height: 6),
+        Text(exp.title, style: Theme.of(context).textTheme.titleMedium),
+        Text('${exp.organization} • ${exp.duration}',
+            style: Theme.of(context).textTheme.bodyMedium),
+        const SizedBox(height: 8),
+        Text(
+          exp.professionalDescription.isNotEmpty
+              ? exp.professionalDescription
+              : exp.rawDescription,
+          style: GoogleFonts.dmSans(
+              fontSize: 13, color: AppTheme.textSecondary, height: 1.5),
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 10),
+        if (exp.professionalDescription.isEmpty)
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: isTranslating
+                  ? null
+                  : () => provider.translateExperience(
+                experienceId: exp.id,
+                companyTone: 'corporate',
+              ),
+              icon: isTranslating
+                  ? const SizedBox(
+                  width: 14, height: 14,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: AppTheme.accent))
+                  : const Icon(Icons.auto_awesome_rounded, size: 15),
+              label: Text(isTranslating
+                  ? 'Translating...'
+                  : 'AI Professional Translate'),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: AppTheme.accent.withOpacity(0.4)),
+                foregroundColor: AppTheme.accentLight,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
               ),
             ),
-        ],
+          ),
+      ]),
+    );
+  }
+}
+
+class _RemovableChip extends StatelessWidget {
+  final String label;
+  final VoidCallback onRemove;
+  const _RemovableChip({required this.label, required this.onRemove});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppTheme.accent.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppTheme.accent.withOpacity(0.3)),
       ),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        Flexible(
+          child: Text(
+            label,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.spaceGrotesk(
+                fontSize: 12, color: AppTheme.accentLight),
+          ),
+        ),
+        const SizedBox(width: 4),
+        GestureDetector(
+          onTap: onRemove,
+          child: const Icon(Icons.close_rounded,
+              size: 14, color: AppTheme.textSecondary),
+        ),
+      ]),
     );
   }
 }
