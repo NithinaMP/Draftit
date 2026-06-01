@@ -18,7 +18,7 @@ class _SyllabusTrackerScreenState extends State<SyllabusTrackerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bg,
+      backgroundColor: AppTheme.bgOf(context),
       body: SafeArea(
         child: Column(
           children: [
@@ -48,8 +48,8 @@ class _SyllabusTrackerScreenState extends State<SyllabusTrackerScreen> {
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: AppTheme.textPrimary),
+            icon:  Icon(Icons.arrow_back_ios_new_rounded,
+                color: AppTheme.textPrimaryOf(context)),
             onPressed: () => Navigator.pop(context),
           ),
           Expanded(
@@ -69,8 +69,8 @@ class _SyllabusTrackerScreenState extends State<SyllabusTrackerScreen> {
           ),
           // PDF Import button
           IconButton(
-            icon: const Icon(Icons.upload_file_rounded,
-                color: AppTheme.textSecondary),
+            icon:  Icon(Icons.upload_file_rounded,
+                color: AppTheme.textSecondaryOf(context)),
             tooltip: 'Import syllabus PDF',
             onPressed: _importPdf,
           ),
@@ -119,9 +119,9 @@ class _SyllabusTrackerScreenState extends State<SyllabusTrackerScreen> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppTheme.surface,
+              color: AppTheme.surfaceOf(context),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppTheme.border),
+              border: Border.all(color: AppTheme.borderOf(context)),
             ),
             child: Column(
               children: [
@@ -133,7 +133,7 @@ class _SyllabusTrackerScreenState extends State<SyllabusTrackerScreen> {
                   style: GoogleFonts.playfairDisplay(
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.textPrimary,
+                    color: AppTheme.textPrimaryOf(context),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -154,8 +154,8 @@ class _SyllabusTrackerScreenState extends State<SyllabusTrackerScreen> {
                   icon: const Icon(Icons.edit_outlined, size: 16),
                   label: const Text('Type Manually'),
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppTheme.border),
-                    foregroundColor: AppTheme.textSecondary,
+                    side:  BorderSide(color: AppTheme.borderOf(context)),
+                    foregroundColor: AppTheme.textSecondaryOf(context),
                     minimumSize: const Size(double.infinity, 48),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -195,9 +195,9 @@ class _SyllabusTrackerScreenState extends State<SyllabusTrackerScreen> {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppTheme.surface,
+              color: AppTheme.surfaceOf(context),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppTheme.border),
+              border: Border.all(color: AppTheme.borderOf(context)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,7 +222,7 @@ class _SyllabusTrackerScreenState extends State<SyllabusTrackerScreen> {
                   borderRadius: BorderRadius.circular(6),
                   child: LinearProgressIndicator(
                     value: provider.overallProgress,
-                    backgroundColor: AppTheme.border,
+                    backgroundColor: AppTheme.borderOf(context),
                     valueColor:
                     const AlwaysStoppedAnimation(AppTheme.accent),
                     minHeight: 8,
@@ -254,7 +254,7 @@ class _SyllabusTrackerScreenState extends State<SyllabusTrackerScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppTheme.surface,
+      backgroundColor: AppTheme.surfaceOf(context),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -280,7 +280,7 @@ class _SyllabusTrackerScreenState extends State<SyllabusTrackerScreen> {
             TextField(
               controller: textCtrl,
               maxLines: 8,
-              style: const TextStyle(color: AppTheme.textPrimary),
+              style:  TextStyle(color: AppTheme.textPrimaryOf(context)),
               decoration: const InputDecoration(
                 hintText: 'Unit 1: Introduction to...\n  - Topic 1\n  - Topic 2\nUnit 2: ...',
               ),
@@ -316,18 +316,18 @@ class _UnitCard extends StatelessWidget {
         ? AppTheme.success
         : progress > 0
         ? AppTheme.amber
-        : AppTheme.textSecondary;
+        : AppTheme.textSecondaryOf(context);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: progress >= 1.0
               ? AppTheme.success.withOpacity(0.3)
-              : AppTheme.border,
+              : AppTheme.borderOf(context),
         ),
       ),
       child: Column(
@@ -344,7 +344,7 @@ class _UnitCard extends StatelessWidget {
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: AppTheme.textSecondary,
+                        color: AppTheme.textSecondaryOf(context),
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -357,9 +357,9 @@ class _UnitCard extends StatelessWidget {
                 ),
               ),
               PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert,
-                    color: AppTheme.textSecondary, size: 18),
-                color: AppTheme.surfaceElevated,
+                icon:  Icon(Icons.more_vert,
+                    color: AppTheme.textSecondaryOf(context), size: 18),
+                color: AppTheme.surfaceElevOf(context),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
                 onSelected: (v) {
@@ -388,7 +388,7 @@ class _UnitCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: progress,
-                    backgroundColor: AppTheme.border,
+                    backgroundColor: AppTheme.borderOf(context),
                     valueColor: AlwaysStoppedAnimation(progressColor),
                     minHeight: 5,
                   ),
@@ -454,7 +454,7 @@ class _AddUnitFAB extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppTheme.surface,
+      backgroundColor: AppTheme.surfaceOf(context),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -474,20 +474,20 @@ class _AddUnitFAB extends StatelessWidget {
             const SizedBox(height: 16),
             TextField(
               controller: unitNumCtrl,
-              style: const TextStyle(color: AppTheme.textPrimary),
+              style:  TextStyle(color: AppTheme.textPrimaryOf(context)),
               decoration: const InputDecoration(labelText: 'Unit Number (e.g. Unit 3)'),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: unitTitleCtrl,
-              style: const TextStyle(color: AppTheme.textPrimary),
+              style:  TextStyle(color: AppTheme.textPrimaryOf(context)),
               decoration: const InputDecoration(labelText: 'Unit Title'),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: sectionsCtrl,
               maxLines: 4,
-              style: const TextStyle(color: AppTheme.textPrimary),
+              style:  TextStyle(color: AppTheme.textPrimaryOf(context)),
               decoration: const InputDecoration(
                 labelText: 'Sections (one per line)',
                 hintText: 'Introduction to Neural Networks\nBackpropagation\nActivation Functions',
