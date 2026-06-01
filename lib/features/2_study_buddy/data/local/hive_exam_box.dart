@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../models/exam_question_model.dart';
 
 class HiveExamBox {
   static const _boxName = 'exam_questions_box';
+  String get _prefix => 'eq_${FirebaseAuth.instance.currentUser?.uid ?? 'guest'}_';
   Box<ExamQuestion>? _box;
 
   Future<Box<ExamQuestion>> get box async {
@@ -10,41 +12,33 @@ class HiveExamBox {
     return _box!;
   }
 
-  /// Save all questions for a lecture (replaces previous ones for same lectureId)
-  Future<void> saveQuestionsForLecture(
-      String lectureId, List<ExamQuestion> questions) async {
+  Future<void> saveQuestionsForLecture(String lectureId, List<ExamQuestion> questions) async {
     final b = await box;
-    // Delete old questions for this lecture first
-    final oldKeys = b.values
-        .where((q) => q.lectureId == lectureId)
-        .map((q) => q.key)
-        .toList();
+    final oldKeys = b.keys.where((k) => k.toString().startsWith('${_prefix}$lectureId')).toList();
     await b.deleteAll(oldKeys);
-    // Save new ones
     for (final q in questions) {
-      await b.put(q.id, q);
+      await b.put('${_prefix}${q.id}', q);
     }
   }
 
-  /// Get all questions for a specific lecture
   Future<List<ExamQuestion>> getQuestionsForLecture(String lectureId) async {
     final b = await box;
-    return b.values.where((q) => q.lectureId == lectureId).toList()
+    return b.values
+        .where((q) => q.lectureId == lectureId && b.keys.contains('${_prefix}${q.id}'))
+        .toList()
       ..sort((a, b) => a.marks.compareTo(b.marks));
   }
 
-  /// Check if questions exist for a lecture already
   Future<bool> hasQuestionsForLecture(String lectureId) async {
-    final b = await box;
-    return b.values.any((q) => q.lectureId == lectureId);
+    final questions = await getQuestionsForLecture(lectureId);
+    return questions.isNotEmpty;
   }
 
   Future<void> deleteForLecture(String lectureId) async {
     final b = await box;
-    final keys = b.values
-        .where((q) => q.lectureId == lectureId)
-        .map((q) => q.key)
-        .toList();
+    final keys = b.keys.where((k) => k.toString().startsWith('${_prefix}$lectureId')).toList();
     await b.deleteAll(keys);
   }
+
+  void reset() => _box = null;
 }
