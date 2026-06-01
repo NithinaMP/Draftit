@@ -43,13 +43,13 @@ class _ExamBlueprintScreenState extends State<ExamBlueprintScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bg,
+      backgroundColor: AppTheme.bgOf(context),
       body: SafeArea(
         child: Column(
           children: [
             _buildHeader(),
             _buildAlignmentBanner(),
-            _buildTabBar(),
+            _buildTabBar(context),
             Expanded(
               child: Consumer<ExamPredictorProvider>(
                 builder: (_, provider, __) {
@@ -74,8 +74,8 @@ class _ExamBlueprintScreenState extends State<ExamBlueprintScreen>
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: AppTheme.textPrimary),
+            icon:  Icon(Icons.arrow_back_ios_new_rounded,
+                color: AppTheme.textPrimaryOf(context)),
             onPressed: () => Navigator.pop(context),
           ),
           Expanded(
@@ -98,7 +98,7 @@ class _ExamBlueprintScreenState extends State<ExamBlueprintScreen>
           // Regenerate button
           Consumer<ExamPredictorProvider>(
             builder: (_, p, __) => IconButton(
-              icon: const Icon(Icons.refresh_rounded, color: AppTheme.textSecondary),
+              icon:  Icon(Icons.refresh_rounded, color: AppTheme.textSecondaryOf(context)),
               tooltip: 'Regenerate questions',
               onPressed: p.isGenerating
                   ? null
@@ -150,7 +150,7 @@ class _ExamBlueprintScreenState extends State<ExamBlueprintScreen>
                       syllabus.lastAlignmentNote ?? '',
                       style: GoogleFonts.dmSans(
                         fontSize: 12,
-                        color: AppTheme.textSecondary,
+                        color: AppTheme.textSecondaryOf(context),
                       ),
                     ),
                   ],
@@ -163,15 +163,15 @@ class _ExamBlueprintScreenState extends State<ExamBlueprintScreen>
     );
   }
 
-  Widget _buildTabBar() {
+  Widget _buildTabBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: Container(
         height: 44,
         decoration: BoxDecoration(
-          color: AppTheme.surface,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.border),
+          border: Border.all(color: AppTheme.borderOf(context)),
         ),
         child: TabBar(
           controller: _tabCtrl,
@@ -184,7 +184,7 @@ class _ExamBlueprintScreenState extends State<ExamBlueprintScreen>
           indicatorSize: TabBarIndicatorSize.tab,
           dividerColor: Colors.transparent,
           labelColor: Colors.white,
-          unselectedLabelColor: AppTheme.textSecondary,
+          unselectedLabelColor: AppTheme.textSecondaryOf(context),
           labelStyle: GoogleFonts.spaceGrotesk(
             fontSize: 13,
             fontWeight: FontWeight.w700,
@@ -221,7 +221,7 @@ class _ExamBlueprintScreenState extends State<ExamBlueprintScreen>
               style: GoogleFonts.playfairDisplay(
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
-                color: AppTheme.textPrimary,
+                color: AppTheme.textPrimaryOf(context),
               ),
             ),
             const SizedBox(height: 12),
@@ -260,7 +260,7 @@ class _ExamBlueprintScreenState extends State<ExamBlueprintScreen>
                     style: GoogleFonts.playfairDisplay(
                       fontSize: 22,
                       fontWeight: FontWeight.w600,
-                      color: AppTheme.textPrimary,
+                      color: AppTheme.textPrimaryOf(context),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -386,9 +386,9 @@ class _QuestionCardState extends State<_QuestionCard> {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(color: AppTheme.borderOf(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -419,7 +419,7 @@ class _QuestionCardState extends State<_QuestionCard> {
                   'Q${widget.index}',
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 12,
-                    color: AppTheme.textSecondary,
+                    color: AppTheme.textSecondaryOf(context),
                   ),
                 ),
               ],
@@ -433,7 +433,7 @@ class _QuestionCardState extends State<_QuestionCard> {
               q.questionText,
               style: GoogleFonts.dmSans(
                 fontSize: 15,
-                color: AppTheme.textPrimary,
+                color: AppTheme.textPrimaryOf(context),
                 height: 1.55,
               ),
             ),
@@ -447,14 +447,14 @@ class _QuestionCardState extends State<_QuestionCard> {
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
               child: Row(
                 children: [
-                  const Icon(Icons.key_rounded,
-                      size: 14, color: AppTheme.textSecondary),
+                   Icon(Icons.key_rounded,
+                      size: 14, color: AppTheme.textSecondaryOf(context)),
                   const SizedBox(width: 5),
                   Text(
                     'Key Criteria',
                     style: GoogleFonts.spaceGrotesk(
                       fontSize: 12,
-                      color: AppTheme.textSecondary,
+                      color: AppTheme.textSecondaryOf(context),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -464,7 +464,7 @@ class _QuestionCardState extends State<_QuestionCard> {
                         ? Icons.keyboard_arrow_up_rounded
                         : Icons.keyboard_arrow_down_rounded,
                     size: 16,
-                    color: AppTheme.textSecondary,
+                    color: AppTheme.textSecondaryOf(context),
                   ),
                 ],
               ),
