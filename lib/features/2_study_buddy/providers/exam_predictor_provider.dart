@@ -126,6 +126,18 @@ class ExamPredictorProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Call when a new user signs in — wipes in-memory state
+  void clearForNewUser() {
+    _genStatus = ExamGenStatus.idle;
+    _gradingStatus = GradingStatus.idle;
+    _questions = [];
+    _genError = null;
+    _gradingError = null;
+    _lastEvaluation = null;
+    _currentLecture = null;
+    notifyListeners();
+  }
+
   void resetAll() {
     _genStatus = ExamGenStatus.idle;
     _gradingStatus = GradingStatus.idle;
