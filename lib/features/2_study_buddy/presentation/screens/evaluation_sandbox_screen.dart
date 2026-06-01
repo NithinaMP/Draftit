@@ -45,7 +45,7 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bg,
+      backgroundColor: AppTheme.bgOf(context),
       body: SafeArea(
         child: Consumer<ExamPredictorProvider>(
           builder: (_, provider, __) {
@@ -54,8 +54,8 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
                 _buildHeader(provider),
                 Expanded(
                   child: provider.lastEvaluation != null
-                      ? _buildResults(provider)
-                      : _buildAnswerInput(provider),
+                      ? _buildResults(context,provider)
+                      : _buildAnswerInput(context, provider),
                 ),
               ],
             );
@@ -71,8 +71,8 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: AppTheme.textPrimary),
+            icon:  Icon(Icons.arrow_back_ios_new_rounded,
+                color: AppTheme.textPrimaryOf(context)),
             onPressed: () {
               provider.resetGrading();
               Navigator.pop(context);
@@ -103,7 +103,7 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
     );
   }
 
-  Widget _buildAnswerInput(ExamPredictorProvider provider) {
+  Widget _buildAnswerInput(BuildContext context,ExamPredictorProvider provider) {
     final q = widget.question;
     final markColor = q.marks == 2
         ? AppTheme.success
@@ -156,7 +156,7 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
                         q.questionText,
                         style: GoogleFonts.dmSans(
                           fontSize: 16,
-                          color: AppTheme.textPrimary,
+                          color: AppTheme.textPrimaryOf(context),
                           height: 1.6,
                           fontWeight: FontWeight.w500,
                         ),
@@ -181,22 +181,22 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
                 // Answer text field
                 Container(
                   decoration: BoxDecoration(
-                    color: AppTheme.surface,
+                    color: AppTheme.surfaceOf(context),
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppTheme.border),
+                    border: Border.all(color: AppTheme.borderOf(context)),
                   ),
                   child: TextField(
                     controller: _answerCtrl,
                     maxLines: 10,
                     style: GoogleFonts.dmSans(
                       fontSize: 15,
-                      color: AppTheme.textPrimary,
+                      color: AppTheme.textPrimaryOf(context),
                       height: 1.6,
                     ),
                     decoration: InputDecoration(
                       hintText: 'Write your answer here...',
                       hintStyle: GoogleFonts.dmSans(
-                        color: AppTheme.textSecondary,
+                        color: AppTheme.textSecondaryOf(context),
                       ),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.all(16),
@@ -245,7 +245,7 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
     );
   }
 
-  Widget _buildResults(ExamPredictorProvider provider) {
+  Widget _buildResults(BuildContext context,ExamPredictorProvider provider) {
     final eval = provider.lastEvaluation!;
     final scoreColor = eval.scorePercent >= 0.9
         ? AppTheme.success
@@ -290,7 +290,7 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
                         eval.overallFeedback,
                         style: GoogleFonts.dmSans(
                           fontSize: 14,
-                          color: AppTheme.textPrimary,
+                          color: AppTheme.textPrimaryOf(context),
                           height: 1.5,
                         ),
                       ),
@@ -307,7 +307,7 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
                       height: 80,
                       child: CircularProgressIndicator(
                         value: eval.scorePercent,
-                        backgroundColor: AppTheme.border,
+                        backgroundColor: AppTheme.borderOf(context),
                         valueColor: AlwaysStoppedAnimation(scoreColor),
                         strokeWidth: 6,
                       ),
@@ -327,7 +327,7 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
                           '/ ${eval.maxMarks}',
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 12,
-                            color: AppTheme.textSecondary,
+                            color: AppTheme.textSecondaryOf(context),
                           ),
                         ),
                       ],
@@ -368,7 +368,7 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
                         point,
                         style: GoogleFonts.dmSans(
                           fontSize: 14,
-                          color: AppTheme.textPrimary,
+                          color: AppTheme.textPrimaryOf(context),
                           height: 1.5,
                         ),
                       ),
@@ -406,7 +406,7 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
                       eval.howToGetFullMarks,
                       style: GoogleFonts.dmSans(
                         fontSize: 14,
-                        color: AppTheme.textPrimary,
+                        color: AppTheme.textPrimaryOf(context),
                         height: 1.6,
                       ),
                     ),
