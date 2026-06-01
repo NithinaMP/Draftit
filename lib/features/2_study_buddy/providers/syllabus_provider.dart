@@ -35,6 +35,16 @@ class SyllabusProvider extends ChangeNotifier {
       _status == SyllabusStatus.aligning;
 
   /// Load all units from Hive on startup
+  void clearForNewUser() {
+    _units = [];
+    _overallProgress = 0;
+    _status = SyllabusStatus.idle;
+    _error = null;
+    _lastAlignmentNote = null;
+    _lastMatchedUnitId = null;
+    notifyListeners();
+  }
+
   Future<void> loadUnits() async {
     _status = SyllabusStatus.loading;
     notifyListeners();
@@ -50,73 +60,25 @@ class SyllabusProvider extends ChangeNotifier {
   }
 
   /// Import syllabus from a PDF file (local only — no upload)
-  // Future<void> importFromPdf(String filePath) async {
-  //   _status = SyllabusStatus.importing;
-  //   _error = null;
-  //   notifyListeners();
-  //
-  //   try {
-  //     final text = await _pdfExtractor.extractText(filePath);
-  //     await _parseAndSaveSyllabusText(text);
-  //   } catch (e) {
-  //     final msg = e.toString()
-  //         .replaceAll('Exception: ', '')
-  //         .replaceAll('SCANNED_PDF: ', '')
-  //         .replaceAll('PDF_READ_ERROR: ', '');
-  //     _error = msg;
-  //     _status = SyllabusStatus.error;
-  //     notifyListeners();
-  //   }
-  // }
-
   Future<void> importFromPdf(String filePath) async {
-    debugPrint('PDF PATH: $filePath');
-
     _status = SyllabusStatus.importing;
     _error = null;
     notifyListeners();
 
     try {
       final text = await _pdfExtractor.extractText(filePath);
-
-      debugPrint('TEXT LENGTH: ${text.length}');
-      debugPrint('FIRST 500 CHARS:');
-      debugPrint(text.substring(0, text.length > 500 ? 500 : text.length));
-
       await _parseAndSaveSyllabusText(text);
-    }catch (e) {
+    } catch (e) {
       final msg = e.toString()
           .replaceAll('Exception: ', '')
           .replaceAll('SCANNED_PDF: ', '')
           .replaceAll('PDF_READ_ERROR: ', '');
-
-      if (msg.contains('scanned image')) {
-        _error =
-        'This PDF cannot be imported automatically because it contains scanned images instead of selectable text.\n\n'
-            'Try one of the following:\n'
-            '• Upload the original digital syllabus PDF\n'
-            '• Copy and paste the syllabus text manually\n'
-            '• Add units manually using the Add Unit button';
-      } else {
-        _error = msg;
-      }
-
+      _error = msg;
       _status = SyllabusStatus.error;
       notifyListeners();
     }
-    // catch (e) {
-    //   debugPrint('IMPORT ERROR: $e');
-    //
-    //   final msg = e.toString()
-    //       .replaceAll('Exception: ', '')
-    //       .replaceAll('SCANNED_PDF: ', '')
-    //       .replaceAll('PDF_READ_ERROR: ', '');
-    //
-    //   _error = msg;
-    //   _status = SyllabusStatus.error;
-    //   notifyListeners();
-    // }
   }
+
   /// Import syllabus from manually typed text
   Future<void> importFromText(String rawText) async {
     _status = SyllabusStatus.importing;
