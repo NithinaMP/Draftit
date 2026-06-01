@@ -114,7 +114,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                             SliverToBoxAdapter(child: _buildShimmerList())
                           else if (provider.error != null)
                             SliverToBoxAdapter(
-                                child: _buildError(provider.error!))
+                                child: _buildError(context,provider.error!))
                           else if (provider.lectures.isEmpty)
                               SliverToBoxAdapter(child: _buildEmpty())
                             else
@@ -215,8 +215,8 @@ class _DashboardScreenState extends State<DashboardScreen>
           ),
           const SizedBox(height: 6),
           ShaderMask(
-            shaderCallback: (bounds) => const LinearGradient(
-              colors: [AppTheme.textPrimary, AppTheme.accentLight],
+            shaderCallback: (bounds) =>  LinearGradient(
+              colors: [AppTheme.textPrimaryOf(context), AppTheme.accentLight],
             ).createShader(bounds),
             child: Text(
               'Your\nKnowledge Hub',
@@ -290,7 +290,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  Widget _buildError(String msg) {
+  Widget _buildError(BuildContext context, String msg) {
     return Padding(
       padding: const EdgeInsets.all(32),
       child: Center(
@@ -298,7 +298,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           children: [
             const Icon(Icons.error_outline, color: AppTheme.error, size: 40),
             const SizedBox(height: 12),
-            Text(msg, style: const TextStyle(color: AppTheme.textSecondary)),
+            Text(msg, style:  TextStyle(color: AppTheme.textSecondaryOf(context))),
           ],
         ),
       ),
@@ -446,7 +446,7 @@ class _CardMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
-      icon: const Icon(Icons.more_vert, color: AppTheme.textSecondary, size: 20),
+      icon: Icon(Icons.more_vert, color: AppTheme.textSecondaryOf(context), size: 20),
       color: AppTheme.surfaceElevOf(context),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       onSelected: (val) {

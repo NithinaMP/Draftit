@@ -60,19 +60,19 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) return _buildLoading();
+    if (_isLoading) return _buildLoading(context);
     if (_error != null) return _buildError();
     if (_lecture == null) return _buildError(msg: 'Lecture not found');
 
     final lecture = _lecture!;
 
     return Scaffold(
-      backgroundColor: AppTheme.bg,
+      backgroundColor: AppTheme.bgOf(context),
       body: SafeArea(
         child: Column(
           children: [
             _buildHeader(lecture),
-            _buildTabBar(),
+            _buildTabBar(context),
             Expanded(
               child: TabBarView(
                 controller: _tabCtrl,
@@ -104,8 +104,8 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
               const Spacer(),
               // Copy button
               IconButton(
-                icon: const Icon(Icons.copy_rounded,
-                    color: AppTheme.textSecondary, size: 20),
+                icon: Icon(Icons.copy_rounded,
+                    color: AppTheme.textSecondaryOf(context), size: 20),
                 tooltip: 'Copy notes',
                 onPressed: () => _copyNotes(lecture),
               ),
@@ -121,15 +121,15 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
                   style: GoogleFonts.playfairDisplay(
                     fontSize: 26,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.textPrimary,
+                    color: AppTheme.textPrimaryOf(context),
                     height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    const Icon(Icons.calendar_today_outlined,
-                        size: 13, color: AppTheme.textSecondary),
+                     Icon(Icons.calendar_today_outlined,
+                        size: 13, color: AppTheme.textSecondaryOf(context)),
                     const SizedBox(width: 5),
                     Text(
                       DateFormat('MMMM d, yyyy').format(lecture.createdAt),
@@ -157,14 +157,48 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
     );
   }
 
-  Widget _buildTabBar() {
+  // Widget _buildTabBar() {
+  //   return Container(
+  //     margin: const EdgeInsets.symmetric(horizontal: 20),
+  //     height: 44,
+  //     decoration: BoxDecoration(
+  //       color: AppTheme.surface,
+  //       borderRadius: BorderRadius.circular(12),
+  //       border: Border.all(color: AppTheme.borderOf(context)),
+  //     ),
+  //     child: TabBar(
+  //       controller: _tabCtrl,
+  //       indicator: BoxDecoration(
+  //         gradient: const LinearGradient(
+  //           colors: [AppTheme.accent, Color(0xFF9D40FF)],
+  //         ),
+  //         borderRadius: BorderRadius.circular(10),
+  //       ),
+  //       indicatorSize: TabBarIndicatorSize.tab,
+  //       dividerColor: Colors.transparent,
+  //       labelColor: Colors.white,
+  //       unselectedLabelColor: AppTheme.textSecondaryOf(context),
+  //       labelStyle: GoogleFonts.spaceGrotesk(
+  //         fontSize: 14,
+  //         fontWeight: FontWeight.w600,
+  //       ),
+  //       tabs: const [
+  //         Tab(text: 'Notes'),
+  //         Tab(text: 'Skills'),
+  //       ],
+  //     ),
+  //   );
+  // }
+  Widget _buildTabBar(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       height: 44,
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(
+          color: AppTheme.borderOf(context),
+        ),
       ),
       child: TabBar(
         controller: _tabCtrl,
@@ -177,7 +211,7 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
         indicatorSize: TabBarIndicatorSize.tab,
         dividerColor: Colors.transparent,
         labelColor: Colors.white,
-        unselectedLabelColor: AppTheme.textSecondary,
+        unselectedLabelColor: AppTheme.textSecondaryOf(context),
         labelStyle: GoogleFonts.spaceGrotesk(
           fontSize: 14,
           fontWeight: FontWeight.w600,
@@ -242,7 +276,7 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
                   lecture.summary,
                   style: GoogleFonts.dmSans(
                     fontSize: 15,
-                    color: AppTheme.textPrimary,
+                    color: AppTheme.textPrimaryOf(context),
                     height: 1.65,
                   ),
                 ),
@@ -286,7 +320,7 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
                       lecture.keyPoints[i],
                       style: GoogleFonts.dmSans(
                         fontSize: 15,
-                        color: AppTheme.textPrimary,
+                        color: AppTheme.textPrimaryOf(context),
                         height: 1.5,
                       ),
                     ),
@@ -307,22 +341,22 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
               decoration: BoxDecoration(
                 color: AppTheme.surface,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.border),
+                border: Border.all(color: AppTheme.borderOf(context)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.text_snippet_outlined,
-                          color: AppTheme.textSecondary, size: 18),
+                       Icon(Icons.text_snippet_outlined,
+                          color: AppTheme.textSecondaryOf(context), size: 18),
                       const SizedBox(width: 8),
                       Text(
                         'Raw Transcript',
                         style: GoogleFonts.spaceGrotesk(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.textSecondary,
+                          color: AppTheme.textSecondaryOf(context),
                         ),
                       ),
                       const Spacer(),
@@ -330,19 +364,19 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
                         _transcriptExpanded
                             ? Icons.keyboard_arrow_up_rounded
                             : Icons.keyboard_arrow_down_rounded,
-                        color: AppTheme.textSecondary,
+                        color: AppTheme.textSecondaryOf(context),
                       ),
                     ],
                   ),
                   if (_transcriptExpanded) ...[
                     const SizedBox(height: 12),
-                    const Divider(color: AppTheme.border),
+                     Divider(color: AppTheme.borderOf(context)),
                     const SizedBox(height: 12),
                     Text(
                       lecture.rawTranscript,
                       style: GoogleFonts.dmSans(
                         fontSize: 14,
-                        color: AppTheme.textSecondary,
+                        color: AppTheme.textSecondaryOf(context),
                         height: 1.6,
                       ),
                     ),
@@ -381,7 +415,7 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
                     '${lecture.extractedSkills.length} skills identified from this lecture. These will power your career builder in Phase 3.',
                     style: GoogleFonts.dmSans(
                       fontSize: 14,
-                      color: AppTheme.textPrimary,
+                      color: AppTheme.textPrimaryOf(context),
                       height: 1.5,
                     ),
                   ),
@@ -463,18 +497,29 @@ ${lecture.extractedSkills.join(', ')}
     );
   }
 
-  Widget _buildLoading() {
-    return const Scaffold(
-      backgroundColor: AppTheme.bg,
-      body: Center(
-        child: CircularProgressIndicator(color: AppTheme.accent),
+  // Widget _buildLoading() {
+  //   return Scaffold(
+  //     backgroundColor: AppTheme.bgOf(context),
+  //     body: Center(
+  //       child: CircularProgressIndicator(color: AppTheme.accent),
+  //     ),
+  //   );
+  // }
+
+  Widget _buildLoading(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppTheme.bgOf(context),
+      body: const Center(
+        child: CircularProgressIndicator(
+          color: AppTheme.accent,
+        ),
       ),
     );
   }
 
   Widget _buildError({String? msg}) {
     return Scaffold(
-      backgroundColor: AppTheme.bg,
+      backgroundColor: AppTheme.bgOf(context),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -482,7 +527,7 @@ ${lecture.extractedSkills.join(', ')}
             const Icon(Icons.error_outline, color: AppTheme.error, size: 40),
             const SizedBox(height: 16),
             Text(msg ?? _error ?? 'Error',
-                style: const TextStyle(color: AppTheme.textSecondary)),
+                style: TextStyle(color: AppTheme.textSecondaryOf(context))),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => Navigator.pop(context),

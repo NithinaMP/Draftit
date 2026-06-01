@@ -93,10 +93,10 @@ class SkillChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: highlighted
             ? AppTheme.accent.withOpacity(0.15)
-            : AppTheme.surfaceElevated,
+            : AppTheme.surfaceElevOf(context),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: highlighted ? AppTheme.accent.withOpacity(0.5) : AppTheme.border,
+          color: highlighted ? AppTheme.accent.withOpacity(0.5) : AppTheme.borderOf(context),
         ),
       ),
       child: Text(
@@ -104,7 +104,7 @@ class SkillChip extends StatelessWidget {
         style: GoogleFonts.spaceGrotesk(
           fontSize: 12,
           fontWeight: FontWeight.w500,
-          color: highlighted ? AppTheme.accentLight : AppTheme.textSecondary,
+          color: highlighted ? AppTheme.accentLight : AppTheme.textSecondaryOf(context),
         ),
       ),
     );
@@ -131,9 +131,9 @@ class GlassCard extends StatelessWidget {
       child: Container(
         padding: padding ?? const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: AppTheme.surface,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppTheme.border),
+          border: Border.all(color: AppTheme.borderOf(context)),
         ),
         child: child,
       ),
@@ -226,9 +226,9 @@ class _ShimmerBoxState extends State<ShimmerBox>
           borderRadius: BorderRadius.circular(widget.borderRadius),
           gradient: LinearGradient(
             colors: [
-              AppTheme.surface,
-              Color.lerp(AppTheme.surface, AppTheme.surfaceElevated, _anim.value)!,
-              AppTheme.surface,
+              AppTheme.surfaceOf(context),
+              Color.lerp(AppTheme.surfaceOf(context), AppTheme.surfaceElevOf(context), _anim.value)!,
+              AppTheme.surfaceOf(context),
             ],
           ),
         ),
@@ -257,9 +257,9 @@ class StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(color: AppTheme.borderOf(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,7 +278,7 @@ class StatCard extends StatelessWidget {
             style: GoogleFonts.spaceGrotesk(
               fontSize: 24,
               fontWeight: FontWeight.w700,
-              color: AppTheme.textPrimary,
+              color: AppTheme.textPrimaryOf(context),
             ),
           ),
           const SizedBox(height: 2),

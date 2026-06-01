@@ -87,7 +87,7 @@ class _RecorderScreenState extends State<RecorderScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bg,
+      backgroundColor: AppTheme.bgOf(context),
       body: Stack(
         children: [
           // Animated background orbs
@@ -325,14 +325,14 @@ class _RecorderScreenState extends State<RecorderScreen>
                             ? AppTheme.success.withOpacity(0.15)
                             : stepActive
                             ? AppTheme.accent.withOpacity(0.15)
-                            : AppTheme.surfaceElevated,
+                            : AppTheme.surfaceElevOf(context),
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: stepDone
                               ? AppTheme.success
                               : stepActive
                               ? AppTheme.accent
-                              : AppTheme.border,
+                              : AppTheme.borderOf(context),
                         ),
                       ),
                       child: Center(
@@ -352,7 +352,7 @@ class _RecorderScreenState extends State<RecorderScreen>
                           '${i + 1}',
                           style: GoogleFonts.spaceGrotesk(
                             fontSize: 13,
-                            color: AppTheme.textSecondary,
+                            color: AppTheme.textSecondaryOf(context),
                           ),
                         ),
                       ),
@@ -363,8 +363,8 @@ class _RecorderScreenState extends State<RecorderScreen>
                       style: GoogleFonts.dmSans(
                         fontSize: 15,
                         color: stepDone || stepActive
-                            ? AppTheme.textPrimary
-                            : AppTheme.textSecondary,
+                            ? AppTheme.textPrimaryOf(context)
+                            : AppTheme.textSecondaryOf(context),
                         fontWeight: stepActive
                             ? FontWeight.w600
                             : FontWeight.normal,

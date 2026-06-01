@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
+import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
 import 'core/constants/app_constants.dart';
@@ -71,6 +72,9 @@ class DraftItApp extends StatelessWidget {
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
           themeMode: themeProvider.mode,
+
+          onGenerateRoute: AppRouter.generateRoute,
+
           // All routes pushed from here inherit the MultiProvider above
           home: const AppBootstrap(),
         ),
