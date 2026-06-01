@@ -38,7 +38,7 @@ class _OptimizationViewScreenState extends State<OptimizationViewScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bg,
+      backgroundColor: AppTheme.bgOf(context),
       body: SafeArea(
         child: Consumer2<JobApplicationProvider, MasterProfileProvider>(
           builder: (_, jobProvider, profileProvider, __) {
@@ -49,8 +49,8 @@ class _OptimizationViewScreenState extends State<OptimizationViewScreen>
             return Column(
               children: [
                 _buildHeader(context, jobProvider, profileProvider),
-                _buildScoreHero(job),
-                _buildTabBar(),
+                _buildScoreHero(context, job),
+                _buildTabBar(context),
                 Expanded(
                   child: TabBarView(
                     controller: _tabCtrl,
@@ -84,8 +84,8 @@ class _OptimizationViewScreenState extends State<OptimizationViewScreen>
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: AppTheme.textPrimary),
+            icon:  Icon(Icons.arrow_back_ios_new_rounded,
+                color: AppTheme.textPrimaryOf(context)),
             onPressed: () {
               jobProvider.reset();
               Navigator.pop(context);
@@ -113,8 +113,8 @@ class _OptimizationViewScreenState extends State<OptimizationViewScreen>
                 width: 18, height: 18,
                 child: CircularProgressIndicator(
                     strokeWidth: 2, color: AppTheme.accent))
-                : const Icon(Icons.refresh_rounded,
-                color: AppTheme.textSecondary),
+                :  Icon(Icons.refresh_rounded,
+                color: AppTheme.textSecondaryOf(context)),
             tooltip: 'Regenerate with updated profile',
             onPressed: jobProvider.isProcessing
                 ? null
@@ -127,7 +127,8 @@ class _OptimizationViewScreenState extends State<OptimizationViewScreen>
     );
   }
 
-  Widget _buildScoreHero(dynamic job) {
+  Widget _buildScoreHero(  BuildContext context,
+      dynamic job) {
     final score = job.matchScore as int;
     final scoreColor = score >= 80
         ? AppTheme.success
@@ -155,7 +156,7 @@ class _OptimizationViewScreenState extends State<OptimizationViewScreen>
                 height: 76,
                 child: CircularProgressIndicator(
                   value: score / 100,
-                  backgroundColor: AppTheme.border,
+                  backgroundColor: AppTheme.borderOf(context),
                   valueColor: AlwaysStoppedAnimation(scoreColor),
                   strokeWidth: 7,
                 ),
@@ -168,7 +169,7 @@ class _OptimizationViewScreenState extends State<OptimizationViewScreen>
                         color: scoreColor)),
                 Text('%',
                     style: GoogleFonts.spaceGrotesk(
-                        fontSize: 11, color: AppTheme.textSecondary)),
+                        fontSize: 11, color: AppTheme.textSecondaryOf(context))),
               ]),
             ],
           ),
@@ -191,13 +192,13 @@ class _OptimizationViewScreenState extends State<OptimizationViewScreen>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: AppTheme.surfaceElevated,
+                    color: AppTheme.surfaceElevOf(context),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     'Tone: ${(job.companyTone as String)[0].toUpperCase()}${(job.companyTone as String).substring(1)}',
                     style: GoogleFonts.spaceGrotesk(
-                        fontSize: 11, color: AppTheme.textSecondary),
+                        fontSize: 11, color: AppTheme.textSecondaryOf(context)),
                   ),
                 ),
               ],
@@ -208,15 +209,15 @@ class _OptimizationViewScreenState extends State<OptimizationViewScreen>
     );
   }
 
-  Widget _buildTabBar() {
+  Widget _buildTabBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
       child: Container(
         height: 44,
         decoration: BoxDecoration(
-          color: AppTheme.surface,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.border),
+          border: Border.all(color: AppTheme.borderOf(context)),
         ),
         child: TabBar(
           controller: _tabCtrl,
@@ -227,8 +228,8 @@ class _OptimizationViewScreenState extends State<OptimizationViewScreen>
           ),
           indicatorSize: TabBarIndicatorSize.tab,
           dividerColor: Colors.transparent,
-          labelColor: AppTheme.bg,
-          unselectedLabelColor: AppTheme.textSecondary,
+          labelColor: AppTheme.bgOf(context),
+          unselectedLabelColor: AppTheme.textSecondaryOf(context),
           labelStyle: GoogleFonts.spaceGrotesk(
               fontSize: 13, fontWeight: FontWeight.w700),
           tabs: const [
@@ -291,7 +292,7 @@ class _AnalysisTab extends StatelessWidget {
                     child: Text(
                       'Add these missing skills to your Master Profile and tap Regenerate ↑ to boost your score.',
                       style: GoogleFonts.dmSans(
-                          fontSize: 12, color: AppTheme.textSecondary, height: 1.5),
+                          fontSize: 12, color: AppTheme.textSecondaryOf(context), height: 1.5),
                     ),
                   ),
                 ],
@@ -302,12 +303,12 @@ class _AnalysisTab extends StatelessWidget {
 
           _skillGroupHeader(
               'All Required Skills', Icons.list_alt_rounded,
-              AppTheme.textSecondary, required.length),
+              AppTheme.textSecondaryOf(context), required.length),
           const SizedBox(height: 10),
           _overflowSafeWrap(
             context,
             required,
-            AppTheme.textSecondary,
+            AppTheme.textSecondaryOf(context),
             null,
             highlightList: matched,
           ),
@@ -463,7 +464,7 @@ class _ResumePdfTabState extends State<_ResumePdfTab> {
             margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppTheme.border),
+              border: Border.all(color: AppTheme.borderOf(context)),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
@@ -478,12 +479,12 @@ class _ResumePdfTabState extends State<_ResumePdfTab> {
                 pdfPreviewPageDecoration: const BoxDecoration(
                   color: Colors.white,
                 ),
-                scrollViewDecoration: const BoxDecoration(
-                  color: AppTheme.bg,
+                scrollViewDecoration:  BoxDecoration(
+                  color: AppTheme.bgOf(context),
                 ),
                 previewPageMargin:
                 const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                loadingWidget: const Center(
+                loadingWidget:  Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -491,7 +492,7 @@ class _ResumePdfTabState extends State<_ResumePdfTab> {
                       SizedBox(height: 12),
                       Text('Building your resume...',
                           style: TextStyle(
-                              color: AppTheme.textSecondary, fontSize: 13)),
+                              color: AppTheme.textSecondaryOf(context), fontSize: 13)),
                     ],
                   ),
                 ),
@@ -666,7 +667,7 @@ class _ImprovementTab extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: AppTheme.surface,
+                color: AppTheme.surfaceOf(context),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: AppTheme.accent.withOpacity(0.25)),
               ),
@@ -674,7 +675,7 @@ class _ImprovementTab extends StatelessWidget {
                 improvementPlan,
                 style: GoogleFonts.dmSans(
                     fontSize: 14,
-                    color: AppTheme.textPrimary,
+                    color: AppTheme.textPrimaryOf(context),
                     height: 1.7),
               ),
             ),
