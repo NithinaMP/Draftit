@@ -260,7 +260,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     child: _FormField(
                                       controller: _nameCtrl,
                                       label: 'Full Name',
-                                      hint: 'Enter',
+                                      hint: 'e.g. Nandhitha MP',
                                       icon: Icons.person_outline_rounded,
                                       validator: (v) {
                                         if (v == null || v.trim().isEmpty) {
