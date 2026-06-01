@@ -48,7 +48,7 @@ class _CareerBuilderScreenState extends State<CareerBuilderScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bg,
+      backgroundColor: AppTheme.bgOf(context),
       body: SafeArea(
         child: FadeTransition(
           opacity: CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut),
@@ -56,7 +56,7 @@ class _CareerBuilderScreenState extends State<CareerBuilderScreen>
             builder: (_, profileProvider, jobProvider, __) {
               return CustomScrollView(
                 slivers: [
-                  SliverToBoxAdapter(child: _buildHeader(profileProvider)),
+                  SliverToBoxAdapter(child: _buildHeader(context, profileProvider)),
                   SliverToBoxAdapter(
                     child: _buildProfileBanner(context, profileProvider),
                   ),
@@ -74,7 +74,7 @@ class _CareerBuilderScreenState extends State<CareerBuilderScreen>
                     ),
                   ),
                   if (jobProvider.applications.isEmpty)
-                    SliverToBoxAdapter(child: _buildEmptyApps())
+                    SliverToBoxAdapter(child: _buildEmptyApps(context))
                   else
                     SliverPadding(
                       padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
@@ -114,7 +114,7 @@ class _CareerBuilderScreenState extends State<CareerBuilderScreen>
     );
   }
 
-  Widget _buildHeader(MasterProfileProvider provider) {
+  Widget _buildHeader(BuildContext context,MasterProfileProvider provider) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       child: Row(
@@ -140,7 +140,7 @@ class _CareerBuilderScreenState extends State<CareerBuilderScreen>
                   style: GoogleFonts.playfairDisplay(
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.textPrimary,
+                    color: AppTheme.textPrimaryOf(context),
                   ),
                 ),
                 Text(
@@ -151,8 +151,8 @@ class _CareerBuilderScreenState extends State<CareerBuilderScreen>
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.person_outline_rounded,
-                color: AppTheme.textSecondary),
+            icon:  Icon(Icons.person_outline_rounded,
+                color: AppTheme.textSecondaryOf(context)),
             tooltip: 'Edit Master Profile',
             onPressed: () => Navigator.push(
               context,
@@ -218,7 +218,7 @@ class _CareerBuilderScreenState extends State<CareerBuilderScreen>
                     style: GoogleFonts.spaceGrotesk(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: AppTheme.textPrimary,
+                      color: AppTheme.textPrimaryOf(context),
                     ),
                   ),
                   const SizedBox(height: 3),
@@ -231,8 +231,8 @@ class _CareerBuilderScreenState extends State<CareerBuilderScreen>
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded,
-                color: AppTheme.textSecondary),
+             Icon(Icons.chevron_right_rounded,
+                color: AppTheme.textSecondaryOf(context)),
           ],
         ),
       ),
@@ -269,27 +269,27 @@ class _CareerBuilderScreenState extends State<CareerBuilderScreen>
     );
   }
 
-  Widget _buildEmptyApps() {
+  Widget _buildEmptyApps(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(32),
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: AppTheme.surface,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppTheme.border),
+          border: Border.all(color: AppTheme.borderOf(context)),
         ),
         child: Column(
           children: [
-            const Icon(Icons.business_center_outlined,
-                color: AppTheme.textSecondary, size: 40),
+             Icon(Icons.business_center_outlined,
+                color: AppTheme.textSecondaryOf(context), size: 40),
             const SizedBox(height: 16),
             Text(
               'No applications yet',
               style: GoogleFonts.playfairDisplay(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color: AppTheme.textPrimaryOf(context),
               ),
             ),
             const SizedBox(height: 8),
@@ -337,7 +337,7 @@ class _ApplicationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = _statusColors[app.status] ?? AppTheme.textSecondary;
+    final statusColor = _statusColors[app.status] ?? AppTheme.textSecondaryOf(context);
     final scoreColor = app.matchScore >= 80
         ? AppTheme.success
         : app.matchScore >= 60
@@ -350,9 +350,9 @@ class _ApplicationCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: AppTheme.surface,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppTheme.border),
+          border: Border.all(color: AppTheme.borderOf(context)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -390,9 +390,9 @@ class _ApplicationCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_vert,
-                      color: AppTheme.textSecondary, size: 18),
-                  color: AppTheme.surfaceElevated,
+                  icon:  Icon(Icons.more_vert,
+                      color: AppTheme.textSecondaryOf(context), size: 18),
+                  color: AppTheme.surfaceElevOf(context),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                   onSelected: (v) {
@@ -455,7 +455,7 @@ class _ApplicationCard extends StatelessWidget {
                   DateFormat('MMM d, yyyy').format(app.createdAt),
                   style: GoogleFonts.spaceGrotesk(
                     fontSize: 11,
-                    color: AppTheme.textSecondary,
+                    color: AppTheme.textSecondaryOf(context),
                   ),
                 ),
               ],
