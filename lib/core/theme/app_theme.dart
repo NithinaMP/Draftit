@@ -280,4 +280,61 @@ class AppTheme {
     );
   }
 
+  // ── Light theme ────────────────────────────────────────────────────────────
+  static const Color bgLight           = Color(0xFFF8F8FF);
+  static const Color surfaceLight      = Color(0xFFFFFFFF);
+  static const Color surfaceElevLight  = Color(0xFFF0F0FF);
+  static const Color textPrimaryLight  = Color(0xFF1A1A2E);
+  static const Color textSecondaryLight= Color(0xFF6B6B90);
+  static const Color borderLight       = Color(0xFFE0E0F0);
+
+  static ThemeData get light {
+    return ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: bgLight,
+      colorScheme: const ColorScheme.light(
+        primary: accent,
+        secondary: amber,
+        surface: surfaceLight,
+        background: bgLight,
+        error: error,
+      ),
+      textTheme: TextTheme(
+        displayLarge: GoogleFonts.playfairDisplay(fontSize: 48, fontWeight: FontWeight.w700, color: textPrimaryLight),
+        headlineLarge: GoogleFonts.playfairDisplay(fontSize: 28, fontWeight: FontWeight.w600, color: textPrimaryLight),
+        headlineMedium: GoogleFonts.spaceGrotesk(fontSize: 22, fontWeight: FontWeight.w600, color: textPrimaryLight),
+        titleLarge: GoogleFonts.spaceGrotesk(fontSize: 18, fontWeight: FontWeight.w600, color: textPrimaryLight),
+        titleMedium: GoogleFonts.spaceGrotesk(fontSize: 16, fontWeight: FontWeight.w500, color: textPrimaryLight),
+        bodyLarge: GoogleFonts.dmSans(fontSize: 16, color: textPrimaryLight, height: 1.6),
+        bodyMedium: GoogleFonts.dmSans(fontSize: 14, color: textSecondaryLight, height: 1.5),
+        labelLarge: GoogleFonts.spaceGrotesk(fontSize: 14, fontWeight: FontWeight.w600, color: textPrimaryLight),
+        labelMedium: GoogleFonts.spaceGrotesk(fontSize: 12, fontWeight: FontWeight.w500, color: textSecondaryLight),
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: bgLight, elevation: 0, centerTitle: false,
+        titleTextStyle: GoogleFonts.spaceGrotesk(fontSize: 20, fontWeight: FontWeight.w700, color: textPrimaryLight),
+        iconTheme: const IconThemeData(color: textPrimaryLight),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: accent, foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true, fillColor: surfaceLight,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: borderLight)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: borderLight)),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: accent, width: 2)),
+        labelStyle: GoogleFonts.dmSans(color: textSecondaryLight),
+      ),
+      cardTheme: CardTheme(
+        color: surfaceLight, elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: const BorderSide(color: borderLight)),
+      ),
+      dividerColor: borderLight,
+    );
+  }
+
 }
