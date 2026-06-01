@@ -97,8 +97,8 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
           Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                    color: AppTheme.textPrimary),
+                icon: Icon(Icons.arrow_back_ios_new_rounded,
+                    color: AppTheme.textPrimaryOf(context)),
                 onPressed: () => Navigator.pop(context),
               ),
               const Spacer(),
@@ -339,7 +339,7 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppTheme.surface,
+                color: AppTheme.surfaceOf(context),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppTheme.borderOf(context)),
               ),
@@ -451,7 +451,7 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
-                    color: AppTheme.surface,
+                    color: AppTheme.surfaceOf(context),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: AppTheme.accent.withOpacity(0.3)),
                   ),
