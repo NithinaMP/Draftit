@@ -23,6 +23,13 @@ class MasterProfileProvider extends ChangeNotifier {
   bool get isSaving => _status == ProfileStatus.saving;
   bool get isComplete => _profile.isComplete;
 
+  void clearForNewUser() {
+    _profile = MasterProfile();
+    _status = ProfileStatus.idle;
+    _error = null;
+    notifyListeners();
+  }
+
   Future<void> load() async {
     _status = ProfileStatus.loading;
     notifyListeners();
@@ -137,11 +144,6 @@ class MasterProfileProvider extends ChangeNotifier {
     }
   }
 
-  // Future<void> removeCertification(int index) async {
-  //   _profile.certifications.removeAt(index);
-  //   await _persist();
-  // }
-
   Future<void> removeCertification(int index) async {
     _profile.certifications.removeAt(index);
     await _persist();
@@ -172,8 +174,6 @@ class MasterProfileProvider extends ChangeNotifier {
     _profile.languages.remove(lang);
     await _persist();
   }
-
-
 
   ExperienceEntry buildExperience({
     required String title,
