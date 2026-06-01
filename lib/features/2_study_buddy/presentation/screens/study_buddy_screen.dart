@@ -50,7 +50,7 @@ class _StudyBuddyScreenState extends State<StudyBuddyScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bg,
+      backgroundColor: AppTheme.bgOf(context),
       body: SafeArea(
         child: FadeTransition(
           opacity: _fadeAnim,
@@ -148,7 +148,7 @@ class _StudyBuddyScreenState extends State<StudyBuddyScreen>
                 style: GoogleFonts.playfairDisplay(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
-                  color: AppTheme.textPrimary,
+                  color: AppTheme.textPrimaryOf(context),
                 ),
               ),
               Text(
@@ -209,7 +209,7 @@ class _StudyBuddyScreenState extends State<StudyBuddyScreen>
                   style: GoogleFonts.playfairDisplay(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.textPrimary,
+                    color: AppTheme.textPrimaryOf(context),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -283,7 +283,7 @@ class _SyllabusBanner extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
                         value: progress,
-                        backgroundColor: AppTheme.border,
+                        backgroundColor: AppTheme.borderOf(context),
                         valueColor: const AlwaysStoppedAnimation(AppTheme.accent),
                         minHeight: 6,
                       ),
@@ -293,7 +293,7 @@ class _SyllabusBanner extends StatelessWidget {
                       '${(progress * 100).toInt()}% of syllabus covered',
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 12,
-                        color: AppTheme.textSecondary,
+                        color: AppTheme.textSecondaryOf(context),
                       ),
                     ),
                   ] else
@@ -301,14 +301,14 @@ class _SyllabusBanner extends StatelessWidget {
                       'Upload your syllabus to track progress',
                       style: GoogleFonts.dmSans(
                         fontSize: 13,
-                        color: AppTheme.textSecondary,
+                        color: AppTheme.textSecondaryOf(context),
                       ),
                     ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded,
-                color: AppTheme.textSecondary),
+             Icon(Icons.chevron_right_rounded,
+                color: AppTheme.textSecondaryOf(context)),
           ],
         ),
       ),
@@ -331,9 +331,9 @@ class _LectureStudyCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: AppTheme.surface,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppTheme.border),
+          border: Border.all(color: AppTheme.borderOf(context)),
         ),
         child: Row(
           children: [
@@ -366,8 +366,8 @@ class _LectureStudyCard extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios_rounded,
-                color: AppTheme.textSecondary, size: 16),
+             Icon(Icons.arrow_forward_ios_rounded,
+                color: AppTheme.textSecondaryOf(context), size: 16),
           ],
         ),
       ),
