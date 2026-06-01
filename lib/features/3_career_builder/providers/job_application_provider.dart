@@ -166,6 +166,16 @@ class JobApplicationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearForNewUser() {
+    _applications = [];
+    _currentJob = null;
+    _status = JobStatus.idle;
+    _statusLabel = '';
+    _improvementPlan = '';
+    _error = null;
+    notifyListeners();
+  }
+
   void reset() {
     _status = JobStatus.idle;
     _currentJob = null;
