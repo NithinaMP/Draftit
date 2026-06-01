@@ -5,23 +5,19 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'core/theme/app_theme.dart';
-import 'core/router/app_router.dart';
+import 'core/theme/theme_provider.dart';
 import 'core/constants/app_constants.dart';
-
-// Phase 1
 import 'features/auth/providers/auth_provider.dart';
+import 'features/auth/presentation/login_screen.dart';
+import 'features/shell/main_shell.dart';
 import 'features/1_voice_to_notes/data/models/lecture_model.dart';
 import 'features/1_voice_to_notes/providers/audio_recording_provider.dart';
 import 'features/1_voice_to_notes/providers/notes_generation_provider.dart';
 import 'features/1_voice_to_notes/providers/lectures_provider.dart';
-
-// Phase 2
 import 'features/2_study_buddy/data/models/exam_question_model.dart';
 import 'features/2_study_buddy/data/models/syllabus_model.dart';
 import 'features/2_study_buddy/providers/exam_predictor_provider.dart';
 import 'features/2_study_buddy/providers/syllabus_provider.dart';
-
-// Phase 3
 import 'features/3_career_builder/data/models/master_profile_model.dart';
 import 'features/3_career_builder/data/models/job_application_model.dart';
 import 'features/3_career_builder/providers/master_profile_provider.dart';
@@ -29,34 +25,21 @@ import 'features/3_career_builder/providers/job_application_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await dotenv.load(fileName: '.env');
-
   if (!AppConstants.isKeyValid) {
-    debugPrint(
-      '\n══════════════════════════════════════════\n'
-          '⚠️  Groq API key missing!\n'
-          '   Open .env and set GROQ_API_KEY=gsk_...\n'
-          '══════════════════════════════════════════\n',
-    );
+    debugPrint('⚠️  Groq API key missing — open .env and set GROQ_API_KEY');
   } else {
-    debugPrint('✅ Groq key loaded: ${AppConstants.groqApiKey.substring(0, 8)}...');
+    debugPrint('✅ Groq key: ${AppConstants.groqApiKey.substring(0, 8)}...');
   }
-
   await Firebase.initializeApp();
-
   await Hive.initFlutter();
-  // Phase 1
   Hive.registerAdapter(LectureModelAdapter());
-  // Phase 2
   Hive.registerAdapter(ExamQuestionAdapter());
   Hive.registerAdapter(SyllabusUnitAdapter());
-  // Phase 3
   Hive.registerAdapter(EducationEntryAdapter());
   Hive.registerAdapter(ExperienceEntryAdapter());
   Hive.registerAdapter(MasterProfileAdapter());
   Hive.registerAdapter(JobApplicationAdapter());
-
   runApp(const DraftItApp());
 }
 
@@ -65,28 +48,80 @@ class DraftItApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // MultiProvider wraps everything ABOVE MaterialApp
+    // so ALL routes — including ones pushed via Navigator — inherit the providers
     return MultiProvider(
       providers: [
-        // Auth
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-        // Phase 1
         ChangeNotifierProvider(create: (_) => AudioRecordingProvider()),
         ChangeNotifierProvider(create: (_) => NotesGenerationProvider()),
         ChangeNotifierProvider(create: (_) => LecturesProvider()),
-        // Phase 2
         ChangeNotifierProvider(create: (_) => ExamPredictorProvider()),
         ChangeNotifierProvider(create: (_) => SyllabusProvider()),
-        // Phase 3
         ChangeNotifierProvider(create: (_) => MasterProfileProvider()),
         ChangeNotifierProvider(create: (_) => JobApplicationProvider()),
       ],
-      child: MaterialApp(
-        title: 'DraftIt',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.dark,
-        onGenerateRoute: AppRouter.generateRoute,
-        home: const AuthGate(),
+      // Consumer<ThemeProvider> is a child of MultiProvider,
+      // so context here already has ThemeProvider available
+      child: Consumer<ThemeProvider>(
+        builder: (ctx, themeProvider, _) => MaterialApp(
+          title: 'DraftIt',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
+          themeMode: themeProvider.mode,
+          // All routes pushed from here inherit the MultiProvider above
+          home: const AppBootstrap(),
+        ),
       ),
     );
+  }
+}
+
+/// Watches auth state and resets providers when user changes
+class AppBootstrap extends StatefulWidget {
+  const AppBootstrap({super.key});
+
+  @override
+  State<AppBootstrap> createState() => _AppBootstrapState();
+}
+
+class _AppBootstrapState extends State<AppBootstrap> {
+  String? _lastUid;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final auth = context.watch<AuthProvider>();
+    final uid = auth.user?.uid;
+
+    if (uid != null && uid != _lastUid) {
+      _lastUid = uid;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        context.read<LecturesProvider>().startListening();
+        context.read<MasterProfileProvider>().clearForNewUser();
+        context.read<JobApplicationProvider>().clearForNewUser();
+        context.read<ExamPredictorProvider>().clearForNewUser();
+        context.read<SyllabusProvider>().clearForNewUser();
+      });
+    }
+
+    if (uid == null) _lastUid = null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+
+    if (auth.isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (auth.user == null) return const LoginScreen();
+    return const MainShell();
   }
 }
