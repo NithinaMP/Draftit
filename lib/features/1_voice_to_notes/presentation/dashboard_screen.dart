@@ -46,7 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bg,
+      backgroundColor: AppTheme.bgOf(context),
       body: Stack(
         children: [
           // Top gradient blob
@@ -185,7 +185,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             style: GoogleFonts.playfairDisplay(
               fontSize: 22,
               fontWeight: FontWeight.w700,
-              color: AppTheme.textPrimary,
+              color: AppTheme.textPrimaryOf(context),
             ),
           ),
           const Spacer(),
@@ -210,7 +210,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             'Hello, $name 👋',
             style: GoogleFonts.dmSans(
               fontSize: 16,
-              color: AppTheme.textSecondary,
+              color: AppTheme.textSecondaryOf(context),
             ),
           ),
           const SizedBox(height: 6),
@@ -313,9 +313,9 @@ class _DashboardScreenState extends State<DashboardScreen>
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppTheme.surface,
+              color: AppTheme.surfaceOf(context),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: AppTheme.border),
+              border: Border.all(color: AppTheme.borderOf(context)),
             ),
             child: Column(
               children: [
@@ -337,15 +337,15 @@ class _DashboardScreenState extends State<DashboardScreen>
                   style: GoogleFonts.playfairDisplay(
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.textPrimary,
+                    color: AppTheme.textPrimaryOf(context),
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Tap the microphone button to record your first lecture and let AI transform it into structured notes.',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: AppTheme.textSecondary, height: 1.5),
+                  style:  TextStyle(
+                      color: AppTheme.textSecondaryOf(context), height: 1.5),
                 ),
               ],
             ),
@@ -377,9 +377,9 @@ class _LectureCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: AppTheme.surface,
+            color: AppTheme.surfaceOf(context),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppTheme.border),
+            border: Border.all(color: AppTheme.borderOf(context)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -425,7 +425,7 @@ class _LectureCard extends StatelessWidget {
                     DateFormat('MMM d').format(lecture.createdAt),
                     style: GoogleFonts.spaceGrotesk(
                       fontSize: 12,
-                      color: AppTheme.textSecondary,
+                      color: AppTheme.textSecondaryOf(context),
                     ),
                   ),
                 ],
@@ -447,14 +447,14 @@ class _CardMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
       icon: const Icon(Icons.more_vert, color: AppTheme.textSecondary, size: 20),
-      color: AppTheme.surfaceElevated,
+      color: AppTheme.surfaceElevOf(context),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       onSelected: (val) {
         if (val == 'delete') {
           showDialog(
             context: context,
             builder: (_) => AlertDialog(
-              backgroundColor: AppTheme.surface,
+              backgroundColor: AppTheme.surfaceOf(context),
               title: const Text('Delete lecture?'),
               content: const Text('This cannot be undone.'),
               actions: [
@@ -504,7 +504,7 @@ class _ProfileMenu extends StatelessWidget {
       onTap: () {
         showModalBottomSheet(
           context: context,
-          backgroundColor: AppTheme.surface,
+          backgroundColor: AppTheme.surfaceOf(context),
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
