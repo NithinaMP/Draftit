@@ -36,12 +36,12 @@ class _MasterProfileScreenState extends State<MasterProfileScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bg,
+      backgroundColor: AppTheme.bgOf(context),
       body: SafeArea(
         child: Column(
           children: [
             _buildHeader(),
-            _buildTabBar(),
+            _buildTabBar(context),
             Expanded(
               child: Consumer<MasterProfileProvider>(
                 builder: (_, provider, __) {
@@ -74,8 +74,8 @@ class _MasterProfileScreenState extends State<MasterProfileScreen>
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: AppTheme.textPrimary),
+            icon:  Icon(Icons.arrow_back_ios_new_rounded,
+                color: AppTheme.textPrimaryOf(context)),
             onPressed: () => Navigator.pop(context),
           ),
           Expanded(
@@ -94,15 +94,15 @@ class _MasterProfileScreenState extends State<MasterProfileScreen>
     );
   }
 
-  Widget _buildTabBar() {
+  Widget _buildTabBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: Container(
         height: 44,
         decoration: BoxDecoration(
-          color: AppTheme.surface,
+          color: AppTheme.surfaceOf(context),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppTheme.border),
+          border: Border.all(color: AppTheme.borderOf(context)),
         ),
         child: TabBar(
           controller: _tabCtrl,
@@ -115,8 +115,8 @@ class _MasterProfileScreenState extends State<MasterProfileScreen>
           ),
           indicatorSize: TabBarIndicatorSize.tab,
           dividerColor: Colors.transparent,
-          labelColor: AppTheme.bg,
-          unselectedLabelColor: AppTheme.textSecondary,
+          labelColor: AppTheme.bgOf(context),
+          unselectedLabelColor: AppTheme.textSecondaryOf(context),
           labelStyle: GoogleFonts.spaceGrotesk(
               fontSize: 12, fontWeight: FontWeight.w700),
           tabs: const [
@@ -224,7 +224,7 @@ class _BasicInfoTabState extends State<_BasicInfoTab> {
       child: TextField(
         controller: ctrl,
         keyboardType: type,
-        style: const TextStyle(color: AppTheme.textPrimary),
+        style:  TextStyle(color: AppTheme.textPrimaryOf(context)),
         decoration: InputDecoration(
           labelText: label,
           prefixIcon: Icon(icon, size: 18),
@@ -304,7 +304,7 @@ class _SkillsTabState extends State<_SkillsTab> {
             Expanded(
               child: TextField(
                 controller: _ctrl,
-                style: const TextStyle(color: AppTheme.textPrimary),
+                style:  TextStyle(color: AppTheme.textPrimaryOf(context)),
                 decoration: const InputDecoration(
                   labelText: 'Add skills',
                   hintText: 'Flutter, Firebase, Python...',
@@ -420,7 +420,7 @@ class _ExperienceTab extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppTheme.surface,
+      backgroundColor: AppTheme.surfaceOf(context),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (ctx) => StatefulBuilder(
@@ -448,7 +448,7 @@ class _ExperienceTab extends StatelessWidget {
                     labelStyle: GoogleFonts.spaceGrotesk(
                       color: selectedType == t
                           ? AppTheme.accentLight
-                          : AppTheme.textSecondary,
+                          : AppTheme.textSecondaryOf(context),
                       fontSize: 12,
                     ),
                   ))
@@ -491,11 +491,11 @@ class _ExperienceTab extends StatelessWidget {
 
   static Widget _tf(TextEditingController c, String label, {int maxLines = 1}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding:  EdgeInsets.only(bottom: 12),
       child: TextField(
         controller: c,
         maxLines: maxLines,
-        style: const TextStyle(color: AppTheme.textPrimary),
+        style:  TextStyle(color: AppTheme.textPrimary),
         decoration: InputDecoration(labelText: label),
       ),
     );
@@ -523,9 +523,9 @@ class _EducationTab extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppTheme.surface,
+                color: AppTheme.surfaceOf(context),
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppTheme.border),
+                border: Border.all(color: AppTheme.borderOf(context)),
               ),
               child: Row(children: [
                 const Icon(Icons.school_outlined,
@@ -572,7 +572,7 @@ class _EducationTab extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppTheme.surface,
+      backgroundColor: AppTheme.surfaceOf(context),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (ctx) => Padding(
@@ -585,21 +585,21 @@ class _EducationTab extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 16),
           TextField(controller: degreeCtrl,
-              style: const TextStyle(color: AppTheme.textPrimary),
+              style:  TextStyle(color: AppTheme.textPrimaryOf(context)),
               decoration: const InputDecoration(
                   labelText: 'Degree (e.g. B.Tech Computer Science)')),
           const SizedBox(height: 12),
           TextField(controller: instCtrl,
-              style: const TextStyle(color: AppTheme.textPrimary),
+              style:  TextStyle(color: AppTheme.textPrimaryOf(context)),
               decoration: const InputDecoration(labelText: 'Institution')),
           const SizedBox(height: 12),
           TextField(controller: yearCtrl,
-              style: const TextStyle(color: AppTheme.textPrimary),
+              style:  TextStyle(color: AppTheme.textPrimaryOf(context)),
               decoration:
               const InputDecoration(labelText: 'Year (2021 – 2025)')),
           const SizedBox(height: 12),
           TextField(controller: gradeCtrl,
-              style: const TextStyle(color: AppTheme.textPrimary),
+              style:  TextStyle(color: AppTheme.textPrimaryOf(context)),
               decoration: const InputDecoration(
                   labelText: 'Grade / GPA (Optional)')),
           const SizedBox(height: 20),
@@ -673,7 +673,7 @@ class _ExtrasTabState extends State<_ExtrasTab> {
                     p.certifications.indexOf(c))),
 
           const SizedBox(height: 24),
-          const Divider(color: AppTheme.border),
+           Divider(color: AppTheme.borderOf(context)),
           const SizedBox(height: 16),
 
           // ── Languages ──
@@ -695,7 +695,7 @@ class _ExtrasTabState extends State<_ExtrasTab> {
                     (l) => widget.provider.removeLanguage(l)),
 
           const SizedBox(height: 24),
-          const Divider(color: AppTheme.border),
+           Divider(color: AppTheme.borderOf(context)),
           const SizedBox(height: 16),
 
           // ── Soft Skills ──
@@ -735,7 +735,7 @@ class _ExtrasTabState extends State<_ExtrasTab> {
           style: GoogleFonts.spaceGrotesk(
               fontSize: 15,
               fontWeight: FontWeight.w700,
-              color: AppTheme.textPrimary)),
+              color: AppTheme.textPrimaryOf(context))),
     ]);
   }
 
@@ -745,19 +745,19 @@ class _ExtrasTabState extends State<_ExtrasTab> {
       Expanded(
         child: TextField(
           controller: ctrl,
-          style: const TextStyle(color: AppTheme.textPrimary),
+          style:  TextStyle(color: AppTheme.textPrimaryOf(context)),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: GoogleFonts.dmSans(
-                color: AppTheme.textSecondary, fontSize: 13),
+                color: AppTheme.textSecondaryOf(context), fontSize: 13),
             contentPadding:
             const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: AppTheme.border)),
+                borderSide:  BorderSide(color: AppTheme.borderOf(context))),
             enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: AppTheme.border)),
+                borderSide:  BorderSide(color: AppTheme.borderOf(context))),
           ),
           onSubmitted: (_) => onAdd(),
         ),
@@ -781,7 +781,7 @@ class _ExtrasTabState extends State<_ExtrasTab> {
   Widget _emptyHint(String msg) {
     return Text(msg,
         style: GoogleFonts.dmSans(
-            color: AppTheme.textSecondary, fontSize: 13));
+            color: AppTheme.textSecondaryOf(context), fontSize: 13));
   }
 
   Widget _chipWrap(
@@ -828,7 +828,7 @@ Widget _dividerLabel(String label) {
   return Builder(builder: (ctx) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 8),
     child: Row(children: [
-      const Expanded(child: Divider(color: AppTheme.border)),
+       Expanded(child: Divider(color: AppTheme.border)),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Text(label,
@@ -882,9 +882,9 @@ class _ExperienceCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(color: AppTheme.borderOf(context)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
@@ -918,7 +918,7 @@ class _ExperienceCard extends StatelessWidget {
               ? exp.professionalDescription
               : exp.rawDescription,
           style: GoogleFonts.dmSans(
-              fontSize: 13, color: AppTheme.textSecondary, height: 1.5),
+              fontSize: 13, color: AppTheme.textSecondaryOf(context), height: 1.5),
           maxLines: 3,
           overflow: TextOverflow.ellipsis,
         ),
@@ -981,8 +981,8 @@ class _RemovableChip extends StatelessWidget {
         const SizedBox(width: 4),
         GestureDetector(
           onTap: onRemove,
-          child: const Icon(Icons.close_rounded,
-              size: 14, color: AppTheme.textSecondary),
+          child:  Icon(Icons.close_rounded,
+              size: 14, color: AppTheme.textSecondaryOf(context)),
         ),
       ]),
     );
