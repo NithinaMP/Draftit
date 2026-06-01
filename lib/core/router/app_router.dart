@@ -10,6 +10,7 @@ import '../../features/2_study_buddy/presentation/screens/syllabus_tracker_scree
 import '../../features/3_career_builder/presentation/screens/career_builder_screen.dart';
 import '../../features/3_career_builder/presentation/screens/master_profile_screen.dart';
 import '../../features/3_career_builder/presentation/screens/jd_input_screen.dart';
+import '../presentation/main_shell.dart';
 
 class AppRouter {
   static const String login          = '/login';
@@ -27,7 +28,9 @@ class AppRouter {
       case login:
         return _route(const LoginScreen());
       case dashboard:
-        return _route(const DashboardScreen());
+        // return _route(const DashboardScreen());
+        return _route(const MainShell());
+
       case recorder:
         return _route(const RecorderScreen());
       case notesViewer:
