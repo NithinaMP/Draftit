@@ -116,7 +116,7 @@ class _RecorderScreenState extends State<RecorderScreen>
                     builder: (context, recorder, generator, _) {
                       if (generator.isProcessing ||
                           generator.status == NotesStatus.error) {
-                        return _buildProcessingView(generator);
+                        return _buildProcessingView(context,generator);
                       }
                       return _buildRecorderView(context, recorder);
                     },
@@ -136,8 +136,8 @@ class _RecorderScreenState extends State<RecorderScreen>
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: AppTheme.textPrimary),
+            icon: Icon(Icons.arrow_back_ios_new_rounded,
+                color: AppTheme.textPrimaryOf(context)),
             onPressed: () => Navigator.pop(context),
           ),
           Text(
@@ -169,7 +169,7 @@ class _RecorderScreenState extends State<RecorderScreen>
           style: GoogleFonts.spaceGrotesk(
             fontSize: 52,
             fontWeight: FontWeight.w700,
-            color: AppTheme.textPrimary,
+            color: AppTheme.textPrimaryOf(context),
             letterSpacing: 2,
           ),
         ),
@@ -241,7 +241,8 @@ class _RecorderScreenState extends State<RecorderScreen>
     );
   }
 
-  Widget _buildProcessingView(NotesGenerationProvider generator) {
+  Widget _buildProcessingView( BuildContext context,
+      NotesGenerationProvider generator,) {
     final steps = [
       'Transcribing audio with Whisper',
       'Structuring notes with Mistral AI',
