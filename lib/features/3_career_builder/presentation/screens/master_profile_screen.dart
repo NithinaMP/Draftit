@@ -455,12 +455,12 @@ class _ExperienceTab extends StatelessWidget {
                       .toList(),
                 ),
                 const SizedBox(height: 12),
-                _tf(titleCtrl, 'Title (e.g. Flutter Developer)'),
-                _tf(orgCtrl, 'Organization / Company'),
-                _tf(durationCtrl, 'Duration (e.g. Jun 2024 – Aug 2024)'),
-                _tf(descCtrl, 'What did you do?', maxLines: 4),
-                _tf(toolsCtrl, 'Tools Used (Flutter, Firebase, Python...)'),
-                _tf(proofCtrl, 'Proof Link — Optional'),
+                _tf(context,titleCtrl, 'Title (e.g. Flutter Developer)'),
+                _tf(context,orgCtrl, 'Organization / Company'),
+                _tf(context,durationCtrl, 'Duration (e.g. Jun 2024 – Aug 2024)'),
+                _tf(context,descCtrl, 'What did you do?', maxLines: 4),
+                _tf(context,toolsCtrl, 'Tools Used (Flutter, Firebase, Python...)'),
+                _tf(context,proofCtrl, 'Proof Link — Optional'),
                 const SizedBox(height: 16),
                 GradientButton(
                   label: 'Add Experience',
@@ -489,13 +489,14 @@ class _ExperienceTab extends StatelessWidget {
     );
   }
 
-  static Widget _tf(TextEditingController c, String label, {int maxLines = 1}) {
+  static Widget _tf(  BuildContext context,
+      TextEditingController c, String label, {int maxLines = 1}) {
     return Padding(
       padding:  EdgeInsets.only(bottom: 12),
       child: TextField(
         controller: c,
         maxLines: maxLines,
-        style:  TextStyle(color: AppTheme.textPrimary),
+        style:  TextStyle(color: AppTheme.textPrimaryOf(context)),
         decoration: InputDecoration(labelText: label),
       ),
     );
@@ -813,8 +814,8 @@ class _ExtrasTabState extends State<_ExtrasTab> {
             const SizedBox(width: 5),
             GestureDetector(
               onTap: () => onRemove(item),
-              child: const Icon(Icons.close_rounded,
-                  size: 14, color: AppTheme.textSecondary),
+              child:  Icon(Icons.close_rounded,
+                  size: 14, color: AppTheme.textSecondaryOf(context)),
             ),
           ]),
         );
@@ -828,13 +829,13 @@ Widget _dividerLabel(String label) {
   return Builder(builder: (ctx) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 8),
     child: Row(children: [
-       Expanded(child: Divider(color: AppTheme.border)),
+       Expanded(child: Divider(color: AppTheme.borderOf(ctx))),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Text(label,
             style: Theme.of(ctx).textTheme.labelMedium),
       ),
-      const Expanded(child: Divider(color: AppTheme.border)),
+       Expanded(child: Divider(color: AppTheme.borderOf(ctx))),
     ]),
   ));
 }
