@@ -112,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bg,
+      backgroundColor: AppTheme.bgOf(context),
       body: Stack(
         children: [
           // Ambient orbs
@@ -171,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   style: GoogleFonts.playfairDisplay(
                                     fontSize: 40,
                                     fontWeight: FontWeight.w700,
-                                    color: AppTheme.textPrimary,
+                                    color: AppTheme.textPrimaryOf(context),
                                     height: 1.1,
                                   ),
                                 ),
@@ -183,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyLarge
-                                      ?.copyWith(color: AppTheme.textSecondary),
+                                      ?.copyWith(color: AppTheme.textSecondaryOf(context)),
                                 ),
                               ],
                             ),
@@ -368,13 +368,13 @@ class _LoginScreenState extends State<LoginScreen>
 
                           // Divider
                           Row(children: [
-                            const Expanded(child: Divider(color: AppTheme.border)),
+                             Expanded(child: Divider(color: AppTheme.borderOf(context))),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 14),
                               child: Text('or continue with',
                                   style: Theme.of(context).textTheme.bodyMedium),
                             ),
-                            const Expanded(child: Divider(color: AppTheme.border)),
+                             Expanded(child: Divider(color: AppTheme.borderOf(context))),
                           ]),
 
                           const SizedBox(height: 20),
@@ -419,9 +419,9 @@ class _ModeSelector extends StatelessWidget {
     return Container(
       height: 48,
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.border),
+        border: Border.all(color: AppTheme.borderOf(context)),
       ),
       child: Row(children: [
         _Tab(label: 'Sign In', active: current == 'login',
@@ -460,7 +460,7 @@ class _Tab extends StatelessWidget {
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: active ? Colors.white : AppTheme.textSecondary,
+                color: active ? Colors.white : AppTheme.textSecondaryOf(context),
               ),
             ),
           ),
@@ -504,11 +504,11 @@ class _DraftItLogo extends StatelessWidget {
             style: GoogleFonts.playfairDisplay(
               fontSize: 28,
               fontWeight: FontWeight.w700,
-              color: AppTheme.textPrimary,
+              color: AppTheme.textPrimaryOf(context),
             )),
         Text('From Classroom to Career',
             style: GoogleFonts.dmSans(
-                fontSize: 11, color: AppTheme.textSecondary)),
+                fontSize: 11, color: AppTheme.textSecondaryOf(context))),
       ]),
     ]);
   }
@@ -537,7 +537,7 @@ class _FormField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       keyboardType: type,
-      style: const TextStyle(color: AppTheme.textPrimary),
+      style:  TextStyle(color: AppTheme.textPrimaryOf(context)),
       validator: validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
@@ -570,7 +570,7 @@ class _PasswordField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       obscureText: obscure,
-      style: const TextStyle(color: AppTheme.textPrimary),
+      style:  TextStyle(color: AppTheme.textPrimaryOf(context)),
       validator: validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
@@ -580,7 +580,7 @@ class _PasswordField extends StatelessWidget {
           icon: Icon(
             obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
             size: 20,
-            color: AppTheme.textSecondary,
+            color: AppTheme.textSecondaryOf(context),
           ),
           onPressed: onToggle,
         ),
@@ -643,7 +643,7 @@ class _PasswordStrengthBarState extends State<_PasswordStrengthBar> {
           children: [
             Text('Password Strength',
                 style: GoogleFonts.spaceGrotesk(
-                    fontSize: 12, color: AppTheme.textSecondary)),
+                    fontSize: 12, color: AppTheme.textSecondaryOf(context))),
             Text(_label,
                 style: GoogleFonts.spaceGrotesk(
                     fontSize: 12,
@@ -660,7 +660,7 @@ class _PasswordStrengthBarState extends State<_PasswordStrengthBar> {
                 height: 4,
                 margin: EdgeInsets.only(right: i < 4 ? 4 : 0),
                 decoration: BoxDecoration(
-                  color: i < _strength ? _color : AppTheme.border,
+                  color: i < _strength ? _color : AppTheme.borderOf(context),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -687,10 +687,10 @@ class _GoogleButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: isLoading ? null : onPressed,
         style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: AppTheme.border),
+          side:  BorderSide(color: AppTheme.borderOf(context)),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14)),
-          backgroundColor: AppTheme.surface,
+          backgroundColor: AppTheme.surfaceOf(context),
         ),
         child: isLoading
             ? const SizedBox(
@@ -705,7 +705,7 @@ class _GoogleButton extends StatelessWidget {
               style: GoogleFonts.spaceGrotesk(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimary,
+                color: AppTheme.textPrimaryOf(context),
               )),
         ]),
       ),
