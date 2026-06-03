@@ -196,6 +196,35 @@ class MasterProfileProvider extends ChangeNotifier {
     );
   }
 
+  Future<void> addProject(ProjectEntry project) async {
+    _profile.projects.add(project);
+    await _persist();
+  }
+
+  Future<void> removeProject(String id) async {
+    _profile.projects.removeWhere((p) => p.id == id);
+    await _persist();
+  }
+
+  ProjectEntry buildProject({
+    required String title,
+    required String description,
+    required List<String> techStack,
+    required String duration,
+    String? githubLink,
+    String? liveLink,
+  }) {
+    return ProjectEntry(
+      id: const Uuid().v4(),
+      title: title,
+      description: description,
+      techStack: techStack,
+      duration: duration,
+      githubLink: githubLink,
+      liveLink: liveLink,
+    );
+  }
+
   Future<void> _persist() async {
     _status = ProfileStatus.saving;
     notifyListeners();
