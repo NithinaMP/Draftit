@@ -10,11 +10,11 @@ class ResumePdfService {
   static const _dark    = PdfColor.fromInt(0xFF1A1A2E);
   static const _text    = PdfColor.fromInt(0xFF2D2D3A);
   static const _muted   = PdfColor.fromInt(0xFF6B6B80);
-  static const _sideCol = PdfColor.fromInt(0xFFF0EFFF); // right column bg
+  static const _sideCol = PdfColor.fromInt(0xFFF0EFFF);
   static const _divCol  = PdfColor.fromInt(0xFFE0E0F0);
   static const _white   = PdfColors.white;
-  static const _chipBg  = PdfColor.fromInt(0xFFEDECFF); // unmatched chip bg
-  static const _chipFg  = PdfColor.fromInt(0xFF4A4580); // unmatched chip text
+  static const _chipBg  = PdfColor.fromInt(0xFFEDECFF);
+  static const _chipFg  = PdfColor.fromInt(0xFF4A4580);
 
   Future<Uint8List> generatePdf({
     required MasterProfile profile,
@@ -34,7 +34,7 @@ class ResumePdfService {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                _summary(job, profile, fonts),
+                _summary(profile, job, fonts),
                 pw.SizedBox(height: 16),
                 _body(profile, job, fonts),
               ],
@@ -53,97 +53,82 @@ class ResumePdfService {
       width: double.infinity,
       padding: const pw.EdgeInsets.fromLTRB(32, 30, 32, 22),
       decoration: const pw.BoxDecoration(color: _dark),
-      child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-        pw.Text(
-          p.fullName.isNotEmpty ? p.fullName : 'Your Name',
-          style: pw.TextStyle(font: f.bold, fontSize: 26, color: _white, letterSpacing: 0.5),
-        ),
-        pw.SizedBox(height: 8),
-        pw.Wrap(
-          spacing: 14,
-          runSpacing: 3,
-          children: [
-            if (p.email.isNotEmpty)    _chip(p.email, f),
-            if (p.phone.isNotEmpty)    _chip(p.phone, f),
-            if (p.location.isNotEmpty) _chip(p.location, f),
-            if ((p.linkedIn ?? '').isNotEmpty) _chip(_url(p.linkedIn!), f),
-            if ((p.github ?? '').isNotEmpty)   _chip(_url(p.github!), f),
-          ],
-        ),
-      ]),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text(
+            p.fullName.isNotEmpty ? p.fullName : 'Your Name',
+            style: pw.TextStyle(font: f.bold, fontSize: 26, color: _white, letterSpacing: 0.5),
+          ),
+          pw.SizedBox(height: 8),
+          pw.Wrap(spacing: 14, runSpacing: 3, children: [
+            if (p.email.isNotEmpty)            _contactText(p.email, f),
+            if (p.phone.isNotEmpty)            _contactText(p.phone, f),
+            if (p.location.isNotEmpty)         _contactText(p.location, f),
+            if ((p.linkedIn ?? '').isNotEmpty) _contactText(_url(p.linkedIn!), f),
+            if ((p.github ?? '').isNotEmpty)   _contactText(_url(p.github!), f),
+          ]),
+        ],
+      ),
     );
   }
 
-  pw.Widget _chip(String t, _Fonts f) => pw.Text(t,
+  pw.Widget _contactText(String t, _Fonts f) => pw.Text(t,
       style: pw.TextStyle(font: f.regular, fontSize: 8.5,
           color: const PdfColor.fromInt(0xFFCCCCEE)));
 
-  // ── FIX 1: Summary — pull it cleanly from AI text, strip markdown ──────────
-  pw.Widget _summary(JobApplication job, MasterProfile profile, _Fonts f) {
-    final text = _extractSummaryText(job.generatedResume, profile);
-    if (text.isEmpty) return pw.SizedBox();
+  // ── FIX 1: Summary — write it directly from profile data, NOT from AI JSON ──
+  pw.Widget _summary(MasterProfile p, JobApplication job, _Fonts f) {
+    // Build a clean professional summary from actual profile fields
+    // instead of parsing the messy AI-generated resume text
+    final namePart = p.fullName.isNotEmpty ? p.fullName : 'A motivated professional';
+    final skillsTop = p.skills.take(5).join(', ');
+    final expCount = p.experiences.length;
+    final targetRole = job.roleTitle;
+    final company = job.companyName;
+
+    String summaryText;
+    if (expCount > 0) {
+      final latestExp = p.experiences.first;
+      summaryText =
+      '$namePart is a results-driven professional with hands-on experience as ${latestExp.title} '
+          'at ${latestExp.organization}. Proficient in $skillsTop, with a strong foundation in '
+          'delivering impactful solutions. Seeking to contribute as $targetRole at $company '
+          'by leveraging technical expertise and collaborative mindset.';
+    } else {
+      summaryText =
+      '$namePart is an enthusiastic and detail-oriented professional skilled in $skillsTop. '
+          'Driven by a passion for continuous learning and practical problem-solving. '
+          'Eager to contribute as $targetRole at $company through dedication and technical acumen.';
+    }
+
     return pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
       _secTitle('PROFESSIONAL SUMMARY', f),
-      pw.SizedBox(height: 6),
-      pw.Text(text,
-          style: pw.TextStyle(font: f.regular, fontSize: 9.5, color: _text, lineSpacing: 2)),
+      pw.SizedBox(height: 7),
+      pw.Text(summaryText,
+          style: pw.TextStyle(font: f.regular, fontSize: 9.5, color: _text, lineSpacing: 2.2)),
       pw.SizedBox(height: 4),
       _hr(),
     ]);
   }
 
-  // Extract summary: find the SUMMARY section, strip ** markdown, clean it up
-  String _extractSummaryText(String resume, MasterProfile profile) {
-    final lines = resume.split('\n').map((l) => l.trim()).toList();
-    final summaryIdx = lines.indexWhere(
-            (l) => l.toUpperCase().contains('SUMMARY'));
-
-    if (summaryIdx != -1 && summaryIdx + 1 < lines.length) {
-      // Collect lines after SUMMARY header until next ALL-CAPS section
-      final buffer = StringBuffer();
-      for (int i = summaryIdx + 1; i < lines.length; i++) {
-        final line = lines[i];
-        if (line.isEmpty) continue;
-        // Stop at next section header (all caps, short)
-        if (RegExp(r'^[A-Z\s&|/]{4,}$').hasMatch(line) && line.length < 30) break;
-        // Strip markdown bold/italic
-        final clean = line
-            .replaceAll(RegExp(r'\*\*(.+?)\*\*'), r'$1')
-            .replaceAll(RegExp(r'\*(.+?)\*'), r'$1')
-            .replaceAll('**', '')
-            .replaceAll('*', '')
-            .trim();
-        if (clean.isNotEmpty) buffer.write('$clean ');
-      }
-      final result = buffer.toString().trim();
-      if (result.length > 20) return result;
-    }
-
-    // Fallback: use first long non-bullet line
-    for (final line in lines) {
-      final clean = line
-          .replaceAll(RegExp(r'\*\*(.+?)\*\*'), r'$1')
-          .replaceAll('**', '').replaceAll('*', '').trim();
-      if (!clean.startsWith('•') && clean.length > 50 &&
-          !RegExp(r'^[A-Z\s&|/]{4,}$').hasMatch(clean)) {
-        return clean;
-      }
-    }
-    return '';
-  }
-
   // ── Two-column body ────────────────────────────────────────────────────────
   pw.Widget _body(MasterProfile p, JobApplication job, _Fonts f) {
     return pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+      // Left — 62%
       pw.Expanded(flex: 62, child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          _experienceSection(p, job, f),
+          _experienceSection(p, f),
+          if (p.experiences.any((e) => e.type == 'project')) ...[],
+          pw.SizedBox(height: 14),
+          _projectsSection(p, f),
           pw.SizedBox(height: 14),
           _educationSection(p, f),
         ],
       )),
       pw.SizedBox(width: 18),
+      // Right — 38%
       pw.Expanded(flex: 38, child: pw.Container(
         padding: const pw.EdgeInsets.all(13),
         decoration: pw.BoxDecoration(
@@ -151,53 +136,89 @@ class ResumePdfService {
           borderRadius: pw.BorderRadius.circular(6),
         ),
         child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-          _skillsSection(p, job, f),
+          _skillsSection(p, f),
           if (p.certifications.isNotEmpty) ...[pw.SizedBox(height: 12), _certSection(p, f)],
           if (p.languages.isNotEmpty)      ...[pw.SizedBox(height: 12), _langSection(p, f)],
-          if (p.softSkills.isNotEmpty)     ...[pw.SizedBox(height: 12), _softSkillsSection(p, f)],
+          if (p.softSkills.isNotEmpty)     ...[pw.SizedBox(height: 12), _softSection(p, f)],
         ]),
       )),
     ]);
   }
 
-  // ── Experience ─────────────────────────────────────────────────────────────
-  pw.Widget _experienceSection(MasterProfile p, JobApplication job, _Fonts f) {
-    if (p.experiences.isEmpty) return pw.SizedBox();
+  // ── Experience (internships/jobs only — not projects) ──────────────────────
+  pw.Widget _experienceSection(MasterProfile p, _Fonts f) {
+    final exps = p.experiences
+        .where((e) => e.type != 'project')
+        .toList();
+    if (exps.isEmpty) return pw.SizedBox();
+
     return pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
       _secTitle('EXPERIENCE', f),
       pw.SizedBox(height: 8),
-      ...p.experiences.map((exp) {
-        final raw = exp.professionalDescription.isNotEmpty
-            ? exp.professionalDescription : exp.rawDescription;
-        final bullets = raw.split('\n')
-            .map((l) => l.replaceAll('•', '').replaceAll('**', '').replaceAll('*', '').trim())
-            .where((l) => l.isNotEmpty).toList();
-        return pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-          pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
-            pw.Expanded(child: pw.Text(exp.title,
-                style: pw.TextStyle(font: f.semiBold, fontSize: 10, color: _dark))),
-            pw.Text(exp.duration,
-                style: pw.TextStyle(font: f.italic, fontSize: 8, color: _muted)),
-          ]),
-          pw.Text(exp.organization,
-              style: pw.TextStyle(font: f.regular, fontSize: 9, color: _accent)),
-          pw.SizedBox(height: 4),
-          ...bullets.map((b) => pw.Padding(
-            padding: const pw.EdgeInsets.only(bottom: 2),
-            child: pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-              pw.Text('• ', style: pw.TextStyle(font: f.bold, fontSize: 9, color: _accent)),
-              pw.Expanded(child: pw.Text(b,
-                  style: pw.TextStyle(font: f.regular, fontSize: 9, color: _text, lineSpacing: 1.4))),
-            ]),
-          )),
-          if (exp.toolsUsed.isNotEmpty)
-            pw.Padding(padding: const pw.EdgeInsets.only(top: 2),
-                child: pw.Text('Tools: ${exp.toolsUsed.join(" • ")}',
-                    style: pw.TextStyle(font: f.italic, fontSize: 7.5, color: _muted))),
-          pw.SizedBox(height: 10),
-        ]);
-      }),
+      ...exps.map((exp) => _expCard(exp, f)),
       _hr(),
+    ]);
+  }
+
+  // ── FIX 3: Projects section (academic/freelance projects) ──────────────────
+  pw.Widget _projectsSection(MasterProfile p, _Fonts f) {
+    final projects = p.experiences
+        .where((e) => e.type == 'project' || e.type == 'freelance')
+        .toList();
+    if (projects.isEmpty) return pw.SizedBox();
+
+    return pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+      _secTitle('ACADEMIC PROJECTS', f),
+      pw.SizedBox(height: 8),
+      ...projects.map((proj) => _expCard(proj, f)),
+      _hr(),
+    ]);
+  }
+
+  // ── FIX 4: Experience/Project card — deduplicate tools ────────────────────
+  pw.Widget _expCard(ExperienceEntry exp, _Fonts f) {
+    final desc = exp.professionalDescription.isNotEmpty
+        ? exp.professionalDescription
+        : exp.rawDescription;
+
+    // Clean bullets: strip markdown, remove empty lines
+    final bullets = desc
+        .split('\n')
+        .map((l) => l
+        .replaceAll(RegExp(r'\*\*(.+?)\*\*'), r'$1')
+        .replaceAll('**', '').replaceAll('*', '')
+        .replaceAll('•', '').trim())
+        .where((l) => l.isNotEmpty && l.length > 3)
+        .toList();
+
+    // FIX: Deduplicate tools — use Set to remove duplicates, then sort
+    final tools = exp.toolsUsed.toSet().toList()..sort();
+
+    return pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+      pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
+        pw.Expanded(child: pw.Text(exp.title,
+            style: pw.TextStyle(font: f.semiBold, fontSize: 10, color: _dark))),
+        pw.Text(exp.duration,
+            style: pw.TextStyle(font: f.italic, fontSize: 8, color: _muted)),
+      ]),
+      pw.Text(exp.organization,
+          style: pw.TextStyle(font: f.regular, fontSize: 9, color: _accent)),
+      pw.SizedBox(height: 4),
+      ...bullets.map((b) => pw.Padding(
+        padding: const pw.EdgeInsets.only(bottom: 2),
+        child: pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+          pw.Text('• ', style: pw.TextStyle(font: f.bold, fontSize: 9, color: _accent)),
+          pw.Expanded(child: pw.Text(b,
+              style: pw.TextStyle(font: f.regular, fontSize: 9, color: _text, lineSpacing: 1.4))),
+        ]),
+      )),
+      if (tools.isNotEmpty)
+        pw.Padding(
+          padding: const pw.EdgeInsets.only(top: 3),
+          child: pw.Text('Technologies: ${tools.join(', ')}',
+              style: pw.TextStyle(font: f.italic, fontSize: 7.5, color: _muted)),
+        ),
+      pw.SizedBox(height: 10),
     ]);
   }
 
@@ -226,34 +247,23 @@ class ResumePdfService {
     ]);
   }
 
-  // ── FIX 2: Skills — consistent chip colors (purple=matched, grey=others) ──
-  pw.Widget _skillsSection(MasterProfile p, JobApplication job, _Fonts f) {
+  // ── FIX 2: Skills — ALL same uniform color (no blue/grey split) ────────────
+  pw.Widget _skillsSection(MasterProfile p, _Fonts f) {
     if (p.skills.isEmpty) return pw.SizedBox();
-    final matched = job.matchedSkills.map((s) => s.toLowerCase()).toSet();
-    final sorted = [
-      ...p.skills.where((s) => matched.contains(s.toLowerCase())),
-      ...p.skills.where((s) => !matched.contains(s.toLowerCase())),
-    ];
     return pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
       _sideTitle('TECHNICAL SKILLS', f),
       pw.SizedBox(height: 6),
       pw.Wrap(spacing: 4, runSpacing: 5,
-        children: sorted.take(18).map((s) {
-          final isMatch = matched.contains(s.toLowerCase());
-          return pw.Container(
-            padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-            decoration: pw.BoxDecoration(
-              // FIX: matched=accent purple, unmatched=light grey — no mixed colors
-              color: isMatch ? _accent : _chipBg,
-              borderRadius: pw.BorderRadius.circular(3),
-            ),
-            child: pw.Text(s,
-                style: pw.TextStyle(
-                  font: f.semiBold, fontSize: 7.5,
-                  color: isMatch ? _white : _chipFg,
-                )),
-          );
-        }).toList(),
+        // ALL chips same color — uniform professional look
+        children: p.skills.take(20).map((s) => pw.Container(
+          padding: const pw.EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+          decoration: pw.BoxDecoration(
+            color: _accent,  // ALL purple — clean and professional
+            borderRadius: pw.BorderRadius.circular(3),
+          ),
+          child: pw.Text(s,
+              style: pw.TextStyle(font: f.semiBold, fontSize: 7.5, color: _white)),
+        )).toList(),
       ),
     ]);
   }
@@ -284,8 +294,7 @@ class ResumePdfService {
       pw.Wrap(spacing: 4, runSpacing: 4,
         children: p.languages.map((l) => pw.Container(
           padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-          decoration: pw.BoxDecoration(
-              color: _chipBg, borderRadius: pw.BorderRadius.circular(3)),
+          decoration: pw.BoxDecoration(color: _chipBg, borderRadius: pw.BorderRadius.circular(3)),
           child: pw.Text(l,
               style: pw.TextStyle(font: f.regular, fontSize: 8, color: _chipFg)),
         )).toList(),
@@ -293,25 +302,19 @@ class ResumePdfService {
     ]);
   }
 
-  // ── FIX 3: Soft Skills — use bullet list, NOT chips (avoids overflow) ──────
-  pw.Widget _softSkillsSection(MasterProfile p, _Fonts f) {
+  // ── Soft Skills ────────────────────────────────────────────────────────────
+  pw.Widget _softSection(MasterProfile p, _Fonts f) {
     return pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
       _sideTitle('SOFT SKILLS', f),
       pw.SizedBox(height: 5),
-      // Use simple bullet rows — no containers, no wrapping, no overflow
       ...p.softSkills.map((s) => pw.Padding(
         padding: const pw.EdgeInsets.only(bottom: 3),
         child: pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-          pw.Container(
-            width: 4, height: 4,
-            margin: const pw.EdgeInsets.only(top: 3, right: 6),
-            decoration: pw.BoxDecoration(color: _accent, shape: pw.BoxShape.circle),
-          ),
-          pw.Expanded(
-            // pw.Expanded inside right column ensures text wraps, never overflows
-            child: pw.Text(s,
-                style: pw.TextStyle(font: f.regular, fontSize: 8.5, color: _text)),
-          ),
+          pw.Container(width: 4, height: 4,
+              margin: const pw.EdgeInsets.only(top: 3, right: 6),
+              decoration: pw.BoxDecoration(color: _accent, shape: pw.BoxShape.circle)),
+          pw.Expanded(child: pw.Text(s,
+              style: pw.TextStyle(font: f.regular, fontSize: 8.5, color: _text))),
         ]),
       )),
     ]);

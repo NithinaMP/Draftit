@@ -207,7 +207,7 @@ class _DashboardScreenState extends State<DashboardScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Hello, $name 👋',
+            'Hello, $name',  // 👋
             style: GoogleFonts.dmSans(
               fontSize: 16,
               color: AppTheme.textSecondaryOf(context),

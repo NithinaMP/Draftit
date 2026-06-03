@@ -25,6 +25,7 @@ class _CareerBuilderScreenState extends State<CareerBuilderScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _fadeCtrl;
 
+
   @override
   void initState() {
     super.initState();
@@ -54,6 +55,7 @@ class _CareerBuilderScreenState extends State<CareerBuilderScreen>
           opacity: CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut),
           child: Consumer2<MasterProfileProvider, JobApplicationProvider>(
             builder: (_, profileProvider, jobProvider, __) {
+
               return CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(child: _buildHeader(context, profileProvider)),
@@ -70,9 +72,14 @@ class _CareerBuilderScreenState extends State<CareerBuilderScreen>
                         title: 'Application Tracker',
                         subtitle:
                         '${jobProvider.applications.length} applications',
+
                       ),
                     ),
                   ),
+
+
+
+
                   if (jobProvider.applications.isEmpty)
                     SliverToBoxAdapter(child: _buildEmptyApps(context))
                   else
@@ -331,7 +338,7 @@ class _ApplicationCard extends StatelessWidget {
     'draft': 'Draft',
     'applied': 'Applied',
     'interview': 'Interview',
-    'offer': 'Offer 🎉',
+    'offer': 'Offer ',         //🎉
     'rejected': 'Rejected',
   };
 
