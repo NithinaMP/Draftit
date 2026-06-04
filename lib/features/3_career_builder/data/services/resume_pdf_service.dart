@@ -418,12 +418,12 @@ class ResumePdfService {
       'Strong track record of building reliable, user-focused applications.',
     ];
 
-    final closings = [
-      'Seeking to bring this expertise to $company as $role and make an immediate impact.',
-      'Eager to leverage these skills at $company to contribute meaningfully as $role.',
-      'Looking to grow and deliver value as $role at $company.',
-      'Excited to apply this background at $company and excel as $role.',
-    ];
+    // final closings = [
+    //   'Seeking to bring this expertise to $company as $role and make an immediate impact.',
+    //   'Eager to leverage these skills at $company to contribute meaningfully as $role.',
+    //   'Looking to grow and deliver value as $role at $company.',
+    //   'Excited to apply this background at $company and excel as $role.',
+    // ];
 
     // Add experience context if available
     String expContext = '';
@@ -436,9 +436,9 @@ class ResumePdfService {
 
     final opening = openings[rand.nextInt(openings.length)];
     final middle  = middles[rand.nextInt(middles.length)];
-    final closing = closings[rand.nextInt(closings.length)];
+    // final closing = closings[rand.nextInt(closings.length)];
 
-    return '$opening$expContext $middle $closing';
+    return '$opening$expContext $middle '; //$closing
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────

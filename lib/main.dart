@@ -4,7 +4,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
-import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
 import 'core/constants/app_constants.dart';
@@ -40,6 +39,7 @@ void main() async {
   Hive.registerAdapter(EducationEntryAdapter());
   Hive.registerAdapter(ExperienceEntryAdapter());
   Hive.registerAdapter(MasterProfileAdapter());
+  Hive.registerAdapter(ProjectEntryAdapter());
   Hive.registerAdapter(JobApplicationAdapter());
   runApp(const DraftItApp());
 }
@@ -73,7 +73,6 @@ class DraftItApp extends StatelessWidget {
           darkTheme: AppTheme.dark,
           themeMode: themeProvider.mode,
 
-          onGenerateRoute: AppRouter.generateRoute,
 
           // All routes pushed from here inherit the MultiProvider above
           home: const AppBootstrap(),
