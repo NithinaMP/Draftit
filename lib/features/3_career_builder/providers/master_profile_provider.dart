@@ -143,22 +143,22 @@ class MasterProfileProvider extends ChangeNotifier {
   //     await _persist();
   //   }
   // }
-  //
-  // Future<void> removeCertification(int index) async {
-  //   _profile.certifications.removeAt(index);
-  //   await _persist();
-  // }
 
   Future<void> addCertification(CertificationEntry cert) async {
     _profile.certifications.add(cert);
     await _persist();
   }
 
+  // Future<void> removeCertification(int index) async {
+  //   _profile.certifications.removeAt(index);
+  //   await _persist();
+  // }
   Future<void> removeCertification(String id) async {
-    _profile.certifications.removeWhere((c) => c.id == id);
+    _profile.certifications.removeWhere(
+          (c) => c.id == id,
+    );
     await _persist();
   }
-
   CertificationEntry buildCertification({
     required String name,
     required String organization,

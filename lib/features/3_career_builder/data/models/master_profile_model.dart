@@ -75,7 +75,7 @@ class ExperienceEntry extends HiveObject {
 }
 
 // ── Certification (NEW — full fields) ─────────────────────────────────────────
-@HiveType(typeId: 6)
+@HiveType(typeId: 8)
 class CertificationEntry extends HiveObject {
   @HiveField(0) String id;
   @HiveField(1) String name;           // e.g. Basic Life Support (BLS)
@@ -106,7 +106,7 @@ class CertificationEntry extends HiveObject {
 }
 
 // ── Project ───────────────────────────────────────────────────────────────────
-@HiveType(typeId: 7)
+@HiveType(typeId: 9)
 class ProjectEntry extends HiveObject {
   @HiveField(0) String id;
   @HiveField(1) String title;
