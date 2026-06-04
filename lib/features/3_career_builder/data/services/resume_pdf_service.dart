@@ -244,23 +244,6 @@ class ResumePdfService {
     ]);
   }
 
-  // pw.Widget _certSection(MasterProfile p, _Fonts f) {
-  //   return pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-  //     _sideTitle('CERTIFICATIONS', f),
-  //     pw.SizedBox(height: 5),
-  //     ...p.certifications.map((c) => pw.Padding(
-  //       padding: const pw.EdgeInsets.only(bottom: 3),
-  //       child: pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-  //         pw.Container(width: 4, height: 4,
-  //             margin: const pw.EdgeInsets.only(top: 3, right: 5),
-  //             decoration: pw.BoxDecoration(color: _accent, shape: pw.BoxShape.circle)),
-  //         pw.Expanded(child: pw.Text(c,
-  //             style: pw.TextStyle(font: f.regular, fontSize: 8, color: _text))),
-  //       ]),
-  //     )),
-  //   ]);
-  // }
-
   pw.Widget _certSection(MasterProfile p, _Fonts f) {
     return pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
       _sideTitle('CERTIFICATIONS', f),
@@ -285,7 +268,6 @@ class ResumePdfService {
       )),
     ]);
   }
-
 
   pw.Widget _langSection(MasterProfile p, _Fonts f) {
     return pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
@@ -389,10 +371,6 @@ class ResumePdfService {
     }
 
     // Certifications
-    // if (p.certifications.isNotEmpty) {
-    //   sections.add(_atsSection('CERTIFICATIONS', p.certifications, f));
-    // }
-    // Certifications
     if (p.certifications.isNotEmpty) {
       final certLines = p.certifications.map((cert) {
         final parts = [cert.name, cert.organization, cert.issueDate];
@@ -402,7 +380,6 @@ class ResumePdfService {
       }).toList();
       sections.add(_atsSection('CERTIFICATIONS', certLines, f));
     }
-
 
     // Languages
     if (p.languages.isNotEmpty) {
@@ -455,19 +432,11 @@ class ResumePdfService {
       'Strong track record of building reliable, user-focused applications.',
     ];
 
-    // final closings = [
-    //   'Seeking to bring this expertise to $company as $role and make an immediate impact.',
-    //   'Eager to leverage these skills at $company to contribute meaningfully as $role.',
-    //   'Looking to grow and deliver value as $role at $company.',
-    //   'Excited to apply this background at $company and excel as $role.',
-    // ];
-
     final closings = [
-      'Committed to continuous learning, professional growth, and delivering meaningful results.',
-      'Known for adaptability, strong problem-solving abilities, and a proactive approach to new challenges.',
-      'Bringing a combination of academic knowledge, practical experience, and a passion for excellence.',
-      'Dedicated to applying skills and knowledge to create positive impact and achieve meaningful outcomes.',
-      'Focused on continuous improvement, collaboration, and delivering high-quality work.',
+      'Seeking to bring this expertise to $company as $role and make an immediate impact.',
+      'Eager to leverage these skills at $company to contribute meaningfully as $role.',
+      'Looking to grow and deliver value as $role at $company.',
+      'Excited to apply this background at $company and excel as $role.',
     ];
 
     // Add experience context if available
