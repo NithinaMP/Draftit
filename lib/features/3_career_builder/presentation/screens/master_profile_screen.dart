@@ -6,7 +6,7 @@ import '../../data/models/master_profile_model.dart';
 import '../../providers/master_profile_provider.dart';
 // import '../providers/master_profile_provider.dart';
 // import '../../1_voice_to_notes/providers/lectures_provider.dart';
-// import '../data/models/master_profile_model.dart';
+// import '../data/models/master_profile_model/.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_widgets.dart';
 
@@ -570,17 +570,6 @@ class _ExtrasTabState extends State<_ExtrasTab> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // _sectionHead('Certifications', Icons.verified_outlined, AppTheme.success),
-        // const SizedBox(height: 10),
-        // _addRow(_certC, 'e.g. AWS Certified, Google Analytics', () async {
-        //   if (_certC.text.trim().isNotEmpty) {
-        //     await widget.provider.addCertification(_certC.text.trim());
-        //     _certC.clear();
-        //   }
-        // }),
-        // const SizedBox(height: 10),
-        // _chipWrap(context, p.certifications, AppTheme.success,
-        //         (c) => widget.provider.removeCertification(p.certifications.indexOf(c))),
         _sectionHead('Certifications', Icons.verified_outlined, AppTheme.success),
         const SizedBox(height: 10),
         // Certification cards
