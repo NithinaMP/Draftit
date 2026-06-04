@@ -425,6 +425,14 @@ class ResumePdfService {
     //   'Excited to apply this background at $company and excel as $role.',
     // ];
 
+    final closings = [
+      'Committed to continuous learning, professional growth, and delivering meaningful results.',
+      'Known for adaptability, strong problem-solving abilities, and a proactive approach to new challenges.',
+      'Bringing a combination of academic knowledge, practical experience, and a passion for excellence.',
+      'Dedicated to applying skills and knowledge to create positive impact and achieve meaningful outcomes.',
+      'Focused on continuous improvement, collaboration, and delivering high-quality work.',
+    ];
+
     // Add experience context if available
     String expContext = '';
     if (p.experiences.isNotEmpty) {
@@ -436,9 +444,9 @@ class ResumePdfService {
 
     final opening = openings[rand.nextInt(openings.length)];
     final middle  = middles[rand.nextInt(middles.length)];
-    // final closing = closings[rand.nextInt(closings.length)];
+    final closing = closings[rand.nextInt(closings.length)];
 
-    return '$opening$expContext $middle '; //$closing
+    return '$opening$expContext $middle $closing';
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
