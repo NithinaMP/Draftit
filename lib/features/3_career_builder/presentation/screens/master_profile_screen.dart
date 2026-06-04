@@ -570,17 +570,39 @@ class _ExtrasTabState extends State<_ExtrasTab> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        // _sectionHead('Certifications', Icons.verified_outlined, AppTheme.success),
+        // const SizedBox(height: 10),
+        // _addRow(_certC, 'e.g. AWS Certified, Google Analytics', () async {
+        //   if (_certC.text.trim().isNotEmpty) {
+        //     await widget.provider.addCertification(_certC.text.trim());
+        //     _certC.clear();
+        //   }
+        // }),
+        // const SizedBox(height: 10),
+        // _chipWrap(context, p.certifications, AppTheme.success,
+        //         (c) => widget.provider.removeCertification(p.certifications.indexOf(c))),
         _sectionHead('Certifications', Icons.verified_outlined, AppTheme.success),
         const SizedBox(height: 10),
-        _addRow(_certC, 'e.g. AWS Certified, Google Analytics', () async {
-          if (_certC.text.trim().isNotEmpty) {
-            await widget.provider.addCertification(_certC.text.trim());
-            _certC.clear();
-          }
-        }),
-        const SizedBox(height: 10),
-        _chipWrap(context, p.certifications, AppTheme.success,
-                (c) => widget.provider.removeCertification(p.certifications.indexOf(c))),
+        // Certification cards
+        if (p.certifications.isEmpty)
+          Text('No certifications added.', style: Theme.of(context).textTheme.bodyMedium)
+        else
+          ...p.certifications.map((cert) => _CertCard(
+            cert: cert,
+            onDelete: () => widget.provider.removeCertification(cert.id),
+          )),
+        const SizedBox(height: 12),
+        OutlinedButton.icon(
+          onPressed: () => _showCertSheet(context, widget.provider),
+          icon: const Icon(Icons.add_rounded, size: 18, color: AppTheme.success),
+          label: Text('Add Certification',
+              style: GoogleFonts.spaceGrotesk(color: AppTheme.success, fontWeight: FontWeight.w600)),
+          style: OutlinedButton.styleFrom(
+            side: const BorderSide(color: AppTheme.success),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            minimumSize: const Size(double.infinity, 48),
+          ),
+        ),
 
         const SizedBox(height: 24),
         const Divider(),
@@ -768,6 +790,134 @@ class _ProjectCard extends StatelessWidget {
                 fontSize: 12, color: AppTheme.accentLight)),
           ]),
         ],
+      ]),
+    );
+  }
+}
+
+
+// ─── Cert Sheet helper (top-level function used by _ExtrasTabState) ───────────
+void _showCertSheet(BuildContext context, MasterProfileProvider provider) {
+  final nameC = TextEditingController();
+  final orgC = TextEditingController();
+  final issueC = TextEditingController();
+  final expC = TextEditingController();
+  final idC = TextEditingController();
+
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: AppTheme.surfaceOf(context),
+    shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+    builder: (ctx) => Padding(
+      padding: EdgeInsets.only(
+          left: 20, right: 20, top: 20,
+          bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
+      child: SingleChildScrollView(
+        child: Column(mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('Add Certification',
+                  style: Theme.of(context).textTheme.headlineMedium),
+              const SizedBox(height: 16),
+              _certTf(context, nameC, 'Certification Name *', 'e.g. Basic Life Support (BLS)'),
+              _certTf(context, orgC, 'Issuing Organization *', 'e.g. American Heart Association'),
+              _certTf(context, issueC, 'Issue Date *', 'e.g. Jan 2025'),
+              _certTf(context, expC, 'Expiry Date', 'e.g. Jan 2027 (leave blank if no expiry)'),
+              _certTf(context, idC, 'Credential ID', 'e.g. AHA-BLS-99214'),
+              const SizedBox(height: 20),
+              GradientButton(
+                label: 'Add Certification',
+                icon: Icons.verified_outlined,
+                onPressed: () {
+                  if (nameC.text.trim().isEmpty || orgC.text.trim().isEmpty) return;
+                  provider.addCertification(provider.buildCertification(
+                    name: nameC.text.trim(),
+                    organization: orgC.text.trim(),
+                    issueDate: issueC.text.trim(),
+                    expiryDate: expC.text.trim().isEmpty ? null : expC.text.trim(),
+                    credentialId: idC.text.trim().isEmpty ? null : idC.text.trim(),
+                  ));
+                  Navigator.pop(ctx);
+                },
+              ),
+            ]),
+      ),
+    ),
+  );
+}
+
+Widget _certTf(BuildContext ctx, TextEditingController c, String label, String hint) =>
+    Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextField(
+        controller: c,
+        style: TextStyle(color: AppTheme.textPrimaryOf(ctx)),
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+          hintStyle: GoogleFonts.dmSans(color: AppTheme.textSecondaryOf(ctx), fontSize: 12),
+        ),
+      ),
+    );
+
+// ─── Certification Card ───────────────────────────────────────────────────────
+class _CertCard extends StatelessWidget {
+  final CertificationEntry cert;
+  final VoidCallback onDelete;
+  const _CertCard({required this.cert, required this.onDelete});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceOf(context),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppTheme.success.withOpacity(0.3)),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Container(
+            padding: const EdgeInsets.all(7),
+            decoration: BoxDecoration(
+              color: AppTheme.success.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.verified_outlined, color: AppTheme.success, size: 18),
+          ),
+          const SizedBox(width: 10),
+          Expanded(child: Text(cert.name,
+              style: Theme.of(context).textTheme.titleMedium,
+              overflow: TextOverflow.ellipsis)),
+          IconButton(
+            icon: const Icon(Icons.delete_outline, color: AppTheme.error, size: 18),
+            onPressed: onDelete,
+            padding: EdgeInsets.zero,
+          ),
+        ]),
+        const SizedBox(height: 8),
+        _row(context, Icons.business_outlined, cert.organization),
+        _row(context, Icons.calendar_today_outlined,
+            cert.expiryDate != null && cert.expiryDate!.isNotEmpty
+                ? '${cert.issueDate}  →  Expires: ${cert.expiryDate}'
+                : cert.issueDate),
+        if ((cert.credentialId ?? '').isNotEmpty)
+          _row(context, Icons.badge_outlined, 'ID: ${cert.credentialId}'),
+      ]),
+    );
+  }
+
+  Widget _row(BuildContext context, IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Row(children: [
+        Icon(icon, size: 13, color: AppTheme.textSecondaryOf(context)),
+        const SizedBox(width: 6),
+        Expanded(child: Text(text,
+            style: GoogleFonts.dmSans(fontSize: 12,
+                color: AppTheme.textSecondaryOf(context)))),
       ]),
     );
   }

@@ -137,16 +137,43 @@ class MasterProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addCertification(String cert) async {
-    if (cert.trim().isNotEmpty) {
-      _profile.certifications.add(cert.trim());
-      await _persist();
-    }
+  // Future<void> addCertification(String cert) async {
+  //   if (cert.trim().isNotEmpty) {
+  //     _profile.certifications.add(cert.trim());
+  //     await _persist();
+  //   }
+  // }
+  //
+  // Future<void> removeCertification(int index) async {
+  //   _profile.certifications.removeAt(index);
+  //   await _persist();
+  // }
+
+  Future<void> addCertification(CertificationEntry cert) async {
+    _profile.certifications.add(cert);
+    await _persist();
   }
 
-  Future<void> removeCertification(int index) async {
-    _profile.certifications.removeAt(index);
+  Future<void> removeCertification(String id) async {
+    _profile.certifications.removeWhere((c) => c.id == id);
     await _persist();
+  }
+
+  CertificationEntry buildCertification({
+    required String name,
+    required String organization,
+    required String issueDate,
+    String? expiryDate,
+    String? credentialId,
+  }) {
+    return CertificationEntry(
+      id: const Uuid().v4(),
+      name: name,
+      organization: organization,
+      issueDate: issueDate,
+      expiryDate: expiryDate,
+      credentialId: credentialId,
+    );
   }
 
   Future<void> addSoftSkill(String skill) async {

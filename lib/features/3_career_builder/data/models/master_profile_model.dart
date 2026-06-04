@@ -12,25 +12,25 @@ class MasterProfile extends HiveObject {
   @HiveField(5)  List<EducationEntry> education;
   @HiveField(6)  List<ExperienceEntry> experiences;
   @HiveField(7)  List<String> skills;
-  @HiveField(8)  List<String> certifications;
+  @HiveField(8)  List<CertificationEntry> certifications; // UPGRADED
   @HiveField(9)  List<String> languages;
   @HiveField(10) String? linkedIn;
   @HiveField(11) String? github;
   @HiveField(12) String? portfolio;
   @HiveField(13) List<String> softSkills;
-  @HiveField(14) List<ProjectEntry> projects; // NEW
+  @HiveField(14) List<ProjectEntry> projects;
 
   MasterProfile({
     this.fullName = '', this.email = '', this.phone = '',
     this.location = '', this.summary = '',
-    List<EducationEntry>?  education,
-    List<ExperienceEntry>? experiences,
-    List<String>?          skills,
-    List<String>?          certifications,
-    List<String>?          languages,
+    List<EducationEntry>?      education,
+    List<ExperienceEntry>?     experiences,
+    List<String>?              skills,
+    List<CertificationEntry>?  certifications,
+    List<String>?              languages,
     this.linkedIn, this.github, this.portfolio,
-    List<String>?       softSkills,
-    List<ProjectEntry>? projects,
+    List<String>?              softSkills,
+    List<ProjectEntry>?        projects,
   })  : education      = education      ?? [],
         experiences    = experiences    ?? [],
         skills         = skills         ?? [],
@@ -39,9 +39,11 @@ class MasterProfile extends HiveObject {
         softSkills     = softSkills     ?? [],
         projects       = projects       ?? [];
 
-  bool get isComplete => fullName.isNotEmpty && email.isNotEmpty && skills.isNotEmpty;
+  bool get isComplete =>
+      fullName.isNotEmpty && email.isNotEmpty && skills.isNotEmpty;
 }
 
+// ── Education ─────────────────────────────────────────────────────────────────
 @HiveType(typeId: 4)
 class EducationEntry extends HiveObject {
   @HiveField(0) String degree;
@@ -52,6 +54,7 @@ class EducationEntry extends HiveObject {
     required this.year, this.grade});
 }
 
+// ── Experience ────────────────────────────────────────────────────────────────
 @HiveType(typeId: 5)
 class ExperienceEntry extends HiveObject {
   @HiveField(0) String id;
@@ -71,7 +74,38 @@ class ExperienceEntry extends HiveObject {
   }) : toolsUsed = toolsUsed ?? [];
 }
 
-// NEW: Academic Project model
+// ── Certification (NEW — full fields) ─────────────────────────────────────────
+@HiveType(typeId: 6)
+class CertificationEntry extends HiveObject {
+  @HiveField(0) String id;
+  @HiveField(1) String name;           // e.g. Basic Life Support (BLS)
+  @HiveField(2) String organization;   // e.g. American Heart Association
+  @HiveField(3) String issueDate;      // e.g. Jan 2025
+  @HiveField(4) String? expiryDate;    // e.g. Jan 2027 (optional)
+  @HiveField(5) String? credentialId;  // e.g. AHA-BLS-99214
+
+  CertificationEntry({
+    required this.id,
+    required this.name,
+    required this.organization,
+    required this.issueDate,
+    this.expiryDate,
+    this.credentialId,
+  });
+
+  /// Short display label for chips etc.
+  String get displayLabel => name;
+
+  /// Full formatted string for ATS resume
+  String get formatted {
+    final parts = <String>[name, organization, issueDate];
+    if (expiryDate != null && expiryDate!.isNotEmpty) parts.add('Exp: $expiryDate');
+    if (credentialId != null && credentialId!.isNotEmpty) parts.add('ID: $credentialId');
+    return parts.join(' | ');
+  }
+}
+
+// ── Project ───────────────────────────────────────────────────────────────────
 @HiveType(typeId: 7)
 class ProjectEntry extends HiveObject {
   @HiveField(0) String id;
@@ -80,7 +114,7 @@ class ProjectEntry extends HiveObject {
   @HiveField(3) List<String> techStack;
   @HiveField(4) String? githubLink;
   @HiveField(5) String? liveLink;
-  @HiveField(6) String duration; // e.g. "Jan 2024 – Mar 2024"
+  @HiveField(6) String duration;
   ProjectEntry({
     required this.id, required this.title, required this.description,
     List<String>? techStack, this.githubLink, this.liveLink, this.duration = '',

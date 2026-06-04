@@ -41,6 +41,8 @@ void main() async {
   Hive.registerAdapter(ExperienceEntryAdapter());
   Hive.registerAdapter(MasterProfileAdapter());
   Hive.registerAdapter(ProjectEntryAdapter());
+
+  Hive.registerAdapter(CertificationEntryAdapter());
   Hive.registerAdapter(JobApplicationAdapter());
   runApp(const DraftItApp());
 }

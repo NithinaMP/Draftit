@@ -244,22 +244,48 @@ class ResumePdfService {
     ]);
   }
 
+  // pw.Widget _certSection(MasterProfile p, _Fonts f) {
+  //   return pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+  //     _sideTitle('CERTIFICATIONS', f),
+  //     pw.SizedBox(height: 5),
+  //     ...p.certifications.map((c) => pw.Padding(
+  //       padding: const pw.EdgeInsets.only(bottom: 3),
+  //       child: pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+  //         pw.Container(width: 4, height: 4,
+  //             margin: const pw.EdgeInsets.only(top: 3, right: 5),
+  //             decoration: pw.BoxDecoration(color: _accent, shape: pw.BoxShape.circle)),
+  //         pw.Expanded(child: pw.Text(c,
+  //             style: pw.TextStyle(font: f.regular, fontSize: 8, color: _text))),
+  //       ]),
+  //     )),
+  //   ]);
+  // }
+
   pw.Widget _certSection(MasterProfile p, _Fonts f) {
     return pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
       _sideTitle('CERTIFICATIONS', f),
       pw.SizedBox(height: 5),
-      ...p.certifications.map((c) => pw.Padding(
-        padding: const pw.EdgeInsets.only(bottom: 3),
-        child: pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-          pw.Container(width: 4, height: 4,
-              margin: const pw.EdgeInsets.only(top: 3, right: 5),
-              decoration: pw.BoxDecoration(color: _accent, shape: pw.BoxShape.circle)),
-          pw.Expanded(child: pw.Text(c,
-              style: pw.TextStyle(font: f.regular, fontSize: 8, color: _text))),
+      ...p.certifications.map((cert) => pw.Padding(
+        padding: const pw.EdgeInsets.only(bottom: 7),
+        child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+          pw.Text(cert.name,
+              style: pw.TextStyle(font: f.semiBold, fontSize: 8.5, color: _dark)),
+          pw.Text(cert.organization,
+              style: pw.TextStyle(font: f.regular, fontSize: 8, color: _accent)),
+          pw.Text(
+            cert.expiryDate != null && cert.expiryDate!.isNotEmpty
+                ? '${cert.issueDate}  |  Exp: ${cert.expiryDate}'
+                : cert.issueDate,
+            style: pw.TextStyle(font: f.italic, fontSize: 7.5, color: _muted),
+          ),
+          if ((cert.credentialId ?? '').isNotEmpty)
+            pw.Text('ID: ${cert.credentialId}',
+                style: pw.TextStyle(font: f.italic, fontSize: 7.5, color: _muted)),
         ]),
       )),
     ]);
   }
+
 
   pw.Widget _langSection(MasterProfile p, _Fonts f) {
     return pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
@@ -363,9 +389,20 @@ class ResumePdfService {
     }
 
     // Certifications
+    // if (p.certifications.isNotEmpty) {
+    //   sections.add(_atsSection('CERTIFICATIONS', p.certifications, f));
+    // }
+    // Certifications
     if (p.certifications.isNotEmpty) {
-      sections.add(_atsSection('CERTIFICATIONS', p.certifications, f));
+      final certLines = p.certifications.map((cert) {
+        final parts = [cert.name, cert.organization, cert.issueDate];
+        if ((cert.expiryDate ?? '').isNotEmpty) parts.add('Exp: ${cert.expiryDate}');
+        if ((cert.credentialId ?? '').isNotEmpty) parts.add('ID: ${cert.credentialId}');
+        return parts.join(' | ');
+      }).toList();
+      sections.add(_atsSection('CERTIFICATIONS', certLines, f));
     }
+
 
     // Languages
     if (p.languages.isNotEmpty) {
