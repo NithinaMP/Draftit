@@ -116,7 +116,7 @@ class _RecorderScreenState extends State<RecorderScreen>
                     builder: (context, recorder, generator, _) {
                       if (generator.isProcessing ||
                           generator.status == NotesStatus.error) {
-                        return _buildProcessingView(context,generator);
+                        return _buildProcessingView(generator);
                       }
                       return _buildRecorderView(context, recorder);
                     },
@@ -136,7 +136,7 @@ class _RecorderScreenState extends State<RecorderScreen>
       child: Row(
         children: [
           IconButton(
-            icon: Icon(Icons.arrow_back_ios_new_rounded,
+            icon:  Icon(Icons.arrow_back_ios_new_rounded,
                 color: AppTheme.textPrimaryOf(context)),
             onPressed: () => Navigator.pop(context),
           ),
@@ -241,8 +241,7 @@ class _RecorderScreenState extends State<RecorderScreen>
     );
   }
 
-  Widget _buildProcessingView( BuildContext context,
-      NotesGenerationProvider generator,) {
+  Widget _buildProcessingView(NotesGenerationProvider generator) {
     final steps = [
       'Transcribing audio with Whisper',
       'Structuring notes with Mistral AI',
