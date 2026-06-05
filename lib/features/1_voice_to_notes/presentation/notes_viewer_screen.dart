@@ -60,7 +60,7 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) return _buildLoading(context);
+    if (_isLoading) return _buildLoading();
     if (_error != null) return _buildError();
     if (_lecture == null) return _buildError(msg: 'Lecture not found');
 
@@ -72,7 +72,7 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
         child: Column(
           children: [
             _buildHeader(lecture),
-            _buildTabBar(context),
+            _buildTabBar(),
             Expanded(
               child: TabBarView(
                 controller: _tabCtrl,
@@ -97,14 +97,14 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
           Row(
             children: [
               IconButton(
-                icon: Icon(Icons.arrow_back_ios_new_rounded,
+                icon:  Icon(Icons.arrow_back_ios_new_rounded,
                     color: AppTheme.textPrimaryOf(context)),
                 onPressed: () => Navigator.pop(context),
               ),
               const Spacer(),
               // Copy button
               IconButton(
-                icon: Icon(Icons.copy_rounded,
+                icon:  Icon(Icons.copy_rounded,
                     color: AppTheme.textSecondaryOf(context), size: 20),
                 tooltip: 'Copy notes',
                 onPressed: () => _copyNotes(lecture),
@@ -157,48 +157,14 @@ class _NotesViewerScreenState extends State<NotesViewerScreen>
     );
   }
 
-  // Widget _buildTabBar() {
-  //   return Container(
-  //     margin: const EdgeInsets.symmetric(horizontal: 20),
-  //     height: 44,
-  //     decoration: BoxDecoration(
-  //       color: AppTheme.surface,
-  //       borderRadius: BorderRadius.circular(12),
-  //       border: Border.all(color: AppTheme.borderOf(context)),
-  //     ),
-  //     child: TabBar(
-  //       controller: _tabCtrl,
-  //       indicator: BoxDecoration(
-  //         gradient: const LinearGradient(
-  //           colors: [AppTheme.accent, Color(0xFF9D40FF)],
-  //         ),
-  //         borderRadius: BorderRadius.circular(10),
-  //       ),
-  //       indicatorSize: TabBarIndicatorSize.tab,
-  //       dividerColor: Colors.transparent,
-  //       labelColor: Colors.white,
-  //       unselectedLabelColor: AppTheme.textSecondaryOf(context),
-  //       labelStyle: GoogleFonts.spaceGrotesk(
-  //         fontSize: 14,
-  //         fontWeight: FontWeight.w600,
-  //       ),
-  //       tabs: const [
-  //         Tab(text: 'Notes'),
-  //         Tab(text: 'Skills'),
-  //       ],
-  //     ),
-  //   );
-  // }
-  Widget _buildTabBar(BuildContext context) {
+  Widget _buildTabBar() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       height: 44,
       decoration: BoxDecoration(
         color: AppTheme.surfaceOf(context),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppTheme.borderOf(context),
-        ),
+        border: Border.all(color: AppTheme.borderOf(context)),
       ),
       child: TabBar(
         controller: _tabCtrl,
@@ -497,22 +463,11 @@ ${lecture.extractedSkills.join(', ')}
     );
   }
 
-  // Widget _buildLoading() {
-  //   return Scaffold(
-  //     backgroundColor: AppTheme.bgOf(context),
-  //     body: Center(
-  //       child: CircularProgressIndicator(color: AppTheme.accent),
-  //     ),
-  //   );
-  // }
-
-  Widget _buildLoading(BuildContext context) {
-    return Scaffold(
+  Widget _buildLoading() {
+    return  Scaffold(
       backgroundColor: AppTheme.bgOf(context),
-      body: const Center(
-        child: CircularProgressIndicator(
-          color: AppTheme.accent,
-        ),
+      body: Center(
+        child: CircularProgressIndicator(color: AppTheme.accent),
       ),
     );
   }
@@ -527,7 +482,7 @@ ${lecture.extractedSkills.join(', ')}
             const Icon(Icons.error_outline, color: AppTheme.error, size: 40),
             const SizedBox(height: 16),
             Text(msg ?? _error ?? 'Error',
-                style: TextStyle(color: AppTheme.textSecondaryOf(context))),
+                style:  TextStyle(color: AppTheme.textSecondaryOf(context))),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => Navigator.pop(context),
