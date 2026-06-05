@@ -3,12 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../1_voice_to_notes/data/models/lecture_model.dart';
 import '../../providers/exam_predictor_provider.dart';
+import '../../providers/syllabus_provider.dart';
 // import '../providers/exam_predictor_provider.dart';
 // import '../providers/syllabus_provider.dart';
 // import '../../1_voice_to_notes/data/models/lecture_model.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_widgets.dart';
-import '../../providers/syllabus_provider.dart';
 import 'evaluation_sandbox_screen.dart';
 
 class ExamBlueprintScreen extends StatefulWidget {
@@ -49,7 +49,7 @@ class _ExamBlueprintScreenState extends State<ExamBlueprintScreen>
           children: [
             _buildHeader(),
             _buildAlignmentBanner(),
-            _buildTabBar(context),
+            _buildTabBar(),
             Expanded(
               child: Consumer<ExamPredictorProvider>(
                 builder: (_, provider, __) {
@@ -163,7 +163,7 @@ class _ExamBlueprintScreenState extends State<ExamBlueprintScreen>
     );
   }
 
-  Widget _buildTabBar(BuildContext context) {
+  Widget _buildTabBar() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: Container(

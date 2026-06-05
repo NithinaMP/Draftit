@@ -71,8 +71,8 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: AppTheme.textPrimary),
+            icon:  Icon(Icons.arrow_back_ios_new_rounded,
+                color: AppTheme.textPrimaryOf(context)),
             onPressed: () {
               provider.resetGrading();
               Navigator.pop(context);
