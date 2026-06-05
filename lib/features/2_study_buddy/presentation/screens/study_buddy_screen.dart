@@ -8,7 +8,7 @@ import '../../providers/syllabus_provider.dart';
 // import '../providers/exam_predictor_provider.dart';
 // import '../providers/syllabus_provider.dart';
 // import '../../1_voice_to_notes/providers/lectures_provider.dart';
-// import '../../1_voice_to_notes/data/models/lecture_model.dart';
+// import '../../1_voice_to_notes/data/models/lect/ure_model.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_widgets.dart';
 import 'exam_blueprint_screen.dart';
