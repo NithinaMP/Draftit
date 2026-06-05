@@ -3,9 +3,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../models/master_profile_model.dart';
 
 class HiveProfileBox {
-  // Key is scoped by Firebase UID — each user gets their own data
+  static const _boxName = 'master_profile_box_v2'; // v2 = new schema with CertificationEntry
   String get _key => 'profile_${FirebaseAuth.instance.currentUser?.uid ?? 'guest'}';
-  static const _boxName = 'master_profile_box';
   Box<MasterProfile>? _box;
 
   Future<Box<MasterProfile>> get box async {
@@ -29,6 +28,5 @@ class HiveProfileBox {
     return p != null && p.isComplete;
   }
 
-  /// Call on sign-out — clears in-memory box reference
   void reset() => _box = null;
 }
