@@ -54,8 +54,8 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
                 _buildHeader(provider),
                 Expanded(
                   child: provider.lastEvaluation != null
-                      ? _buildResults(context,provider)
-                      : _buildAnswerInput(context, provider),
+                      ? _buildResults(provider)
+                      : _buildAnswerInput(provider),
                 ),
               ],
             );
@@ -71,8 +71,8 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
       child: Row(
         children: [
           IconButton(
-            icon:  Icon(Icons.arrow_back_ios_new_rounded,
-                color: AppTheme.textPrimaryOf(context)),
+            icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                color: AppTheme.textPrimary),
             onPressed: () {
               provider.resetGrading();
               Navigator.pop(context);
@@ -103,7 +103,7 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
     );
   }
 
-  Widget _buildAnswerInput(BuildContext context,ExamPredictorProvider provider) {
+  Widget _buildAnswerInput(ExamPredictorProvider provider) {
     final q = widget.question;
     final markColor = q.marks == 2
         ? AppTheme.success
@@ -245,7 +245,7 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
     );
   }
 
-  Widget _buildResults(BuildContext context,ExamPredictorProvider provider) {
+  Widget _buildResults(ExamPredictorProvider provider) {
     final eval = provider.lastEvaluation!;
     final scoreColor = eval.scorePercent >= 0.9
         ? AppTheme.success
@@ -307,7 +307,7 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
                       height: 80,
                       child: CircularProgressIndicator(
                         value: eval.scorePercent,
-                        backgroundColor: AppTheme.borderOf(context),
+                        backgroundColor: AppTheme.border,
                         valueColor: AlwaysStoppedAnimation(scoreColor),
                         strokeWidth: 6,
                       ),

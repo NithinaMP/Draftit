@@ -155,7 +155,7 @@ class _SyllabusTrackerScreenState extends State<SyllabusTrackerScreen> {
                   label: const Text('Type Manually'),
                   style: OutlinedButton.styleFrom(
                     side:  BorderSide(color: AppTheme.borderOf(context)),
-                    foregroundColor: AppTheme.textSecondary,
+                    foregroundColor: AppTheme.textSecondaryOf(context),
                     minimumSize: const Size(double.infinity, 48),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -222,7 +222,7 @@ class _SyllabusTrackerScreenState extends State<SyllabusTrackerScreen> {
                   borderRadius: BorderRadius.circular(6),
                   child: LinearProgressIndicator(
                     value: provider.overallProgress,
-                    backgroundColor: AppTheme.border,
+                    backgroundColor: AppTheme.borderOf(context),
                     valueColor:
                     const AlwaysStoppedAnimation(AppTheme.accent),
                     minHeight: 8,
@@ -254,7 +254,7 @@ class _SyllabusTrackerScreenState extends State<SyllabusTrackerScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppTheme.surface,
+      backgroundColor: AppTheme.surfaceOf(context),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -327,7 +327,7 @@ class _UnitCard extends StatelessWidget {
         border: Border.all(
           color: progress >= 1.0
               ? AppTheme.success.withOpacity(0.3)
-              : AppTheme.border,
+              : AppTheme.borderOf(context),
         ),
       ),
       child: Column(
@@ -357,8 +357,8 @@ class _UnitCard extends StatelessWidget {
                 ),
               ),
               PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert,
-                    color: AppTheme.textSecondary, size: 18),
+                icon:  Icon(Icons.more_vert,
+                    color: AppTheme.textSecondaryOf(context), size: 18),
                 color: AppTheme.surfaceElevOf(context),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
@@ -388,7 +388,7 @@ class _UnitCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: progress,
-                    backgroundColor: AppTheme.border,
+                    backgroundColor: AppTheme.borderOf(context),
                     valueColor: AlwaysStoppedAnimation(progressColor),
                     minHeight: 5,
                   ),
@@ -454,7 +454,7 @@ class _AddUnitFAB extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppTheme.surface,
+      backgroundColor: AppTheme.surfaceOf(context),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
