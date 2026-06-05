@@ -46,7 +46,7 @@ class _JdInputScreenState extends State<JdInputScreen> {
       body: SafeArea(
         child: Consumer<JobApplicationProvider>(
           builder: (_, provider, __) {
-            if (provider.isProcessing) return _buildProcessing(context, provider);
+            if (provider.isProcessing) return _buildProcessing(provider);
             if (provider.status == JobStatus.done) {
               // Auto-navigate to results
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -58,7 +58,7 @@ class _JdInputScreenState extends State<JdInputScreen> {
                   );
                 }
               });
-              return _buildProcessing(context, provider);
+              return _buildProcessing(provider);
             }
             return _buildInput(context, provider);
           },
@@ -76,8 +76,8 @@ class _JdInputScreenState extends State<JdInputScreen> {
           child: Row(
             children: [
               IconButton(
-                icon:  Icon(Icons.arrow_back_ios_new_rounded,
-                    color: AppTheme.textPrimaryOf(context)),
+                icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                    color: AppTheme.textPrimary),
                 onPressed: () => Navigator.pop(context),
               ),
               Expanded(
@@ -108,7 +108,7 @@ class _JdInputScreenState extends State<JdInputScreen> {
                       child: TextField(
                         controller: _companyCtrl,
                         style:
-                         TextStyle(color: AppTheme.textPrimaryOf(context)),
+                        const TextStyle(color: AppTheme.textPrimary),
                         decoration: const InputDecoration(
                           labelText: 'Company Name',
                           prefixIcon: Icon(
@@ -122,7 +122,7 @@ class _JdInputScreenState extends State<JdInputScreen> {
                       child: TextField(
                         controller: _roleCtrl,
                         style:
-                         TextStyle(color: AppTheme.textPrimaryOf(context)),
+                        const TextStyle(color: AppTheme.textPrimary),
                         decoration: const InputDecoration(
                           labelText: 'Job Title',
                           prefixIcon: Icon(
@@ -184,7 +184,7 @@ class _JdInputScreenState extends State<JdInputScreen> {
                       hintText:
                       'Paste the full job description here...\n\nExample:\nWe are looking for a Software Engineer with 1-2 years of experience in Flutter, Firebase, and REST APIs...',
                       hintStyle: GoogleFonts.dmSans(
-                          color: AppTheme.textSecondaryOf(context)),
+                          color: AppTheme.textSecondary),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.all(16),
                     ),
@@ -241,8 +241,7 @@ class _JdInputScreenState extends State<JdInputScreen> {
     );
   }
 
-  Widget _buildProcessing(BuildContext context,
-      JobApplicationProvider provider) {
+  Widget _buildProcessing(JobApplicationProvider provider) {
     final steps = [
       'Analyzing job description...',
       'Calculating match score...',
@@ -279,7 +278,7 @@ class _JdInputScreenState extends State<JdInputScreen> {
             Text(
               provider.statusLabel,
               style: GoogleFonts.dmSans(
-                  fontSize: 14, color: AppTheme.textSecondaryOf(context)),
+                  fontSize: 14, color: AppTheme.textSecondary),
             ),
           ],
         ),
