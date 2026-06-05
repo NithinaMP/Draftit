@@ -274,7 +274,7 @@ class _FilterBar extends StatelessWidget {
     ('draft',     'Draft',       Color(0xFF8888AA)),
     ('applied',   'Applied',     Color(0xFF6C63FF)),
     ('interview', 'Interview',   Color(0xFFFFB830)),
-    ('offer',     'Offer 🎉',   Color(0xFF4CAF82)),
+    ('offer',     'Offer',   Color(0xFF4CAF82)),
     ('rejected',  'Rejected',    Color(0xFFFF5252)),
   ];
 
@@ -371,7 +371,7 @@ class _AppCard extends StatelessWidget {
     'draft':     'Draft',
     'applied':   'Applied',
     'interview': 'Interview',
-    'offer':     'Offer 🎉',
+    'offer':     'Offer',
     'rejected':  'Rejected',
   };
 
