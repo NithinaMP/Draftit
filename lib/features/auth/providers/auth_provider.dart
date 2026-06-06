@@ -281,6 +281,20 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> sendPasswordResetEmail(String email) async {
+    _setStatus(AuthStatus.loading);
+    _errorMessage = null;
+    try {
+      await _authService.sendPasswordResetEmail(email);
+      _setStatus(AuthStatus.idle);
+      return true;
+    } on FirebaseAuthException catch (e) {
+      _errorMessage = _authService.getFriendlyError(e.code);
+      _setStatus(AuthStatus.error);
+      return false;
+    }
+  }
+
   Future<void> updateDisplayName(String name) async {
     await _authService.updateDisplayName(name);
     await FirebaseAuth.instance.currentUser?.reload();
