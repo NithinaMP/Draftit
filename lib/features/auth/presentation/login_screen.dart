@@ -74,6 +74,126 @@ class _LoginScreenState extends State<LoginScreen>
     _fadeCtrl.forward(from: 0);
   }
 
+  void _showForgotPassword(BuildContext context) {
+    final emailCtrl = TextEditingController(text: _emailCtrl.text.trim());
+    bool sent = false;
+    String? error;
+
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: AppTheme.surfaceOf(context),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        builder: (ctx) => StatefulBuilder(
+            builder: (ctx, setModal) => Padding(
+                padding: EdgeInsets.only(
+                    left: 24, right: 24, top: 20,
+                    bottom: MediaQuery.of(ctx).viewInsets.bottom + 32),
+                child: Column(mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Center(child: Container(
+                  width: 40, height: 4,
+                  margin: const EdgeInsets.only(bottom: 24),
+                  decoration: BoxDecoration(
+                      color: AppTheme.borderOf(context),
+                      borderRadius: BorderRadius.circular(2)),
+                )),
+            if (sent) ...[
+    Center(child: Container(
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+    color: AppTheme.success.withOpacity(0.1),
+    shape: BoxShape.circle),
+    child: const Icon(Icons.mark_email_read_rounded,
+    color: AppTheme.success, size: 40),
+    )),
+    const SizedBox(height: 20),
+    Center(child: Text('Email Sent!',
+    style: GoogleFonts.playfairDisplay(
+    fontSize: 24, fontWeight: FontWeight.w700,
+    color: AppTheme.textPrimaryOf(context)))),
+    const SizedBox(height: 8),
+    Center(child: Text(
+    'A password reset link has been sent to\n${emailCtrl.text.trim()}\n\nCheck your inbox and spam folder.',
+    textAlign: TextAlign.center,
+    style: GoogleFonts.dmSans(
+    fontSize: 14, color: AppTheme.textSecondaryOf(context), height: 1.6),
+    )),
+    const SizedBox(height: 24),
+    GradientButton(
+    label: 'Back to Sign In',
+    icon: Icons.login_rounded,
+    onPressed: () => Navigator.pop(ctx),
+    ),
+    ] else ...[
+    Text('Reset Password',
+    style: GoogleFonts.playfairDisplay(
+    fontSize: 24, fontWeight: FontWeight.w700,
+    color: AppTheme.textPrimaryOf(context))),
+    const SizedBox(height: 8),
+    Text(
+    'Enter your email address and we will send you a link to reset your password.',
+    style: GoogleFonts.dmSans(
+    fontSize: 14, color: AppTheme.textSecondaryOf(context), height: 1.5),
+    ),
+    const SizedBox(height: 24),
+    if (error != null)
+    Container(
+    margin: const EdgeInsets.only(bottom: 16),
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+    color: AppTheme.error.withOpacity(0.1),
+    borderRadius: BorderRadius.circular(10)),
+    child: Row(children: [
+    const Icon(Icons.error_outline_rounded,
+    color: AppTheme.error, size: 16),
+    const SizedBox(width: 8),
+    Expanded(child: Text(error!,
+    style: const TextStyle(color: AppTheme.error, fontSize: 13))),
+    ]),
+    ),
+    TextFormField(
+    controller: emailCtrl,
+    keyboardType: TextInputType.emailAddress,
+    style:  TextStyle(color: AppTheme.textPrimaryOf(context)),
+    decoration: const InputDecoration(
+    labelText: 'Email address',
+    prefixIcon: Icon(Icons.email_outlined, size: 20),
+    ),
+    ),
+    const SizedBox(height: 24),
+    Consumer<AuthProvider>(
+    builder: (_, auth, __) => GradientButton(
+    label: 'Send Reset Link',
+    icon: Icons.send_rounded,
+    isLoading: auth.status == AuthStatus.loading,
+    onPressed: () async {
+    if (emailCtrl.text.trim().isEmpty) {
+    setModal(() => error = 'Please enter your email address.');
+    return;
+    }
+    if (!emailCtrl.text.contains('@')) {
+    setModal(() => error = 'Please enter a valid email address.');
+    return;
+    }
+    final ok = await auth.sendPasswordResetEmail(
+    emailCtrl.text.trim());
+    if (ok) {
+    setModal(() => sent = true);
+    } else {
+    setModal(() => error = auth.errorMessage);
+    }
+    },
+    ),
+    ),
+    ],
+    ]),
+    ),
+    ),
+    );
+  }
+
   Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) {
       _shakeCtrl.forward(from: 0);
@@ -260,7 +380,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     child: _FormField(
                                       controller: _nameCtrl,
                                       label: 'Full Name',
-                                      hint: 'Enter',
+                                      hint: 'e.g. Nandhitha MP',
                                       icon: Icons.person_outline_rounded,
                                       validator: (v) {
                                         if (v == null || v.trim().isEmpty) {
@@ -318,6 +438,26 @@ class _LoginScreenState extends State<LoginScreen>
                                     return null;
                                   },
                                 ),
+
+                                // Forgot password — only on login
+                                if (_mode == 'login')
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: GestureDetector(
+                                      onTap: () => _showForgotPassword(context),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(top: 8),
+                                        child: Text(
+                                          'Forgot Password?',
+                                          style: GoogleFonts.spaceGrotesk(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppTheme.accentLight,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
 
                                 // Confirm password — only on register
                                 AnimatedSize(
@@ -624,7 +764,7 @@ class _PasswordStrengthBarState extends State<_PasswordStrengthBar> {
       ['', 'Very Weak', 'Weak', 'Fair', 'Strong', 'Very Strong'][_strength];
 
   Color get _color => [
-    AppTheme.border,
+    AppTheme.borderOf(context),
     AppTheme.error,
     AppTheme.amber,
     AppTheme.amber,
