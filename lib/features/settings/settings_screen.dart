@@ -679,15 +679,15 @@ class SettingsScreen extends StatelessWidget {
                         color: AppTheme.accent,
                         onTap: () => _showChangePassword(context, auth),
                       ),
-                    if (!auth.isGoogleUser)
-                      _Divider(),
-                    if (!auth.isGoogleUser)
-                      _ActionTile(
-                        icon: Icons.email_outlined,
-                        label: 'Reset via Email',
-                        color: AppTheme.accentLight,
-                        onTap: () => _showResetEmail(context, auth),
-                      ),
+                    // if (!auth.isGoogleUser)
+                    //   _Divider(),
+                    // if (!auth.isGoogleUser)
+                    //   _ActionTile(
+                    //     icon: Icons.email_outlined,
+                    //     label: 'Reset via Email',
+                    //     color: AppTheme.accentLight,
+                    //     onTap: () => _showResetEmail(context, auth),
+                    //   ),
                     if (!auth.isGoogleUser)
                       _Divider(),
                     _ActionTile(

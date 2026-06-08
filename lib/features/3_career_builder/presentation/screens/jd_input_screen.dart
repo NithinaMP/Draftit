@@ -76,8 +76,8 @@ class _JdInputScreenState extends State<JdInputScreen> {
           child: Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                    color: AppTheme.textPrimary),
+                icon:  Icon(Icons.arrow_back_ios_new_rounded,
+                    color: AppTheme.textPrimaryOf(context)),
                 onPressed: () => Navigator.pop(context),
               ),
               Expanded(
@@ -108,7 +108,7 @@ class _JdInputScreenState extends State<JdInputScreen> {
                       child: TextField(
                         controller: _companyCtrl,
                         style:
-                        const TextStyle(color: AppTheme.textPrimary),
+                         TextStyle(color: AppTheme.textPrimaryOf(context)),
                         decoration: const InputDecoration(
                           labelText: 'Company Name',
                           prefixIcon: Icon(
@@ -122,7 +122,7 @@ class _JdInputScreenState extends State<JdInputScreen> {
                       child: TextField(
                         controller: _roleCtrl,
                         style:
-                        const TextStyle(color: AppTheme.textPrimary),
+                         TextStyle(color: AppTheme.textPrimaryOf(context)),
                         decoration: const InputDecoration(
                           labelText: 'Job Title',
                           prefixIcon: Icon(

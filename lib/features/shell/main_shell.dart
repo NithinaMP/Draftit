@@ -19,6 +19,7 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
+  DateTime? _lastBackPressed;
 
   // Keep all screens alive with IndexedStack
   final List<Widget> _screens = const [
@@ -32,20 +33,50 @@ class _MainShellState extends State<MainShell> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeProvider>().isDark;
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: isDark
-          ? SystemUiOverlayStyle.light
-          : SystemUiOverlayStyle.dark,
-      child: Scaffold(
-        backgroundColor: isDark ? AppTheme.bg : AppTheme.bgLight,
-        body: IndexedStack(
-          index: _currentIndex,
-          children: _screens,
-        ),
-        bottomNavigationBar: _BottomNav(
-          currentIndex: _currentIndex,
-          onTap: (i) => setState(() => _currentIndex = i),
-          isDark: isDark,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async{
+        if (didPop) return;
+        // If not on Dashboard, go to Dashboard
+
+        if (_currentIndex != 0){
+          setState(() {
+            _currentIndex = 0;
+          });
+          return;
+        }
+        // Double back to exit
+
+        final now = DateTime.now();
+
+        if (_lastBackPressed == null || now.difference(_lastBackPressed!)>
+        const Duration(seconds: 2)){
+          _lastBackPressed = now;
+
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Press back again to exit'),
+              duration: Duration(seconds: 2),
+          ),);
+          return;
+        }
+
+        SystemNavigator.pop();
+      },
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: isDark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
+        child: Scaffold(
+          backgroundColor: isDark ? AppTheme.bg : AppTheme.bgLight,
+          body: IndexedStack(
+            index: _currentIndex,
+            children: _screens,
+          ),
+          bottomNavigationBar: _BottomNav(
+            currentIndex: _currentIndex,
+            onTap: (i) => setState(() => _currentIndex = i),
+            isDark: isDark,
+          ),
         ),
       ),
     );
