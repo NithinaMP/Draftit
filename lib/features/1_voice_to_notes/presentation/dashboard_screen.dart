@@ -512,8 +512,63 @@ class _ProfileMenu extends StatelessWidget {
             name: auth.displayName,
             email: auth.user?.email ?? '',
             onSignOut: () async {
-              await auth.signOut();
+              // await auth.signOut();
               Navigator.pop(context);
+              void _confirmSignOut( context, auth) {
+                showModalBottomSheet(
+                  context: context,
+                  backgroundColor: AppTheme.surfaceOf(context),
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+                  builder: (ctx) => Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 24),
+                          decoration: BoxDecoration(color: AppTheme.borderOf(context),
+                              borderRadius: BorderRadius.circular(2))),
+                      Container(padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(color: AppTheme.error.withOpacity(0.1),
+                              shape: BoxShape.circle),
+                          child: const Icon(Icons.logout_rounded, color: AppTheme.error, size: 32)),
+                      const SizedBox(height: 16),
+                      Text('Sign Out?', style: GoogleFonts.playfairDisplay(
+                          fontSize: 24, fontWeight: FontWeight.w700,
+                          color: AppTheme.textPrimaryOf(context))),
+                      const SizedBox(height: 8),
+                      Text("You'll need to sign in again to access your data.",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.dmSans(fontSize: 14,
+                              color: AppTheme.textSecondaryOf(context), height: 1.5)),
+                      const SizedBox(height: 28),
+                      Row(children: [
+                        Expanded(child: OutlinedButton(
+                          onPressed: () => Navigator.pop(ctx),
+                          style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: AppTheme.borderOf(context)),
+                              foregroundColor: AppTheme.textSecondaryOf(context),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              padding: const EdgeInsets.symmetric(vertical: 14)),
+                          child: Text('Cancel', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.w600)),
+                        )),
+                        const SizedBox(width: 12),
+                        Expanded(child: ElevatedButton(
+                          onPressed: () async {
+                            Navigator.pop(ctx);
+                            await auth.signOut();
+                          },
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: AppTheme.error, foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              padding: const EdgeInsets.symmetric(vertical: 14), elevation: 0),
+                          child: Text('Sign Out', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.w700)),
+                        )),
+                      ]),
+                    ]),
+                  ),
+                );
+              }
+              _confirmSignOut(context, auth);
+
             },
           ),
         );

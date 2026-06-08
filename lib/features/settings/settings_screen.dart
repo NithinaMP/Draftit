@@ -717,7 +717,7 @@ class SettingsScreen extends StatelessWidget {
                         label: 'DraftIt', value: 'From Classroom to Career'),
                     _Divider(),
                     _InfoTile(icon: Icons.rocket_launch_outlined,
-                        label: 'Powered by', value: 'Groq AI · Firebase · Flutter'),
+                        label: 'Powered by', value: 'DraftIt AI'),
                   ]),
                 ),
 

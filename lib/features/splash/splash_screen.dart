@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
+import '../../main.dart';
 import '../auth/providers/auth_provider.dart';
 import '../auth/presentation/login_screen.dart';
 import '../shell/main_shell.dart';
@@ -58,7 +59,10 @@ class _SplashScreenState extends State<SplashScreen>
         CurvedAnimation(parent: _taglineCtrl, curve: Curves.easeOut));
 
     _orbCtrl = AnimationController(
-        vsync: this, duration: const Duration(seconds: 3))
+        vsync: this, duration:
+    // const Duration(milliseconds: 1500)
+    const Duration(seconds: 1)
+    )
       ..repeat(reverse: true);
     _orbScale = Tween<double>(begin: 0.85, end: 1.15).animate(
         CurvedAnimation(parent: _orbCtrl, curve: Curves.easeInOut));
@@ -78,7 +82,7 @@ class _SplashScreenState extends State<SplashScreen>
     await _textCtrl.forward();
     await Future.delayed(const Duration(milliseconds: 100));
     await _taglineCtrl.forward();
-    await Future.delayed(const Duration(milliseconds: 1400));
+    await Future.delayed(const Duration(milliseconds: 1000));//1400
     await _exitCtrl.forward();
     if (mounted) _navigate();
   }
@@ -88,9 +92,9 @@ class _SplashScreenState extends State<SplashScreen>
     Navigator.pushReplacement(
       context,
       PageRouteBuilder(
-        pageBuilder: (_, __, ___) =>
-        auth.user != null ? const MainShell() : const LoginScreen(),
-        transitionDuration: const Duration(milliseconds: 400),
+        pageBuilder: (_, __, ___) => const AppBootstrap(),
+        // auth.user != null ? const MainShell() : const LoginScreen(),
+        transitionDuration: const Duration(milliseconds: 400),//400
         transitionsBuilder: (_, anim, __, child) =>
             FadeTransition(opacity: anim, child: child),
       ),
@@ -114,7 +118,7 @@ class _SplashScreenState extends State<SplashScreen>
       builder: (_, child) =>
           Opacity(opacity: _exitOpacity.value, child: child),
       child: Scaffold(
-        backgroundColor: AppTheme.bg,
+        backgroundColor: AppTheme.bgOf(context),
         body: Stack(children: [
           // Ambient orbs
           AnimatedBuilder(
@@ -208,8 +212,8 @@ class _SplashScreenState extends State<SplashScreen>
                   child: SlideTransition(
                     position: _textSlide,
                     child: ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                        colors: [AppTheme.textPrimary, AppTheme.accentLight],
+                      shaderCallback: (bounds) =>  LinearGradient(
+                        colors: [AppTheme.textPrimaryOf(context), AppTheme.accentLight],
                       ).createShader(bounds),
                       child: Text('DraftIt',
                           style: GoogleFonts.playfairDisplay(
@@ -237,7 +241,7 @@ class _SplashScreenState extends State<SplashScreen>
                       textAlign: TextAlign.center,
                       style: GoogleFonts.dmSans(
                         fontSize: 16,
-                        color: AppTheme.textSecondary,
+                        color: AppTheme.textSecondaryOf(context),
                         height: 1.6,
                       ),
                     ),
@@ -261,7 +265,7 @@ class _SplashScreenState extends State<SplashScreen>
                       textAlign: TextAlign.center,
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 12,
-                        color: AppTheme.textSecondary.withOpacity(0.5),
+                        color: AppTheme.textSecondaryOf(context).withOpacity(0.5),
                         letterSpacing: 1,
                       )),
                 ]),
@@ -294,7 +298,7 @@ class _LoadingDotsState extends State<_LoadingDots>
         3,
             (i) => AnimationController(
             vsync: this,
-            duration: const Duration(milliseconds: 600)));
+            duration: const Duration(milliseconds: 400))); //600
     _anims = _ctrls
         .map((c) => Tween<double>(begin: 0.25, end: 1.0).animate(
         CurvedAnimation(parent: c, curve: Curves.easeInOut)))

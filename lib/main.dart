@@ -23,6 +23,7 @@ import 'features/3_career_builder/data/models/master_profile_model.dart';
 import 'features/3_career_builder/data/models/job_application_model.dart';
 import 'features/3_career_builder/providers/master_profile_provider.dart';
 import 'features/3_career_builder/providers/job_application_provider.dart';
+import 'features/splash/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,7 +79,8 @@ class DraftItApp extends StatelessWidget {
           onGenerateRoute: AppRouter.generateRoute,
 
           // All routes pushed from here inherit the MultiProvider above
-          home: const AppBootstrap(),
+          // home: const AppBootstrap(),
+          home: const SplashScreen(),
         ),
       ),
     );

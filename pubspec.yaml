@@ -79,30 +79,52 @@ dev_dependencies:
   build_runner: ^2.4.8
   flutter_lints: ^3.0.0
 
+  flutter_native_splash: ^2.4.1
+  flutter_launcher_icons: ^0.14.1
+
 dependency_overrides:
   record_linux: ^1.1.0
+
+
+
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/splashLogo_draftit.png"
+  adaptive_icon_background: "#0A0A0F"
+
+flutter_native_splash:
+  color: "#0A0A0F"
+  image: "assets/images/splashLogo_draftit.png"
+  android: true
+  ios: true
+  fullscreen: true
+
+  android_12:
+    image: "assets/images/splashLogo_draftit.png"
+    color: "#0A0A0F"
 
 flutter:
   uses-material-design: true
   assets:
     - .env
 
+    - assets/lottie/
+    - assets/images/
 
-#flutter:
-#  uses-material-design: true
-#  assets:
-#    - assets/lottie/
-#    - assets/images/
-#  fonts:
-#    - family: ClashDisplay
-#      fonts:
-#        - asset: assets/fonts/ClashDisplay-Variable.ttf
+  fonts:
+    - family: ClashDisplay
+      fonts:
+        - asset: assets/fonts/ClashDisplay-Variable.ttf
 ##        - asset: assets/fonts/ClashDisplay-Medium.ttf
 ##          weight: 500
 ##        - asset: assets/fonts/ClashDisplay-SemiBold.ttf
 ##          weight: 600
 ##        - asset: assets/fonts/ClashDisplay-Bold.ttf
 ##          weight: 700
+
+
 #dependency_overrides:
 #  record_web: ^1.2.0
 #
