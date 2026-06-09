@@ -75,9 +75,9 @@ class DraftItApp extends StatelessWidget {
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
           // 3. Tell Flutter to watch the mobile operating system's theme
-          themeMode: ThemeMode.system,
+          // themeMode: ThemeMode.system,
 
-          // themeMode: themeProvider.mode,
+          themeMode: themeProvider.mode,
 
           onGenerateRoute: AppRouter.generateRoute,
 

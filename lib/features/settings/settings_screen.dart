@@ -1206,24 +1206,107 @@ class _ThemeToggle extends StatelessWidget {
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('Theme', style: GoogleFonts.spaceGrotesk(fontSize: 14,
               fontWeight: FontWeight.w600, color: AppTheme.textPrimaryOf(context))),
-          Text(isDark ? 'Dark mode' : 'Light mode',
+          Text(
+              themeProvider.mode == ThemeMode.system
+                  ? 'Follow system'
+                  : themeProvider.mode == ThemeMode.dark
+                  ? 'Dark mode'
+                  : 'Light mode',
+              // isDark ? 'Dark mode' : 'Light mode',
               style: GoogleFonts.dmSans(fontSize: 12,
                   color: AppTheme.textSecondaryOf(context))),
         ])),
-        Container(
-          padding: const EdgeInsets.all(3),
-          decoration: BoxDecoration(
-            color: AppTheme.surfaceElevOf(context),
-            borderRadius: BorderRadius.circular(10),
+        // Container(
+        //   padding: const EdgeInsets.all(3),
+        //   decoration: BoxDecoration(
+        //     color: AppTheme.surfaceElevOf(context),
+        //     borderRadius: BorderRadius.circular(10),
+        //   ),
+        //   child: Row(children: [
+        //     _ModeChip(icon: Icons.dark_mode_rounded, label: 'Dark',
+        //         active: isDark, onTap: () => themeProvider.setMode(ThemeMode.dark)),
+        //     _ModeChip(icon: Icons.light_mode_rounded, label: 'Light',
+        //         active: !isDark, onTap: () => themeProvider.setMode(ThemeMode.light)),
+        //   ]),
+        // ),
+
+        InkWell(
+          onTap: () => _showThemeSheet(context),
+          borderRadius: BorderRadius.circular(10),
+          child: Row(
+            children: [
+              Text(
+                themeProvider.mode == ThemeMode.system
+                    ? 'System'
+                    : themeProvider.mode == ThemeMode.dark
+                    ? 'Dark'
+                    : 'Light',
+                style: GoogleFonts.spaceGrotesk(
+                  fontWeight: FontWeight.w600,
+                  color: AppTheme.textPrimaryOf(context),
+                ),
+              ),
+              const SizedBox(width: 4),
+              const Icon(Icons.chevron_right_rounded),
+            ],
           ),
-          child: Row(children: [
-            _ModeChip(icon: Icons.dark_mode_rounded, label: 'Dark',
-                active: isDark, onTap: () => themeProvider.setMode(ThemeMode.dark)),
-            _ModeChip(icon: Icons.light_mode_rounded, label: 'Light',
-                active: !isDark, onTap: () => themeProvider.setMode(ThemeMode.light)),
-          ]),
-        ),
+        )
       ]),
+    );
+  }
+  void _showThemeSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppTheme.surfaceOf(context),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(24),
+        ),
+      ),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _themeOption(
+              context,
+              Icons.settings_suggest_rounded,
+              'System',
+              ThemeMode.system,
+            ),
+            _themeOption(
+              context,
+              Icons.dark_mode_rounded,
+              'Dark',
+              ThemeMode.dark,
+            ),
+            _themeOption(
+              context,
+              Icons.light_mode_rounded,
+              'Light',
+              ThemeMode.light,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  Widget _themeOption(
+      BuildContext context,
+      IconData icon,
+      String label,
+      ThemeMode mode,
+      ) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(label),
+      trailing: themeProvider.mode == mode
+          ? const Icon(Icons.check_rounded)
+          : null,
+      onTap: () {
+        themeProvider.setMode(mode);
+        Navigator.pop(context);
+      },
     );
   }
 }

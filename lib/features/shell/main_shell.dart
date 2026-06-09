@@ -31,7 +31,12 @@ class _MainShellState extends State<MainShell> with SingleTickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeProvider>().isDark;
+    // final isDark = context.watch<ThemeProvider>().isDark;
+    final themeProvider = context.watch<ThemeProvider>();
+
+    final isDark = themeProvider.mode == ThemeMode.system
+        ? Theme.of(context).brightness == Brightness.dark
+        : themeProvider.mode == ThemeMode.dark;
 
     return PopScope(
       canPop: false,

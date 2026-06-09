@@ -243,8 +243,8 @@ class _RecorderScreenState extends State<RecorderScreen>
 
   Widget _buildProcessingView(NotesGenerationProvider generator) {
     final steps = [
-      'Transcribing audio with Whisper',
-      'Structuring notes with Mistral AI',
+      'Transcribing audio ',//with Whisper
+      'Structuring notes ',//with Mistral AI
       'Saving to your library',
     ];
 
