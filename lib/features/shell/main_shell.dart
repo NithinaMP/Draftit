@@ -104,8 +104,8 @@ class _BottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = isDark ? AppTheme.surface : AppTheme.surfaceLight;
-    final border = isDark ? AppTheme.border : AppTheme.borderLight;
+    final bg = isDark ? AppTheme.surfaceOf(context) : AppTheme.surfaceLight;
+    final border = isDark ? AppTheme.borderOf(context) : AppTheme.borderLight;
 
     return Container(
       decoration: BoxDecoration(
@@ -152,7 +152,7 @@ class _BottomNav extends StatelessWidget {
                             color: active
                                 ? AppTheme.accent
                                 : isDark
-                                ? AppTheme.textSecondary
+                                ? AppTheme.textSecondaryOf(context)
                                 : AppTheme.textSecondaryLight,
                             size: 24,
                           ),
@@ -168,7 +168,7 @@ class _BottomNav extends StatelessWidget {
                             color: active
                                 ? AppTheme.accent
                                 : isDark
-                                ? AppTheme.textSecondary
+                                ? AppTheme.textSecondaryOf(context)
                                 : AppTheme.textSecondaryLight,
                           ),
                         ),

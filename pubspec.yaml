@@ -92,18 +92,26 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/images/splashLogo_draftit.png"
-  adaptive_icon_background: "#0A0A0F"
+  adaptive_icon_background: "#F8F8FF"
+
 
 flutter_native_splash:
-  color: "#0A0A0F"
+  color: "#F8F8FF"
   image: "assets/images/splashLogo_draftit.png"
+
+  color_dark: "#0A0A0F"
+  image_dark: "assets/images/splashLogo_draftit.png"
+
   android: true
   ios: true
   fullscreen: true
 
   android_12:
     image: "assets/images/splashLogo_draftit.png"
-    color: "#0A0A0F"
+    color: "#F8F8FF"
+
+    image_dark: "assets/images/splashLogo_draftit.png"
+    color_dark: "#0A0A0F"
 
 flutter:
   uses-material-design: true
