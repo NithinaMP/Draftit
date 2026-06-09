@@ -752,7 +752,10 @@ class _ProjectCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8)),
               child: const Icon(Icons.code_rounded, color: AppTheme.accent, size: 16)),
           const SizedBox(width: 10),
-          Expanded(child: Text(project.title, style: Theme.of(context).textTheme.titleMedium)),
+          Expanded(child: Text(project.title, style: Theme.of(context).textTheme.titleMedium,
+          overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          )),
           IconButton(icon: const Icon(Icons.delete_outline, color: AppTheme.error, size: 18),
               onPressed: onDelete, padding: EdgeInsets.zero),
         ]),
@@ -775,8 +778,13 @@ class _ProjectCard extends StatelessWidget {
           Row(children: [
             const Icon(Icons.link_rounded, color: AppTheme.accentLight, size: 14),
             const SizedBox(width: 4),
-            Text(project.githubLink!, style: GoogleFonts.dmSans(
-                fontSize: 12, color: AppTheme.accentLight)),
+            Expanded(
+              child: Text(project.githubLink!, style: GoogleFonts.dmSans(
+                  fontSize: 12, color: AppTheme.accentLight),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
           ]),
         ],
       ]),
