@@ -174,10 +174,30 @@ class LectureRepository {
     _box ??= await Hive.openBox<LectureModel>(AppConstants.lecturesBoxName);
   }
 
+  // Future<void> saveLecture(LectureModel lecture) async {
+  //   await initialize();
+  //   await _lecturesRef.doc(lecture.id).set(lecture.toFirestore());
+  //   await _box!.put(lecture.id, lecture);
+  // }
   Future<void> saveLecture(LectureModel lecture) async {
+    print('1. initialize');
     await initialize();
-    await _lecturesRef.doc(lecture.id).set(lecture.toFirestore());
+
+    print('2. firestore save');
+    // await _lecturesRef.doc(lecture.id).set(lecture.toFirestore());
+    try {
+      await _lecturesRef.doc(lecture.id).set(lecture.toFirestore());
+      print('✅ Firestore write success');
+    } catch (e, s) {
+      print('❌ Firestore write failed');
+      print(e);
+      print(s);
+      rethrow;
+    }
+    print('3. hive save');
     await _box!.put(lecture.id, lecture);
+
+    print('4. saveLecture finished');
   }
 
   Stream<List<LectureModel>> watchLectures() {

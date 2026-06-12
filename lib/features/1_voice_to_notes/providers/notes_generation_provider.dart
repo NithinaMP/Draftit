@@ -80,9 +80,16 @@ class NotesGenerationProvider extends ChangeNotifier {
         createdAt: DateTime.now(),
       );
 
+      // await _repository.saveLecture(lecture);
+      // _lastLecture = lecture;
+      // _setStatus(NotesStatus.done);
+      print('A');
       await _repository.saveLecture(lecture);
+      print('B');
+
       _lastLecture = lecture;
       _setStatus(NotesStatus.done);
+      print('C');
     } catch (e) {
       debugPrint('❌ processAudio failed: $e');
       _errorMessage = _friendlyMessage(e.toString());
