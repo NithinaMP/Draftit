@@ -34,7 +34,6 @@ class AiService {
       userMessage: userMessage,
     );
 
-    debugPrint('📝 Raw Llama output: $raw');
 
     // Clean any accidental markdown fences
     final cleaned = raw

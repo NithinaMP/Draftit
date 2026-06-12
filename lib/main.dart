@@ -29,9 +29,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
   if (!AppConstants.isKeyValid) {
-    debugPrint('⚠️  Groq API key missing — open .env and set GROQ_API_KEY');
-  } else {
-    debugPrint('✅ Groq key: ${AppConstants.groqApiKey.substring(0, 8)}...');
+    debugPrint(' API key missing — open .env and set API_KEY');
   }
   await Firebase.initializeApp();
   await Hive.initFlutter();

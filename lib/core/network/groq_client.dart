@@ -25,10 +25,10 @@ class GroqClient {
   Future<String> transcribeAudio(Uint8List audioBytes, String filename) async {
     if (!AppConstants.isKeyValid) {
       throw Exception(
-          'AUTH_ERROR: Open .env and set GROQ_API_KEY=gsk_yourkey');
+          'AUTH_ERROR: Open .env and set API_KEY=yourkey');
     }
 
-    debugPrint('🎙 Sending ${audioBytes.length} bytes to Groq Whisper...');
+    debugPrint('🎙 Sending ${audioBytes.length} bytes ...');
 
     try {
       final formData = FormData.fromMap({
@@ -47,14 +47,14 @@ class GroqClient {
         data: formData,
       );
 
-      debugPrint('✅ Groq Whisper response: ${response.data}');
+      debugPrint(' response: ${response.data}');
 
       if (response.data is Map && response.data.containsKey('text')) {
         return response.data['text'] as String;
       }
       throw Exception('INVALID_RESPONSE: ${response.data}');
     } on DioException catch (e) {
-      debugPrint('❌ Groq Whisper error: [${e.response?.statusCode}] ${e.message}');
+      debugPrint('model error: [${e.response?.statusCode}] ${e.message}');
       debugPrint('   Body: ${e.response?.data}');
       throw _toFriendly(e);
     }
@@ -67,7 +67,7 @@ class GroqClient {
     int maxTokens = 1024,
     double temperature = 0.2,
   }) async {
-    debugPrint('🤖 Sending to Groq Llama 3...');
+    debugPrint(' Sending to model...');
 
     try {
       final response = await _dio.post(
@@ -83,7 +83,7 @@ class GroqClient {
         },
       );
 
-      debugPrint('✅ Groq Llama response received');
+      debugPrint(' response received');
 
       final choices = response.data['choices'] as List;
       if (choices.isNotEmpty) {
@@ -91,7 +91,7 @@ class GroqClient {
       }
       throw Exception('INVALID_GENERATION_RESPONSE: ${response.data}');
     } on DioException catch (e) {
-      debugPrint('❌ Groq Llama error: [${e.response?.statusCode}] ${e.message}');
+      debugPrint('model: [${e.response?.statusCode}] ${e.message}');
       debugPrint('   Body: ${e.response?.data}');
       throw _toFriendly(e);
     }
