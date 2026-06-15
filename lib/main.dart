@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -25,13 +27,28 @@ import 'features/3_career_builder/providers/master_profile_provider.dart';
 import 'features/3_career_builder/providers/job_application_provider.dart';
 import 'features/splash/splash_screen.dart';
 
+import 'dart:async';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
   if (!AppConstants.isKeyValid) {
-    debugPrint(' API key missing — open .env and set API_KEY');
   }
   await Firebase.initializeApp();
+
+  FlutterError.onError =
+      FirebaseCrashlytics.instance.recordFlutterFatalError;
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(
+      error,
+      stack,
+      fatal: true,
+    );
+    return true;
+  };
+
   await Hive.initFlutter();
   Hive.registerAdapter(LectureModelAdapter());
   Hive.registerAdapter(ExamQuestionAdapter());

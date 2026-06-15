@@ -49,7 +49,6 @@ class JdAnalyzerService {
       temperature: 0.1,
     );
 
-    debugPrint('🔍 JD Analysis raw: $raw');
     return _parse(raw);
   }
 

@@ -81,7 +81,6 @@ class ExamPredictorProvider extends ChangeNotifier {
       // Mark lecture as having exam questions ready in Firestore via callback
       notifyListeners();
     } catch (e) {
-      debugPrint('❌ Blueprint generation failed: $e');
       _genError = _friendlyError(e.toString());
       _genStatus = ExamGenStatus.error;
       notifyListeners();
@@ -112,7 +111,6 @@ class ExamPredictorProvider extends ChangeNotifier {
       _gradingStatus = GradingStatus.done;
       notifyListeners();
     } catch (e) {
-      debugPrint('❌ Grading failed: $e');
       _gradingError = _friendlyError(e.toString());
       _gradingStatus = GradingStatus.error;
       notifyListeners();

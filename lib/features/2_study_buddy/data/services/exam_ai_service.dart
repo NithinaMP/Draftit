@@ -66,7 +66,6 @@ class ExamAiService {
       temperature: 0.3,
     );
 
-    debugPrint('📝 Raw exam blueprint: $raw');
     return _parseBlueprint(raw, lectureId);
   }
 

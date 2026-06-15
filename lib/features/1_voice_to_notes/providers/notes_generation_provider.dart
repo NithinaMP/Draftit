@@ -49,7 +49,6 @@ class NotesGenerationProvider extends ChangeNotifier {
       }
 
       final Uint8List audioBytes = await file.readAsBytes();
-      debugPrint(' Audio file size: ${audioBytes.length} bytes');
 
       // Reject if file is too small — less than ~3 seconds of audio
       // 16kHz AAC at 128kbps ≈ 16000 bytes/sec minimum
@@ -84,7 +83,6 @@ class NotesGenerationProvider extends ChangeNotifier {
       _setStatus(NotesStatus.done);
 
     } catch (e) {
-      debugPrint(' processAudio failed: $e');
       _errorMessage = _friendlyMessage(e.toString());
       _setStatus(NotesStatus.error);
     }

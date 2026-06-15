@@ -184,7 +184,7 @@ class _JdInputScreenState extends State<JdInputScreen> {
                       hintText:
                       'Paste the full job description here...\n\nExample:\nWe are looking for a Software Engineer with 1-2 years of experience in Flutter, Firebase, and REST APIs...',
                       hintStyle: GoogleFonts.dmSans(
-                          color: AppTheme.textSecondary),
+                          color: AppTheme.textSecondaryOf(context)),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.all(16),
                     ),
@@ -278,7 +278,7 @@ class _JdInputScreenState extends State<JdInputScreen> {
             Text(
               provider.statusLabel,
               style: GoogleFonts.dmSans(
-                  fontSize: 14, color: AppTheme.textSecondary),
+                  fontSize: 14, color: AppTheme.textSecondaryOf(context)),
             ),
           ],
         ),

@@ -162,7 +162,6 @@ class SyllabusProvider extends ChangeNotifier {
       _overallProgress = await _box.overallProgress();
       _status = SyllabusStatus.done;
     } catch (e) {
-      debugPrint('❌ Alignment error: $e');
       _status = SyllabusStatus.done; // Non-fatal — just skip alignment
     }
     notifyListeners();

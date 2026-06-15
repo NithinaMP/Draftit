@@ -92,7 +92,6 @@ class JobApplicationProvider extends ChangeNotifier {
       _currentJob = job;
       _setStatus(JobStatus.done, 'Resume ready!');
     } catch (e) {
-      debugPrint('❌ Job analysis failed: $e');
       _error = _friendlyError(e.toString());
       _setStatus(JobStatus.error, 'Failed');
     }

@@ -41,7 +41,6 @@ class AnswerGraderService {
       temperature: 0.2,
     );
 
-    debugPrint('📊 Raw grading response: $raw');
     return _parseEvaluation(raw, question);
   }
 
