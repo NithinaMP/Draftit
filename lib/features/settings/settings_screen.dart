@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/theme_provider.dart';
 import '../../../core/widgets/app_widgets.dart';
+import '../../core/utils/app_info.dart';
 import '../auth/providers/auth_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -84,11 +85,12 @@ class SettingsScreen extends StatelessWidget {
                 ),
 
                 // ── About ──
+                // ── About ──
                 SliverToBoxAdapter(child: _SectionLabel(label: 'About')),
                 SliverToBoxAdapter(
                   child: _SettingsCard(children: [
                     _InfoTile(icon: Icons.info_outline_rounded,
-                        label: 'App Version', value: '1.0.0'),
+                        label: 'App Version', value: AppInfo.version),
                     _Divider(),
                     _InfoTile(
                         icon: Icons.edit_note_rounded,

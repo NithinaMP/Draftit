@@ -10,6 +10,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
 import 'core/constants/app_constants.dart';
+import 'core/utils/app_info.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/auth/presentation/login_screen.dart';
 import 'features/shell/main_shell.dart';
@@ -59,6 +60,9 @@ void main() async {
   Hive.registerAdapter(CertificationEntryAdapter());
   Hive.registerAdapter(ProjectEntryAdapter());
   Hive.registerAdapter(JobApplicationAdapter());
+
+  await AppInfo.init();
+
   runApp(const DraftItApp());
 }
 

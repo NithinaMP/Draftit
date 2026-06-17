@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/utils/app_info.dart';
 import '../../main.dart';
 import '../auth/providers/auth_provider.dart';
 import '../auth/presentation/login_screen.dart';
@@ -263,7 +264,7 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Column(children: [
                   const _LoadingDots(),
                   const SizedBox(height: 16),
-                  Text('v1.0.0',
+                  Text('v${AppInfo.version}',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.spaceGrotesk(
                         fontSize: 12,
