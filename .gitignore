@@ -1,6 +1,3 @@
-# =============================================
-# DraftIt - Professional .gitignore
-# =============================================
 
 # Secrets & API Keys (MOST IMPORTANT)
 env.json
@@ -54,6 +51,7 @@ Thumbs.db
 # =============================================
 # Optional: Add these if needed later
 # =============================================
-# coverage/
-# *.jks
-# *.keystore
+ coverage/
+ *.jks
+ *.keystore
+ android/key.properties

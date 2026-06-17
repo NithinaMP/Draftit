@@ -635,8 +635,10 @@ class _DraftItLogo extends StatelessWidget {
             ),
           ],
         ),
-        child: const Icon(Icons.edit_note_rounded,
-            color: Colors.white, size: 28),
+        clipBehavior: Clip.antiAlias,
+        child: Image.asset('assets/images/logo.png', fit: BoxFit.cover),
+        // child: const Icon(Icons.edit_note_rounded,
+        //     color: Colors.white, size: 28),
       ),
       const SizedBox(width: 14),
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

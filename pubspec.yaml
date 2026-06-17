@@ -74,6 +74,8 @@ dependencies:
 
   firebase_crashlytics: ^4.3.10
 
+  flutter_svg: ^2.0.10+1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -93,26 +95,26 @@ dependency_overrides:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/images/splashLogo_draftit.png"
+  image_path: "assets/images/ReleaseLogo.png"
   adaptive_icon_background: "#F8F8FF"
 
 
 flutter_native_splash:
   color: "#F8F8FF"
-  image: "assets/images/splashLogo_draftit.png"
+  image: "assets/images/ReleaseLogo.png"
 
   color_dark: "#0A0A0F"
-  image_dark: "assets/images/splashLogo_draftit.png"
+  image_dark: "assets/images/ReleaseLogo.png"
 
   android: true
   ios: true
   fullscreen: true
 
   android_12:
-    image: "assets/images/splashLogo_draftit.png"
+    image: "assets/images/ReleaseLogo.png"
     color: "#F8F8FF"
 
-    image_dark: "assets/images/splashLogo_draftit.png"
+    image_dark: "assets/images/ReleaseLogo.png"
     color_dark: "#0A0A0F"
 
 flutter:
@@ -122,6 +124,7 @@ flutter:
 
     - assets/lottie/
     - assets/images/
+
 
   fonts:
     - family: ClashDisplay

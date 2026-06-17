@@ -90,7 +90,8 @@ class SettingsScreen extends StatelessWidget {
                     _InfoTile(icon: Icons.info_outline_rounded,
                         label: 'App Version', value: '1.0.0'),
                     _Divider(),
-                    _InfoTile(icon: Icons.edit_note_rounded,
+                    _InfoTile(
+                        icon: Icons.edit_note_rounded,
                         label: 'DraftIt', value: 'From Classroom to Career'),
                     _Divider(),
                     _InfoTile(icon: Icons.rocket_launch_outlined,

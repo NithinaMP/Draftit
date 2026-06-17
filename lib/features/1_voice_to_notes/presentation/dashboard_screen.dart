@@ -176,8 +176,10 @@ class _DashboardScreenState extends State<DashboardScreen>
               ),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.edit_note_rounded,
-                color: Colors.white, size: 20),
+            clipBehavior: Clip.antiAlias,
+            child: Image.asset('assets/images/logo.png', fit: BoxFit.cover),
+            // child: const Icon(Icons.edit_note_rounded,
+            //     color: Colors.white, size: 20),
           ),
           const SizedBox(width: 10),
           Text(
