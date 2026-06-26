@@ -190,11 +190,25 @@ class JobApplicationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // String _friendlyError(String raw) {
+  //   if (raw.contains('AUTH_ERROR')) return '❌ API key error. Check your .env file.';
+  //   if (raw.contains('RATE_LIMIT')) return '⏱ Too many requests. Wait 1 minute.';
+  //   if (raw.contains('TIMEOUT')) return '⏰ Request timed out. Try again.';
+  //   if (raw.contains('NETWORK_ERROR')) return '🌐 No internet connection.';
+  //   return '❌ $raw';
+  // }
   String _friendlyError(String raw) {
-    if (raw.contains('AUTH_ERROR')) return '❌ API key error. Check your .env file.';
-    if (raw.contains('RATE_LIMIT')) return '⏱ Too many requests. Wait 1 minute.';
-    if (raw.contains('TIMEOUT')) return '⏰ Request timed out. Try again.';
-    if (raw.contains('NETWORK_ERROR')) return '🌐 No internet connection.';
-    return '❌ $raw';
+    if (raw.contains('AUTH_ERROR'))
+      return '❌ API key error. Check your configuration.';
+    if (raw.contains('RATE_LIMIT'))
+      return '⏱ Too many requests. Please wait a minute and try again.';
+    if (raw.contains('TIMEOUT'))
+      return '⏰ Request timed out. Check your internet and try again.';
+    if (raw.contains('NETWORK_ERROR'))
+      return '🌐 No internet connection. Please check your network and try again.';
+    if (raw.contains('SERVICE_DOWN'))
+      return '⚠️ AI service temporarily unavailable. Please try again in a few minutes.';
+    // Never expose raw error to user in production
+    return 'Something went wrong. Please try again.';
   }
 }

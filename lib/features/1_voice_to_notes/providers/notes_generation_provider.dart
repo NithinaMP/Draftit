@@ -123,10 +123,18 @@ class NotesGenerationProvider extends ChangeNotifier {
     if (raw.contains('JSON_PARSE_ERROR')) {
       return '🤖 AI response error\n\nTry recording again.';
     }
-    if (raw.contains('NETWORK_ERROR') || raw.contains('SERVICE_DOWN')) {
-      return '🌐 Cannot reach Groq servers\n\nCheck your internet connection and try again.';
+    // if (raw.contains('NETWORK_ERROR') || raw.contains('SERVICE_DOWN')) {
+    //   return '🌐 Cannot reach Groq servers\n\nCheck your internet connection and try again.';
+    // }
+    // return '❌ Error: $raw';
+    if (raw.contains('NETWORK_ERROR')) {
+      return '🌐 No internet connection\n\nPlease check your network and try again.';
     }
-    return '❌ Error: $raw';
+    if (raw.contains('SERVICE_DOWN')) {
+      return '⚠️ AI service temporarily unavailable\n\nGroq servers are down. Please try again in a few minutes.';
+    }
+    return 'Something went wrong\n\nPlease try again.';
+
   }
 
   void _setStatus(NotesStatus s) {

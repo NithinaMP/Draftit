@@ -16,7 +16,8 @@ class AppConstants {
 
   // Groq model IDs
   static const String whisperModel = 'whisper-large-v3';
-  static const String textModel    = 'llama-3.1-8b-instant';
+  // static const String textModel    = 'llama-3.1-8b-instant';
+  static const String textModel = 'llama-3.3-70b-versatile';
 
   // Firestore
   static const String usersCollection    = 'users';
