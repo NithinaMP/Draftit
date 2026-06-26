@@ -5,6 +5,7 @@ import '../data/models/answer_evaluation_model.dart';
 import '../data/services/exam_ai_service.dart';
 import '../data/services/answer_grader_service.dart';
 import '../../1_voice_to_notes/data/models/lecture_model.dart';
+import '../../1_voice_to_notes/providers/lectures_provider.dart';
 
 enum ExamGenStatus { idle, generating, done, error }
 enum GradingStatus { idle, grading, done, error }
@@ -14,7 +15,7 @@ class ExamPredictorProvider extends ChangeNotifier {
   final AnswerGraderService _graderService = AnswerGraderService();
   final HiveExamBox _examBox = HiveExamBox();
 
-  // ── Question generation state ──────────────────────────────────────────────
+  // ── Generation state ───────────────────────────────────────────────────────
   ExamGenStatus _genStatus = ExamGenStatus.idle;
   List<ExamQuestion> _questions = [];
   String? _genError;
@@ -24,7 +25,11 @@ class ExamPredictorProvider extends ChangeNotifier {
   AnswerEvaluation? _lastEvaluation;
   String? _gradingError;
 
-  // Current lecture being studied
+  // ── Mastery tracking ───────────────────────────────────────────────────────
+  // Tracks cumulative scores per lecture for mastery check
+  // key = lectureId, value = list of scores (0-100 each)
+  final Map<String, List<int>> _lectureScores = {};
+
   LectureModel? _currentLecture;
 
   // ── Getters ────────────────────────────────────────────────────────────────
@@ -44,7 +49,7 @@ class ExamPredictorProvider extends ChangeNotifier {
   bool get isGenerating => _genStatus == ExamGenStatus.generating;
   bool get isGrading => _gradingStatus == GradingStatus.grading;
 
-  /// Load existing questions for a lecture from Hive (instant, no API call)
+  /// Load existing questions for a lecture from Hive
   Future<void> loadQuestionsForLecture(LectureModel lecture) async {
     _currentLecture = lecture;
     _genError = null;
@@ -59,7 +64,7 @@ class ExamPredictorProvider extends ChangeNotifier {
     }
   }
 
-  /// Generate fresh exam blueprint via Groq (replaces cached)
+  /// Generate fresh exam blueprint via Groq
   Future<void> generateBlueprint(LectureModel lecture) async {
     _currentLecture = lecture;
     _genError = null;
@@ -77,8 +82,6 @@ class ExamPredictorProvider extends ChangeNotifier {
       await _examBox.saveQuestionsForLecture(lecture.id, questions);
       _questions = questions;
       _genStatus = ExamGenStatus.done;
-
-      // Mark lecture as having exam questions ready in Firestore via callback
       notifyListeners();
     } catch (e) {
       _genError = _friendlyError(e.toString());
@@ -87,10 +90,12 @@ class ExamPredictorProvider extends ChangeNotifier {
     }
   }
 
-  /// Grade a student's answer
+  /// Grade a student's answer — and check mastery after grading
   Future<void> gradeAnswer({
     required ExamQuestion question,
     required String studentAnswer,
+    required LecturesProvider lecturesProvider,
+    required double syllabusProgress, // 0.0 to 1.0 from SyllabusProvider
   }) async {
     if (_currentLecture == null) return;
 
@@ -110,6 +115,24 @@ class ExamPredictorProvider extends ChangeNotifier {
       _lastEvaluation = evaluation;
       _gradingStatus = GradingStatus.done;
       notifyListeners();
+
+      // ── Mastery check ──────────────────────────────────────────────────────
+      // Track this score against the current lecture
+      final lectureId = _currentLecture!.id;
+      _lectureScores.putIfAbsent(lectureId, () => []);
+      _lectureScores[lectureId]!.add((evaluation.scorePercent * 100).toInt());
+
+      // Calculate average score across all graded answers for this lecture
+      final scores = _lectureScores[lectureId]!;
+      final avgScore = scores.reduce((a, b) => a + b) / scores.length;
+
+      // Mastery = average score ≥ 70% AND syllabus fully covered (100%)
+      final examPassed = avgScore >= 70;
+      final syllabusCovered = syllabusProgress >= 1.0;
+
+      if (examPassed && syllabusCovered) {
+        await lecturesProvider.markMastered(lectureId);
+      }
     } catch (e) {
       _gradingError = _friendlyError(e.toString());
       _gradingStatus = GradingStatus.error;
@@ -124,7 +147,6 @@ class ExamPredictorProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Call when a new user signs in — wipes in-memory state
   void clearForNewUser() {
     _genStatus = ExamGenStatus.idle;
     _gradingStatus = GradingStatus.idle;
@@ -133,6 +155,7 @@ class ExamPredictorProvider extends ChangeNotifier {
     _gradingError = null;
     _lastEvaluation = null;
     _currentLecture = null;
+    _lectureScores.clear();
     notifyListeners();
   }
 
@@ -144,14 +167,16 @@ class ExamPredictorProvider extends ChangeNotifier {
     _gradingError = null;
     _lastEvaluation = null;
     _currentLecture = null;
+    _lectureScores.clear();
     notifyListeners();
   }
 
   String _friendlyError(String raw) {
-    if (raw.contains('AUTH_ERROR')) return '❌ API key error. Check your .env file.';
-    if (raw.contains('RATE_LIMIT')) return '⏱ Too many requests. Wait 1 minute.';
-    if (raw.contains('TIMEOUT'))    return '⏰ Request timed out. Try again.';
-    if (raw.contains('NETWORK_ERROR')) return '🌐 No internet connection.';
-    return '❌ Error: $raw';
+    if (raw.contains('AUTH_ERROR'))    return '❌ API key error. Check your .env file.';
+    if (raw.contains('RATE_LIMIT'))    return '⏱ Too many requests. Wait 1 minute.';
+    if (raw.contains('TIMEOUT'))       return '⏰ Request timed out. Try again.';
+    if (raw.contains('NETWORK_ERROR')) return '🌐 No internet connection. Try again.';
+    if (raw.contains('SERVICE_DOWN'))  return '⚠️ AI service temporarily unavailable.';
+    return '❌ Something went wrong. Please try again.';
   }
 }

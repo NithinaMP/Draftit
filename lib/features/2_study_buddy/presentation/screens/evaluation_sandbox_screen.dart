@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../1_voice_to_notes/data/models/lecture_model.dart';
+import '../../../1_voice_to_notes/providers/lectures_provider.dart';
 import '../../providers/exam_predictor_provider.dart';
+import '../../providers/syllabus_provider.dart';
 // import '../providers/exam_predictor_provider.dart';
 // import '../../1_voice_to_notes/data/models/lecture_model.dart';
+// import '../../1_voice_to_notes/providers/lectures_provider.dart';
+// import '../providers/syllabus_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_widgets.dart';
 
@@ -71,8 +75,8 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
       child: Row(
         children: [
           IconButton(
-            icon:  Icon(Icons.arrow_back_ios_new_rounded,
-                color: AppTheme.textPrimaryOf(context)),
+            icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                color: AppTheme.textPrimary),
             onPressed: () {
               provider.resetGrading();
               Navigator.pop(context);
@@ -237,6 +241,8 @@ class _EvaluationSandboxScreenState extends State<EvaluationSandboxScreen> {
                 ? () => provider.gradeAnswer(
               question: widget.question,
               studentAnswer: _answerCtrl.text.trim(),
+              lecturesProvider: context.read<LecturesProvider>(),
+              syllabusProgress: context.read<SyllabusProvider>().overallProgress,
             )
                 : null,
           ),
