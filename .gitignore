@@ -45,7 +45,7 @@ Thumbs.db
 
 # Misc
 *.pyc
-*.log
+#*.log
 .migrate_working_dir/
 
 # =============================================
@@ -55,3 +55,5 @@ Thumbs.db
  *.jks
  *.keystore
  android/key.properties
+
+ debug-info/

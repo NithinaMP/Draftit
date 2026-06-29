@@ -309,6 +309,18 @@ class _LoadingDotsState extends State<_LoadingDots>
     _startLoop();
   }
 
+  // Future<void> _startLoop() async {
+  //   while (mounted) {
+  //     for (int i = 0; i < 3; i++) {
+  //       if (!mounted) return;
+  //       _ctrls[i].forward();
+  //       await Future.delayed(const Duration(milliseconds: 160));
+  //     }
+  //     await Future.delayed(const Duration(milliseconds: 300));
+  //     for (final c in _ctrls) c.reverse();
+  //     await Future.delayed(const Duration(milliseconds: 500));
+  //   }
+  // }
   Future<void> _startLoop() async {
     while (mounted) {
       for (int i = 0; i < 3; i++) {
@@ -317,7 +329,11 @@ class _LoadingDotsState extends State<_LoadingDots>
         await Future.delayed(const Duration(milliseconds: 160));
       }
       await Future.delayed(const Duration(milliseconds: 300));
-      for (final c in _ctrls) c.reverse();
+      // Check mounted before reverse — fixes dispose crash
+      if (!mounted) return;
+      for (final c in _ctrls) {
+        if (c.isAnimating || c.value > 0) c.reverse();
+      }
       await Future.delayed(const Duration(milliseconds: 500));
     }
   }

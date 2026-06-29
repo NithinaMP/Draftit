@@ -241,69 +241,69 @@ class _RecorderScreenState extends State<RecorderScreen>
         const SizedBox(height: 6),
 
         // Remaining time (shown when recording)
-        if (recorder.isRecording)
-          Text(
-            recorder.formattedRemaining,
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 12,
-              color: recorder.showWarning
-                  ? AppTheme.amber
-                  : AppTheme.textSecondaryOf(context),
-              fontWeight: recorder.showWarning
-                  ? FontWeight.w600
-                  : FontWeight.w400,
-            ),
-          ),
+        // if (recorder.isRecording)
+        //   Text(
+        //     recorder.formattedRemaining,
+        //     style: GoogleFonts.spaceGrotesk(
+        //       fontSize: 12,
+        //       color: recorder.showWarning
+        //           ? AppTheme.amber
+        //           : AppTheme.textSecondaryOf(context),
+        //       fontWeight: recorder.showWarning
+        //           ? FontWeight.w600
+        //           : FontWeight.w400,
+        //     ),
+        //   ),
 
         const SizedBox(height: 8),
 
         // Duration progress bar (shown when recording)
-        if (recorder.isRecording) ...[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 48),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: LinearProgressIndicator(
-                value: recorder.durationProgress,
-                backgroundColor: AppTheme.borderOf(context),
-                valueColor: AlwaysStoppedAnimation(
-                  recorder.showWarning ? AppTheme.amber : AppTheme.accent,
-                ),
-                minHeight: 4,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-        ],
+        // if (recorder.isRecording) ...[
+        //   Padding(
+        //     padding: const EdgeInsets.symmetric(horizontal: 48),
+        //     child: ClipRRect(
+        //       borderRadius: BorderRadius.circular(4),
+        //       child: LinearProgressIndicator(
+        //         value: recorder.durationProgress,
+        //         backgroundColor: AppTheme.borderOf(context),
+        //         valueColor: AlwaysStoppedAnimation(
+        //           recorder.showWarning ? AppTheme.amber : AppTheme.accent,
+        //         ),
+        //         minHeight: 4,
+        //       ),
+        //     ),
+        //   ),
+        //   const SizedBox(height: 8),
+        // ],
 
         // Safeguard 2 — warning banner at 45 minutes
-        if (recorder.showWarning)
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 24),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppTheme.amber.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppTheme.amber.withOpacity(0.35)),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.warning_amber_rounded,
-                    color: AppTheme.amber, size: 18),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Recording stops automatically at 50 min. '
-                        'Stop now to avoid cutoff.',
-                    style: GoogleFonts.dmSans(
-                        fontSize: 12,
-                        color: AppTheme.amber,
-                        height: 1.4),
-                  ),
-                ),
-              ],
-            ),
-          ),
+        // if (recorder.showWarning)
+        //   Container(
+        //     margin: const EdgeInsets.symmetric(horizontal: 24),
+        //     padding: const EdgeInsets.all(12),
+        //     decoration: BoxDecoration(
+        //       color: AppTheme.amber.withOpacity(0.1),
+        //       borderRadius: BorderRadius.circular(10),
+        //       border: Border.all(color: AppTheme.amber.withOpacity(0.35)),
+        //     ),
+        //     child: Row(
+        //       children: [
+        //         const Icon(Icons.warning_amber_rounded,
+        //             color: AppTheme.amber, size: 18),
+        //         const SizedBox(width: 8),
+        //         Expanded(
+        //           child: Text(
+        //             'Recording stops automatically at 50 min. '
+        //                 'Stop now to avoid cutoff.',
+        //             style: GoogleFonts.dmSans(
+        //                 fontSize: 12,
+        //                 color: AppTheme.amber,
+        //                 height: 1.4),
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
 
         // REC badge
         Padding(

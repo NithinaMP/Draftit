@@ -141,9 +141,15 @@ class AudioRecordingProvider extends ChangeNotifier {
 
   Future<void> _autoStop() async {
     _timer?.cancel();
+    // _limitError =
+    // 'Recording automatically stopped at 50 minutes — the maximum length '
+    //     'for AI processing. Your recording has been saved.';
+
     _limitError =
-    'Recording automatically stopped at 50 minutes — the maximum length '
-        'for AI processing. Your recording has been saved.';
+    'Recording stopped automatically.\n\n'
+        'Recordings are limited to 50 minutes per session to ensure '
+        'the best AI processing quality. Your recording has been saved '
+        '— tap Generate Notes to continue.';
     await stopRecording();
   }
 
