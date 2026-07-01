@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import '../../../core/services/onboarding_service.dart';
+import '../../../core/widgets/tooltip_overlay.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../providers/lectures_provider.dart';
 import '../data/models/lecture_model.dart';
-// import '../../../auth/providers/auth_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_widgets.dart';
 import '../../../../core/router/app_router.dart';
@@ -31,7 +32,6 @@ class _DashboardScreenState extends State<DashboardScreen>
     )..forward();
     _heroAnim = CurvedAnimation(parent: _heroCtrl, curve: Curves.easeOut);
 
-    // Start listening to Firestore stream
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<LecturesProvider>().startListening();
     });
@@ -72,7 +72,6 @@ class _DashboardScreenState extends State<DashboardScreen>
                     builder: (context, provider, _) {
                       return CustomScrollView(
                         slivers: [
-                          // Hero section
                           SliverToBoxAdapter(
                             child: FadeTransition(
                               opacity: _heroAnim,
@@ -85,16 +84,13 @@ class _DashboardScreenState extends State<DashboardScreen>
                               ),
                             ),
                           ),
-
-                          // Stats row
                           SliverToBoxAdapter(
                             child: Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                              padding:
+                              const EdgeInsets.fromLTRB(20, 0, 20, 24),
                               child: _buildStats(provider),
                             ),
                           ),
-
-                          // Section header
                           SliverToBoxAdapter(
                             child: Padding(
                               padding:
@@ -108,18 +104,17 @@ class _DashboardScreenState extends State<DashboardScreen>
                           ),
                           const SliverToBoxAdapter(
                               child: SizedBox(height: 16)),
-
-                          // Lectures list
                           if (provider.isLoading)
                             SliverToBoxAdapter(child: _buildShimmerList())
                           else if (provider.error != null)
                             SliverToBoxAdapter(
-                                child: _buildError(context,provider.error!))
+                                child: _buildError(context, provider.error!))
                           else if (provider.lectures.isEmpty)
                               SliverToBoxAdapter(child: _buildEmpty())
                             else
                               SliverPadding(
-                                padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+                                padding:
+                                const EdgeInsets.fromLTRB(20, 0, 20, 100),
                                 sliver: SliverList(
                                   delegate: SliverChildBuilderDelegate(
                                         (context, i) => _LectureCard(
@@ -129,9 +124,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                                         AppRouter.notesViewer,
                                         arguments: provider.lectures[i].id,
                                       ),
-                                      onDelete: () =>
-                                          provider.deleteLecture(
-                                              provider.lectures[i].id),
+                                      onDelete: () => provider.deleteLecture(
+                                          provider.lectures[i].id),
                                     ),
                                     childCount: provider.lectures.length,
                                   ),
@@ -146,15 +140,33 @@ class _DashboardScreenState extends State<DashboardScreen>
             ),
           ),
 
-          // FAB
+          // ── FAB with in-tree tooltip ──────────────────────────────────────
+          // IMPORTANT: This is a normal widget inside Dashboard's own Stack,
+          // NOT an OverlayEntry. This is deliberate — IndexedStack in
+          // MainShell only paints/hit-tests the currently active tab's
+          // widget tree. An in-tree widget here is automatically hidden
+          // when the user switches to Exam/Career/Settings tabs, because
+          // IndexedStack excludes inactive tabs from painting entirely.
+          // An OverlayEntry, by contrast, is inserted into the app's ROOT
+          // Overlay — which sits above the whole Navigator, completely
+          // outside IndexedStack's tab boundary — so it would incorrectly
+          // stay visible across every tab. Keep this as in-tree, not Overlay.
           Positioned(
             bottom: 28,
+            left: 24,
             right: 24,
-            child: _RecordFAB(
-              onPressed: () async {
-                await Navigator.pushNamed(context, AppRouter.recorder);
-                // Refresh is automatic via Firestore stream
-              },
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: OnboardingTooltip(
+                tooltipKey: OnboardingService.tooltipDashboard,
+                message: 'Tap here to record your first lecture 🎙',
+                direction: TooltipDirection.above,
+                child: _RecordFAB(
+                  onPressed: () async {
+                    await Navigator.pushNamed(context, AppRouter.recorder);
+                  },
+                ),
+              ),
             ),
           ),
         ],
@@ -178,8 +190,6 @@ class _DashboardScreenState extends State<DashboardScreen>
             ),
             clipBehavior: Clip.antiAlias,
             child: Image.asset('assets/images/logo.png', fit: BoxFit.cover),
-            // child: const Icon(Icons.edit_note_rounded,
-            //     color: Colors.white, size: 20),
           ),
           const SizedBox(width: 10),
           Text(
@@ -209,7 +219,7 @@ class _DashboardScreenState extends State<DashboardScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Hello, $name',  // 👋
+            'Hello, $name',
             style: GoogleFonts.dmSans(
               fontSize: 16,
               color: AppTheme.textSecondaryOf(context),
@@ -217,7 +227,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           ),
           const SizedBox(height: 6),
           ShaderMask(
-            shaderCallback: (bounds) =>  LinearGradient(
+            shaderCallback: (bounds) => LinearGradient(
               colors: [AppTheme.textPrimaryOf(context), AppTheme.accentLight],
             ).createShader(bounds),
             child: Text(
@@ -300,7 +310,8 @@ class _DashboardScreenState extends State<DashboardScreen>
           children: [
             const Icon(Icons.error_outline, color: AppTheme.error, size: 40),
             const SizedBox(height: 12),
-            Text(msg, style:  TextStyle(color: AppTheme.textSecondaryOf(context))),
+            Text(msg,
+                style: TextStyle(color: AppTheme.textSecondaryOf(context))),
           ],
         ),
       ),
@@ -346,7 +357,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 Text(
                   'Tap the microphone button to record your first lecture and let AI transform it into structured notes.',
                   textAlign: TextAlign.center,
-                  style:  TextStyle(
+                  style: TextStyle(
                       color: AppTheme.textSecondaryOf(context), height: 1.5),
                 ),
               ],
@@ -410,7 +421,6 @@ class _LectureCard extends StatelessWidget {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  // Skills chips
                   Expanded(
                     child: Wrap(
                       spacing: 6,
@@ -422,7 +432,6 @@ class _LectureCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  // Date
                   Text(
                     DateFormat('MMM d').format(lecture.createdAt),
                     style: GoogleFonts.spaceGrotesk(
@@ -448,7 +457,8 @@ class _CardMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
-      icon: Icon(Icons.more_vert, color: AppTheme.textSecondaryOf(context), size: 20),
+      icon: Icon(Icons.more_vert,
+          color: AppTheme.textSecondaryOf(context), size: 20),
       color: AppTheme.surfaceElevOf(context),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       onSelected: (val) {
@@ -514,63 +524,86 @@ class _ProfileMenu extends StatelessWidget {
             name: auth.displayName,
             email: auth.user?.email ?? '',
             onSignOut: () async {
-              // await auth.signOut();
               Navigator.pop(context);
-              void _confirmSignOut( context, auth) {
+              void confirmSignOut(BuildContext ctx, AuthProvider auth) {
                 showModalBottomSheet(
-                  context: context,
-                  backgroundColor: AppTheme.surfaceOf(context),
+                  context: ctx,
+                  backgroundColor: AppTheme.surfaceOf(ctx),
                   shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-                  builder: (ctx) => Padding(
+                      borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(24))),
+                  builder: (sheetCtx) => Padding(
                     padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 24),
-                          decoration: BoxDecoration(color: AppTheme.borderOf(context),
+                      Container(
+                          width: 40,
+                          height: 4,
+                          margin: const EdgeInsets.only(bottom: 24),
+                          decoration: BoxDecoration(
+                              color: AppTheme.borderOf(ctx),
                               borderRadius: BorderRadius.circular(2))),
-                      Container(padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(color: AppTheme.error.withOpacity(0.1),
+                      Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                              color: AppTheme.error.withOpacity(0.1),
                               shape: BoxShape.circle),
-                          child: const Icon(Icons.logout_rounded, color: AppTheme.error, size: 32)),
+                          child: const Icon(Icons.logout_rounded,
+                              color: AppTheme.error, size: 32)),
                       const SizedBox(height: 16),
-                      Text('Sign Out?', style: GoogleFonts.playfairDisplay(
-                          fontSize: 24, fontWeight: FontWeight.w700,
-                          color: AppTheme.textPrimaryOf(context))),
+                      Text('Sign Out?',
+                          style: GoogleFonts.playfairDisplay(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.textPrimaryOf(ctx))),
                       const SizedBox(height: 8),
                       Text("You'll need to sign in again to access your data.",
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.dmSans(fontSize: 14,
-                              color: AppTheme.textSecondaryOf(context), height: 1.5)),
+                          style: GoogleFonts.dmSans(
+                              fontSize: 14,
+                              color: AppTheme.textSecondaryOf(ctx),
+                              height: 1.5)),
                       const SizedBox(height: 28),
                       Row(children: [
-                        Expanded(child: OutlinedButton(
-                          onPressed: () => Navigator.pop(ctx),
-                          style: OutlinedButton.styleFrom(
-                              side: BorderSide(color: AppTheme.borderOf(context)),
-                              foregroundColor: AppTheme.textSecondaryOf(context),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              padding: const EdgeInsets.symmetric(vertical: 14)),
-                          child: Text('Cancel', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.w600)),
-                        )),
+                        Expanded(
+                            child: OutlinedButton(
+                              onPressed: () => Navigator.pop(sheetCtx),
+                              style: OutlinedButton.styleFrom(
+                                  side: BorderSide(color: AppTheme.borderOf(ctx)),
+                                  foregroundColor: AppTheme.textSecondaryOf(ctx),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  padding:
+                                  const EdgeInsets.symmetric(vertical: 14)),
+                              child: Text('Cancel',
+                                  style: GoogleFonts.spaceGrotesk(
+                                      fontWeight: FontWeight.w600)),
+                            )),
                         const SizedBox(width: 12),
-                        Expanded(child: ElevatedButton(
-                          onPressed: () async {
-                            Navigator.pop(ctx);
-                            await auth.signOut();
-                          },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.error, foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              padding: const EdgeInsets.symmetric(vertical: 14), elevation: 0),
-                          child: Text('Sign Out', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.w700)),
-                        )),
+                        Expanded(
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                Navigator.pop(sheetCtx);
+                                await auth.signOut();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppTheme.error,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  padding:
+                                  const EdgeInsets.symmetric(vertical: 14),
+                                  elevation: 0),
+                              child: Text('Sign Out',
+                                  style: GoogleFonts.spaceGrotesk(
+                                      fontWeight: FontWeight.w700)),
+                            )),
                       ]),
                     ]),
                   ),
                 );
               }
-              _confirmSignOut(context, auth);
 
+              confirmSignOut(context, auth);
             },
           ),
         );
@@ -596,7 +629,8 @@ class _ProfileSheet extends StatelessWidget {
   final String email;
   final VoidCallback onSignOut;
 
-  const _ProfileSheet({required this.name, required this.email, required this.onSignOut});
+  const _ProfileSheet(
+      {required this.name, required this.email, required this.onSignOut});
 
   @override
   Widget build(BuildContext context) {
@@ -686,3 +720,906 @@ class _RecordFABState extends State<_RecordFAB>
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import 'package:flutter/material.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:provider/provider.dart';
+// import 'package:intl/intl.dart';
+// import '../../../core/services/onboarding_service.dart';
+// import '../../../core/widgets/tooltip_overlay.dart';
+// import '../../auth/providers/auth_provider.dart';
+// import '../providers/lectures_provider.dart';
+// import '../data/models/lecture_model.dart';
+// // import '../../../auth/providers/auth_provider.dart';
+// import '../../../../core/theme/app_theme.dart';
+// import '../../../../core/widgets/app_widgets.dart';
+// import '../../../../core/router/app_router.dart';
+//
+// class DashboardScreen extends StatefulWidget {
+//   const DashboardScreen({super.key});
+//
+//   @override
+//   State<DashboardScreen> createState() => _DashboardScreenState();
+// }
+//
+// class _DashboardScreenState extends State<DashboardScreen>
+//     with SingleTickerProviderStateMixin {
+//   late final AnimationController _heroCtrl;
+//   late final Animation<double> _heroAnim;
+//
+//   OverlayEntry? _dashboardTooltip;
+//
+//   void _showDashboardTooltip() {
+//     if (!mounted) return;
+//
+//     if (_dashboardTooltip != null) return;
+//     if (OnboardingService.instance
+//         .hasSeenTooltip(OnboardingService.tooltipDashboard)) {
+//       return;
+//     }
+//
+//     _dashboardTooltip = OverlayEntry(
+//       builder: (context) => Positioned(
+//         bottom: 110,
+//         right: 24,
+//         child: Material(
+//           color: Colors.transparent,
+//           child: GestureDetector(
+//             onTap: () async {
+//               await OnboardingService.instance
+//                   .markTooltipSeen(OnboardingService.tooltipDashboard);
+//               _dashboardTooltip?.remove();
+//             },
+//             child: _DashboardTooltip(
+//               onDismiss: () async {
+//                 await OnboardingService.instance.markTooltipSeen(
+//                   OnboardingService.tooltipDashboard,
+//                 );
+//
+//                 _dashboardTooltip?.remove();
+//                 _dashboardTooltip = null;
+//               },
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//
+//     Overlay.of(context).insert(_dashboardTooltip!);
+//   }
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _heroCtrl = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 800),
+//     )..forward();
+//     _heroAnim = CurvedAnimation(parent: _heroCtrl, curve: Curves.easeOut);
+//
+//     // Start listening to Firestore stream
+//     WidgetsBinding.instance.addPostFrameCallback((_) {
+//       context.read<LecturesProvider>().startListening();
+//
+//       Future.delayed(const Duration(milliseconds: 800), () {
+//         if (mounted) {
+//           _showDashboardTooltip();
+//         }
+//       });
+//     });
+//   }
+//
+//   @override
+//   void dispose() {
+//     _dashboardTooltip?.remove();
+//
+//     _heroCtrl.dispose();
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: AppTheme.bgOf(context),
+//       body: Stack(
+//         children: [
+//           // Top gradient blob
+//           Positioned(
+//             top: -120,
+//             right: -100,
+//             child: Container(
+//               width: 350,
+//               height: 350,
+//               decoration: BoxDecoration(
+//                 shape: BoxShape.circle,
+//                 color: AppTheme.accent.withOpacity(0.07),
+//               ),
+//             ),
+//           ),
+//
+//           SafeArea(
+//             child: Column(
+//               children: [
+//                 _buildAppBar(context),
+//                 Expanded(
+//                   child: Consumer<LecturesProvider>(
+//                     builder: (context, provider, _) {
+//                       return CustomScrollView(
+//                         slivers: [
+//                           // Hero section
+//                           SliverToBoxAdapter(
+//                             child: FadeTransition(
+//                               opacity: _heroAnim,
+//                               child: SlideTransition(
+//                                 position: Tween<Offset>(
+//                                   begin: const Offset(0, 0.1),
+//                                   end: Offset.zero,
+//                                 ).animate(_heroAnim),
+//                                 child: _buildHero(context),
+//                               ),
+//                             ),
+//                           ),
+//
+//                           // Stats row
+//                           SliverToBoxAdapter(
+//                             child: Padding(
+//                               padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+//                               child: _buildStats(provider),
+//                             ),
+//                           ),
+//
+//                           // Section header
+//                           SliverToBoxAdapter(
+//                             child: Padding(
+//                               padding:
+//                               const EdgeInsets.symmetric(horizontal: 20),
+//                               child: SectionHeader(
+//                                 title: 'Your Lectures',
+//                                 subtitle:
+//                                 '${provider.lectures.length} notes captured',
+//                               ),
+//                             ),
+//                           ),
+//                           const SliverToBoxAdapter(
+//                               child: SizedBox(height: 16)),
+//
+//                           // Lectures list
+//                           if (provider.isLoading)
+//                             SliverToBoxAdapter(child: _buildShimmerList())
+//                           else if (provider.error != null)
+//                             SliverToBoxAdapter(
+//                                 child: _buildError(context,provider.error!))
+//                           else if (provider.lectures.isEmpty)
+//                               SliverToBoxAdapter(child: _buildEmpty())
+//                             else
+//                               SliverPadding(
+//                                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+//                                 sliver: SliverList(
+//                                   delegate: SliverChildBuilderDelegate(
+//                                         (context, i) => _LectureCard(
+//                                       lecture: provider.lectures[i],
+//                                       onTap: () => Navigator.pushNamed(
+//                                         context,
+//                                         AppRouter.notesViewer,
+//                                         arguments: provider.lectures[i].id,
+//                                       ),
+//                                       onDelete: () =>
+//                                           provider.deleteLecture(
+//                                               provider.lectures[i].id),
+//                                     ),
+//                                     childCount: provider.lectures.length,
+//                                   ),
+//                                 ),
+//                               ),
+//                         ],
+//                       );
+//                     },
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//
+//           // FAB
+//           // Positioned(
+//           //   bottom: 28,
+//           //   right: 24,
+//           //   child: _RecordFAB(
+//           //     onPressed: () async {
+//           //       await Navigator.pushNamed(context, AppRouter.recorder);
+//           //       // Refresh is automatic via Firestore stream
+//           //     },
+//           //   ),
+//           // ),
+//
+//           // Positioned(
+//           //   bottom: 28,
+//           //   left: 24,
+//           //   right: 24,
+//           //   child: Align(
+//           //     alignment: Alignment.centerRight,
+//           //     child: OnboardingTooltip(
+//           //       tooltipKey: OnboardingService.tooltipDashboard,
+//           //       message: 'Tap here to record your first lecture 🎙',
+//           //       direction: TooltipDirection.above,
+//           //       child: _RecordFAB(
+//           //         onPressed: () async {
+//           //           await Navigator.pushNamed(context, AppRouter.recorder);
+//           //         },
+//           //       ),
+//           //     ),
+//           //   ),
+//           // ),
+//           Positioned(
+//             bottom: 28,
+//             right: 24,
+//             child: _RecordFAB(
+//               onPressed: () async {
+//                 _dashboardTooltip?.remove();
+//                 _dashboardTooltip = null;
+//
+//                 await Navigator.pushNamed(
+//                   context,
+//                   AppRouter.recorder,
+//                 );
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   Widget _buildAppBar(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+//       child: Row(
+//         children: [
+//           Container(
+//             width: 36,
+//             height: 36,
+//             decoration: BoxDecoration(
+//               gradient: const LinearGradient(
+//                 colors: [AppTheme.accent, Color(0xFF9D40FF)],
+//               ),
+//               borderRadius: BorderRadius.circular(10),
+//             ),
+//             clipBehavior: Clip.antiAlias,
+//             child: Image.asset('assets/images/logo.png', fit: BoxFit.cover),
+//             // child: const Icon(Icons.edit_note_rounded,
+//             //     color: Colors.white, size: 20),
+//           ),
+//           const SizedBox(width: 10),
+//           Text(
+//             'DraftIt',
+//             style: GoogleFonts.playfairDisplay(
+//               fontSize: 22,
+//               fontWeight: FontWeight.w700,
+//               color: AppTheme.textPrimaryOf(context),
+//             ),
+//           ),
+//           const Spacer(),
+//           _ProfileMenu(),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   Widget _buildHero(BuildContext context) {
+//     final auth = context.read<AuthProvider>();
+//     final name = auth.displayName.split(' ').first.isNotEmpty
+//         ? auth.displayName.split(' ').first
+//         : 'Student';
+//
+//     return Padding(
+//       padding: const EdgeInsets.fromLTRB(20, 32, 20, 24),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Text(
+//             'Hello, $name',  // 👋
+//             style: GoogleFonts.dmSans(
+//               fontSize: 16,
+//               color: AppTheme.textSecondaryOf(context),
+//             ),
+//           ),
+//           const SizedBox(height: 6),
+//           ShaderMask(
+//             shaderCallback: (bounds) =>  LinearGradient(
+//               colors: [AppTheme.textPrimaryOf(context), AppTheme.accentLight],
+//             ).createShader(bounds),
+//             child: Text(
+//               'Your\nKnowledge Hub',
+//               style: GoogleFonts.playfairDisplay(
+//                 fontSize: 38,
+//                 fontWeight: FontWeight.w700,
+//                 color: Colors.white,
+//                 height: 1.1,
+//               ),
+//             ),
+//           ),
+//           const SizedBox(height: 10),
+//           Text(
+//             'From classroom to career, one draft at a time.',
+//             style: Theme.of(context).textTheme.bodyMedium,
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   Widget _buildStats(LecturesProvider provider) {
+//     return Row(
+//       children: [
+//         Expanded(
+//           child: StatCard(
+//             label: 'Lectures',
+//             value: '${provider.lectures.length}',
+//             icon: Icons.mic_none_rounded,
+//             color: AppTheme.accent,
+//           ),
+//         ),
+//         const SizedBox(width: 12),
+//         Expanded(
+//           child: StatCard(
+//             label: 'Skills',
+//             value: '${provider.totalSkills}',
+//             icon: Icons.bolt_rounded,
+//             color: AppTheme.amber,
+//           ),
+//         ),
+//         const SizedBox(width: 12),
+//         Expanded(
+//           child: StatCard(
+//             label: 'Mastered',
+//             value: '${provider.masteredCount}',
+//             icon: Icons.verified_rounded,
+//             color: AppTheme.success,
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+//
+//   Widget _buildShimmerList() {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(horizontal: 20),
+//       child: Column(
+//         children: List.generate(
+//           3,
+//               (i) => Padding(
+//             padding: const EdgeInsets.only(bottom: 12),
+//             child: ShimmerBox(
+//               width: double.infinity,
+//               height: 100,
+//               borderRadius: 16,
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildError(BuildContext context, String msg) {
+//     return Padding(
+//       padding: const EdgeInsets.all(32),
+//       child: Center(
+//         child: Column(
+//           children: [
+//             const Icon(Icons.error_outline, color: AppTheme.error, size: 40),
+//             const SizedBox(height: 12),
+//             Text(msg, style:  TextStyle(color: AppTheme.textSecondaryOf(context))),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildEmpty() {
+//     return Padding(
+//       padding: const EdgeInsets.all(48),
+//       child: Column(
+//         children: [
+//           Container(
+//             padding: const EdgeInsets.all(24),
+//             decoration: BoxDecoration(
+//               color: AppTheme.surfaceOf(context),
+//               borderRadius: BorderRadius.circular(24),
+//               border: Border.all(color: AppTheme.borderOf(context)),
+//             ),
+//             child: Column(
+//               children: [
+//                 Container(
+//                   padding: const EdgeInsets.all(16),
+//                   decoration: BoxDecoration(
+//                     color: AppTheme.accent.withOpacity(0.12),
+//                     borderRadius: BorderRadius.circular(16),
+//                   ),
+//                   child: const Icon(
+//                     Icons.mic_none_rounded,
+//                     color: AppTheme.accent,
+//                     size: 36,
+//                   ),
+//                 ),
+//                 const SizedBox(height: 20),
+//                 Text(
+//                   'No lectures yet',
+//                   style: GoogleFonts.playfairDisplay(
+//                     fontSize: 22,
+//                     fontWeight: FontWeight.w600,
+//                     color: AppTheme.textPrimaryOf(context),
+//                   ),
+//                 ),
+//                 const SizedBox(height: 8),
+//                 Text(
+//                   'Tap the microphone button to record your first lecture and let AI transform it into structured notes.',
+//                   textAlign: TextAlign.center,
+//                   style:  TextStyle(
+//                       color: AppTheme.textSecondaryOf(context), height: 1.5),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+// // ─── Lecture Card ─────────────────────────────────────────────────────────────
+// class _LectureCard extends StatelessWidget {
+//   final LectureModel lecture;
+//   final VoidCallback onTap;
+//   final VoidCallback onDelete;
+//
+//   const _LectureCard({
+//     required this.lecture,
+//     required this.onTap,
+//     required this.onDelete,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.only(bottom: 12),
+//       child: GestureDetector(
+//         onTap: onTap,
+//         child: Container(
+//           padding: const EdgeInsets.all(18),
+//           decoration: BoxDecoration(
+//             color: AppTheme.surfaceOf(context),
+//             borderRadius: BorderRadius.circular(16),
+//             border: Border.all(color: AppTheme.borderOf(context)),
+//           ),
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Row(
+//                 children: [
+//                   Expanded(
+//                     child: Text(
+//                       lecture.title,
+//                       style: Theme.of(context).textTheme.titleMedium,
+//                       maxLines: 2,
+//                       overflow: TextOverflow.ellipsis,
+//                     ),
+//                   ),
+//                   const SizedBox(width: 8),
+//                   _CardMenu(onDelete: onDelete),
+//                 ],
+//               ),
+//               const SizedBox(height: 8),
+//               Text(
+//                 lecture.summary,
+//                 maxLines: 2,
+//                 overflow: TextOverflow.ellipsis,
+//                 style: Theme.of(context).textTheme.bodyMedium,
+//               ),
+//               const SizedBox(height: 12),
+//               Row(
+//                 children: [
+//                   // Skills chips
+//                   Expanded(
+//                     child: Wrap(
+//                       spacing: 6,
+//                       runSpacing: 4,
+//                       children: lecture.extractedSkills
+//                           .take(3)
+//                           .map((s) => SkillChip(label: s))
+//                           .toList(),
+//                     ),
+//                   ),
+//                   const SizedBox(width: 8),
+//                   // Date
+//                   Text(
+//                     DateFormat('MMM d').format(lecture.createdAt),
+//                     style: GoogleFonts.spaceGrotesk(
+//                       fontSize: 12,
+//                       color: AppTheme.textSecondaryOf(context),
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// // ─── Card Menu ────────────────────────────────────────────────────────────────
+// class _CardMenu extends StatelessWidget {
+//   final VoidCallback onDelete;
+//   const _CardMenu({required this.onDelete});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return PopupMenuButton<String>(
+//       icon: Icon(Icons.more_vert, color: AppTheme.textSecondaryOf(context), size: 20),
+//       color: AppTheme.surfaceElevOf(context),
+//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+//       onSelected: (val) {
+//         if (val == 'delete') {
+//           showDialog(
+//             context: context,
+//             builder: (_) => AlertDialog(
+//               backgroundColor: AppTheme.surfaceOf(context),
+//               title: const Text('Delete lecture?'),
+//               content: const Text('This cannot be undone.'),
+//               actions: [
+//                 TextButton(
+//                   onPressed: () => Navigator.pop(context),
+//                   child: const Text('Cancel'),
+//                 ),
+//                 TextButton(
+//                   onPressed: () {
+//                     Navigator.pop(context);
+//                     onDelete();
+//                   },
+//                   child: const Text(
+//                     'Delete',
+//                     style: TextStyle(color: AppTheme.error),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           );
+//         }
+//       },
+//       itemBuilder: (_) => [
+//         const PopupMenuItem(
+//           value: 'delete',
+//           child: Row(
+//             children: [
+//               Icon(Icons.delete_outline, color: AppTheme.error, size: 18),
+//               SizedBox(width: 8),
+//               Text('Delete', style: TextStyle(color: AppTheme.error)),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+//
+// // ─── Profile Menu ─────────────────────────────────────────────────────────────
+// class _ProfileMenu extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     final auth = context.watch<AuthProvider>();
+//     final initial = auth.initials;
+//
+//     return GestureDetector(
+//       onTap: () {
+//         showModalBottomSheet(
+//           context: context,
+//           backgroundColor: AppTheme.surfaceOf(context),
+//           shape: const RoundedRectangleBorder(
+//             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+//           ),
+//           builder: (_) => _ProfileSheet(
+//             name: auth.displayName,
+//             email: auth.user?.email ?? '',
+//             onSignOut: () async {
+//               // await auth.signOut();
+//               Navigator.pop(context);
+//               void _confirmSignOut( context, auth) {
+//                 showModalBottomSheet(
+//                   context: context,
+//                   backgroundColor: AppTheme.surfaceOf(context),
+//                   shape: const RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+//                   builder: (ctx) => Padding(
+//                     padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
+//                     child: Column(mainAxisSize: MainAxisSize.min, children: [
+//                       Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 24),
+//                           decoration: BoxDecoration(color: AppTheme.borderOf(context),
+//                               borderRadius: BorderRadius.circular(2))),
+//                       Container(padding: const EdgeInsets.all(16),
+//                           decoration: BoxDecoration(color: AppTheme.error.withOpacity(0.1),
+//                               shape: BoxShape.circle),
+//                           child: const Icon(Icons.logout_rounded, color: AppTheme.error, size: 32)),
+//                       const SizedBox(height: 16),
+//                       Text('Sign Out?', style: GoogleFonts.playfairDisplay(
+//                           fontSize: 24, fontWeight: FontWeight.w700,
+//                           color: AppTheme.textPrimaryOf(context))),
+//                       const SizedBox(height: 8),
+//                       Text("You'll need to sign in again to access your data.",
+//                           textAlign: TextAlign.center,
+//                           style: GoogleFonts.dmSans(fontSize: 14,
+//                               color: AppTheme.textSecondaryOf(context), height: 1.5)),
+//                       const SizedBox(height: 28),
+//                       Row(children: [
+//                         Expanded(child: OutlinedButton(
+//                           onPressed: () => Navigator.pop(ctx),
+//                           style: OutlinedButton.styleFrom(
+//                               side: BorderSide(color: AppTheme.borderOf(context)),
+//                               foregroundColor: AppTheme.textSecondaryOf(context),
+//                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+//                               padding: const EdgeInsets.symmetric(vertical: 14)),
+//                           child: Text('Cancel', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.w600)),
+//                         )),
+//                         const SizedBox(width: 12),
+//                         Expanded(child: ElevatedButton(
+//                           onPressed: () async {
+//                             Navigator.pop(ctx);
+//                             await auth.signOut();
+//                           },
+//                           style: ElevatedButton.styleFrom(
+//                               backgroundColor: AppTheme.error, foregroundColor: Colors.white,
+//                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+//                               padding: const EdgeInsets.symmetric(vertical: 14), elevation: 0),
+//                           child: Text('Sign Out', style: GoogleFonts.spaceGrotesk(fontWeight: FontWeight.w700)),
+//                         )),
+//                       ]),
+//                     ]),
+//                   ),
+//                 );
+//               }
+//               _confirmSignOut(context, auth);
+//
+//             },
+//           ),
+//         );
+//       },
+//       child: CircleAvatar(
+//         radius: 18,
+//         backgroundColor: AppTheme.accent.withOpacity(0.2),
+//         child: Text(
+//           initial,
+//           style: GoogleFonts.spaceGrotesk(
+//             color: AppTheme.accentLight,
+//             fontWeight: FontWeight.w700,
+//             fontSize: 16,
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class _ProfileSheet extends StatelessWidget {
+//   final String name;
+//   final String email;
+//   final VoidCallback onSignOut;
+//
+//   const _ProfileSheet({required this.name, required this.email, required this.onSignOut});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.all(24),
+//       child: Column(
+//         mainAxisSize: MainAxisSize.min,
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Text('Account', style: Theme.of(context).textTheme.headlineMedium),
+//           const SizedBox(height: 8),
+//           if (name.isNotEmpty)
+//             Text(name, style: Theme.of(context).textTheme.titleMedium),
+//           Text(email, style: Theme.of(context).textTheme.bodyMedium),
+//           const SizedBox(height: 24),
+//           GradientButton(
+//             label: 'Sign Out',
+//             icon: Icons.logout_rounded,
+//             onPressed: onSignOut,
+//           ),
+//           const SizedBox(height: 12),
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+//
+// class _DashboardTooltip extends StatelessWidget {
+//   final VoidCallback onDismiss;
+//
+//   const _DashboardTooltip({
+//     required this.onDismiss,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: onDismiss,
+//       child: Column(
+//         mainAxisSize: MainAxisSize.min,
+//         crossAxisAlignment: CrossAxisAlignment.end,
+//         children: [
+//           Container(
+//             width: 260,
+//             padding: const EdgeInsets.symmetric(
+//               horizontal: 14,
+//               vertical: 11,
+//             ),
+//             decoration: BoxDecoration(
+//               gradient: const LinearGradient(
+//                 colors: [
+//                   AppTheme.accent,
+//                   Color(0xFF9D40FF),
+//                 ],
+//                 begin: Alignment.topLeft,
+//                 end: Alignment.bottomRight,
+//               ),
+//               borderRadius: BorderRadius.circular(12),
+//               boxShadow: [
+//                 BoxShadow(
+//                   color: AppTheme.accent.withOpacity(0.4),
+//                   blurRadius: 18,
+//                   offset: const Offset(0, 6),
+//                 ),
+//               ],
+//             ),
+//             child: Row(
+//               children: [
+//                 const Icon(
+//                   Icons.auto_awesome_rounded,
+//                   color: Colors.white70,
+//                   size: 15,
+//                 ),
+//                 const SizedBox(width: 8),
+//
+//                 const Expanded(
+//                   child: Text(
+//                     'Tap here to record your first lecture 🎙',
+//                     style: TextStyle(
+//                       fontSize: 13,
+//                       color: Colors.white,
+//                       height: 1.4,
+//                     ),
+//                   ),
+//                 ),
+//
+//                 const SizedBox(width: 8),
+//
+//                 const Icon(
+//                   Icons.close_rounded,
+//                   color: Colors.white70,
+//                   size: 16,
+//                 ),
+//               ],
+//             ),
+//           ),
+//
+//           Padding(
+//             padding: const EdgeInsets.only(right: 28),
+//             child: CustomPaint(
+//               size: const Size(14, 7),
+//               painter: _DashboardTooltipArrow(),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+//
+// class _DashboardTooltipArrow extends CustomPainter {
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     final paint = Paint()
+//       ..shader = const LinearGradient(
+//         colors: [
+//           AppTheme.accent,
+//           Color(0xFF9D40FF),
+//         ],
+//       ).createShader(
+//         Rect.fromLTWH(0, 0, size.width, size.height),
+//       );
+//
+//     final path = Path()
+//       ..moveTo(0, 0)
+//       ..lineTo(size.width, 0)
+//       ..lineTo(size.width / 2, size.height)
+//       ..close();
+//
+//     canvas.drawPath(path, paint);
+//   }
+//
+//   @override
+//   bool shouldRepaint(covariant CustomPainter oldDelegate) {
+//     return false;
+//   }
+// }
+//
+// // ─── Record FAB ───────────────────────────────────────────────────────────────
+// class _RecordFAB extends StatefulWidget {
+//   final VoidCallback onPressed;
+//   const _RecordFAB({required this.onPressed});
+//
+//   @override
+//   State<_RecordFAB> createState() => _RecordFABState();
+// }
+//
+// class _RecordFABState extends State<_RecordFAB>
+//     with SingleTickerProviderStateMixin {
+//   late final AnimationController _ctrl;
+//   late final Animation<double> _pulse;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _ctrl = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 1400),
+//     )..repeat(reverse: true);
+//     _pulse = Tween<double>(begin: 1.0, end: 1.08).animate(
+//       CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut),
+//     );
+//   }
+//
+//   @override
+//   void dispose() {
+//     _ctrl.dispose();
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return ScaleTransition(
+//       scale: _pulse,
+//       child: GestureDetector(
+//         onTap: widget.onPressed,
+//         child: Container(
+//           width: 64,
+//           height: 64,
+//           decoration: BoxDecoration(
+//             gradient: const LinearGradient(
+//               colors: [AppTheme.accent, Color(0xFF9D40FF)],
+//               begin: Alignment.topLeft,
+//               end: Alignment.bottomRight,
+//             ),
+//             shape: BoxShape.circle,
+//             boxShadow: [
+//               BoxShadow(
+//                 color: AppTheme.accent.withOpacity(0.45),
+//                 blurRadius: 24,
+//                 offset: const Offset(0, 8),
+//               ),
+//             ],
+//           ),
+//           child: const Icon(Icons.mic_rounded, color: Colors.white, size: 28),
+//         ),
+//       ),
+//     );
+//   }
+// }

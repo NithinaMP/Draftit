@@ -3,10 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../providers/job_application_provider.dart';
 import '../../providers/master_profile_provider.dart';
-// import '../providers/job_application_provider.dart';
-// import '../providers/master_profile_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_widgets.dart';
+import '../../../../core/widgets/tooltip_overlay.dart';
+import '../../../../core/services/onboarding_service.dart';
 import 'optimization_view_screen.dart';
 
 class JdInputScreen extends StatefulWidget {
@@ -18,9 +18,9 @@ class JdInputScreen extends StatefulWidget {
 
 class _JdInputScreenState extends State<JdInputScreen> {
   final _companyCtrl = TextEditingController();
-  final _roleCtrl = TextEditingController();
-  final _jdCtrl = TextEditingController();
-  bool _hasContent = false;
+  final _roleCtrl    = TextEditingController();
+  final _jdCtrl      = TextEditingController();
+  bool _hasContent   = false;
 
   @override
   void initState() {
@@ -48,7 +48,6 @@ class _JdInputScreenState extends State<JdInputScreen> {
           builder: (_, provider, __) {
             if (provider.isProcessing) return _buildProcessing(provider);
             if (provider.status == JobStatus.done) {
-              // Auto-navigate to results
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (mounted) {
                   Navigator.pushReplacement(
@@ -76,7 +75,7 @@ class _JdInputScreenState extends State<JdInputScreen> {
           child: Row(
             children: [
               IconButton(
-                icon:  Icon(Icons.arrow_back_ios_new_rounded,
+                icon: Icon(Icons.arrow_back_ios_new_rounded,
                     color: AppTheme.textPrimaryOf(context)),
                 onPressed: () => Navigator.pop(context),
               ),
@@ -101,19 +100,16 @@ class _JdInputScreenState extends State<JdInputScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Company + Role
+                // Company + Role row
                 Row(
                   children: [
                     Expanded(
                       child: TextField(
                         controller: _companyCtrl,
-                        style:
-                         TextStyle(color: AppTheme.textPrimaryOf(context)),
+                        style: TextStyle(color: AppTheme.textPrimaryOf(context)),
                         decoration: const InputDecoration(
                           labelText: 'Company Name',
-                          prefixIcon: Icon(
-                              Icons.business_outlined,
-                              size: 18),
+                          prefixIcon: Icon(Icons.business_outlined, size: 18),
                         ),
                       ),
                     ),
@@ -121,13 +117,11 @@ class _JdInputScreenState extends State<JdInputScreen> {
                     Expanded(
                       child: TextField(
                         controller: _roleCtrl,
-                        style:
-                         TextStyle(color: AppTheme.textPrimaryOf(context)),
+                        style: TextStyle(color: AppTheme.textPrimaryOf(context)),
                         decoration: const InputDecoration(
                           labelText: 'Job Title',
-                          prefixIcon: Icon(
-                              Icons.work_outline_rounded,
-                              size: 18),
+                          prefixIcon:
+                          Icon(Icons.work_outline_rounded, size: 18),
                         ),
                       ),
                     ),
@@ -141,8 +135,8 @@ class _JdInputScreenState extends State<JdInputScreen> {
                   decoration: BoxDecoration(
                     color: AppTheme.accent.withOpacity(0.07),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                        color: AppTheme.accent.withOpacity(0.2)),
+                    border:
+                    Border.all(color: AppTheme.accent.withOpacity(0.2)),
                   ),
                   child: Row(
                     children: [
@@ -167,26 +161,33 @@ class _JdInputScreenState extends State<JdInputScreen> {
                     style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 10),
 
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppTheme.surfaceOf(context),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppTheme.borderOf(context)),
-                  ),
-                  child: TextField(
-                    controller: _jdCtrl,
-                    maxLines: 14,
-                    style: GoogleFonts.dmSans(
-                        fontSize: 14,
-                        color: AppTheme.textPrimaryOf(context),
-                        height: 1.6),
-                    decoration: InputDecoration(
-                      hintText:
-                      'Paste the full job description here...\n\nExample:\nWe are looking for a Software Engineer with 1-2 years of experience in Flutter, Firebase, and REST APIs...',
-                      hintStyle: GoogleFonts.dmSans(
-                          color: AppTheme.textSecondaryOf(context)),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.all(16),
+                // ── JD text field wrapped in tooltip ──────────────────────
+                OnboardingTooltip(
+                  tooltipKey: OnboardingService.tooltipJd,
+                  message:
+                  'Paste any job description here — AI does the rest ✨',
+                  direction: TooltipDirection.above,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.surfaceOf(context),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: AppTheme.borderOf(context)),
+                    ),
+                    child: TextField(
+                      controller: _jdCtrl,
+                      maxLines: 14,
+                      style: GoogleFonts.dmSans(
+                          fontSize: 14,
+                          color: AppTheme.textPrimaryOf(context),
+                          height: 1.6),
+                      decoration: InputDecoration(
+                        hintText:
+                        'Paste the full job description here...\n\nExample:\nWe are looking for a Software Engineer with 1-2 years of experience in Flutter, Firebase, and REST APIs...',
+                        hintStyle: GoogleFonts.dmSans(
+                            color: AppTheme.textSecondaryOf(context)),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.all(16),
+                      ),
                     ),
                   ),
                 ),
@@ -201,8 +202,7 @@ class _JdInputScreenState extends State<JdInputScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(provider.error!,
-                          style:
-                          const TextStyle(color: AppTheme.error)),
+                          style: const TextStyle(color: AppTheme.error)),
                     ),
                   ),
 
@@ -220,9 +220,8 @@ class _JdInputScreenState extends State<JdInputScreen> {
             isLoading: provider.isProcessing,
             onPressed: _hasContent
                 ? () {
-              final profile = context
-                  .read<MasterProfileProvider>()
-                  .profile;
+              final profile =
+                  context.read<MasterProfileProvider>().profile;
               context.read<JobApplicationProvider>().analyzeAndGenerate(
                 companyName: _companyCtrl.text.trim().isEmpty
                     ? 'Company'
@@ -242,12 +241,6 @@ class _JdInputScreenState extends State<JdInputScreen> {
   }
 
   Widget _buildProcessing(JobApplicationProvider provider) {
-    final steps = [
-      'Analyzing job description...',
-      'Calculating match score...',
-      'Writing targeted resume...',
-    ];
-
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
@@ -255,8 +248,7 @@ class _JdInputScreenState extends State<JdInputScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              width: 64,
-              height: 64,
+              width: 64, height: 64,
               child: CircularProgressIndicator(
                 color: provider.status == JobStatus.generating
                     ? const Color(0xFF00C9FF)
@@ -269,8 +261,7 @@ class _JdInputScreenState extends State<JdInputScreen> {
               'Building Your\nTargeted Resume',
               textAlign: TextAlign.center,
               style: GoogleFonts.playfairDisplay(
-                fontSize: 26,
-                fontWeight: FontWeight.w700,
+                fontSize: 26, fontWeight: FontWeight.w700,
                 color: AppTheme.textPrimaryOf(context),
               ),
             ),
@@ -278,7 +269,8 @@ class _JdInputScreenState extends State<JdInputScreen> {
             Text(
               provider.statusLabel,
               style: GoogleFonts.dmSans(
-                  fontSize: 14, color: AppTheme.textSecondaryOf(context)),
+                  fontSize: 14,
+                  color: AppTheme.textSecondaryOf(context)),
             ),
           ],
         ),

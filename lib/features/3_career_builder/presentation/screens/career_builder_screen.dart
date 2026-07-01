@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/services/onboarding_service.dart';
+import '../../../../core/widgets/tooltip_overlay.dart';
 import '../../data/models/job_application_model.dart';
 import '../../providers/job_application_provider.dart';
 import '../../providers/master_profile_provider.dart';
@@ -66,7 +68,16 @@ class _CareerBuilderScreenState extends State<CareerBuilderScreen>
               return CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(child: _header(context, profileProv)),
-                  SliverToBoxAdapter(child: _profileBanner(context, profileProv)),
+                  // SliverToBoxAdapter(child: _profileBanner(context, profileProv)),
+                  SliverToBoxAdapter(
+                    child: OnboardingTooltip(
+                      tooltipKey: OnboardingService.tooltipCareer,
+                      message: 'Build your Master Profile first — add skills once, generate unlimited resumes 👆',
+                      direction: TooltipDirection.below,
+                      child: _profileBanner(context, profileProv),
+                    ),
+                  ),
+
                   SliverToBoxAdapter(child: _applyBtn(context, profileProv)),
 
                   // ── Tracker header ──

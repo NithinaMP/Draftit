@@ -1,0 +1,105 @@
+[33ma1195c7[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m feat:tooltip added
+[33m359173d[m  update the auto-stop message in recording
+[33mfbb3246[m feat(rv5): implement lecture mastery tracking on dashboard
+[33m74af47e[m fix(errors): replace raw API exceptions with user-friendly message-rv5
+[33m4a85d38[m feat(voice): enforce recording limits with safeguards and UI feedback
+[33mc1c2422[m feat(voice): add recording safeguards for API limits
+[33ma3a0af5[m fix(app-icon): regenerate launcher icons and restore branding assets
+[33maf9aaf6[m fix(auth): configure Google Sign-In for Play Store app signing
+[33m35fc0da[m style: update nav logo to use custom brand gradient
+[33m4eb5080[m feat: Firebase setup and integrate Crashlytics
+[33mb97ae87[m chore: prepare DraftIt for production release
+[33m9232e59[m chore: finalize app configuration and deployment setup
+[33me48cb58[m fix: resolve Firebase auth and Firestore integration issues
+[33m01d74a8[m enhance theme preferences and adaptive appearance support
+[33m913234a[m enhance theme management and system appearance support
+[33mc7981e7[m refine launch branding and adaptive splash experience
+[33ma257fd7[m refine app launch experience and branding
+[33m8d82c08[m Enhance root navigation flow with dashboard fallback and controlled app exit
+[33mfa2fae4[m Refine authentication flow orchestration and recovery state handling
+[33m8153e63[m Expand account management controls with credential recovery actions
+[33m9bc9070[m Refine authentication state management for recovery operations
+[33me5d8b27[m Extend authentication services with secure credential recovery capabilities
+[33m848de22[m Enhance account security and identity management workflows
+[33m23ff709[m Improve recorder interface compatibility with adaptive themes
+[33m0920e0e[m Refine note viewing experience for theme-aware rendering
+[33me695d7c[m Integrate adaptive styling into study assistance workflows
+[33m2d73913[m Enhance blueprint visualization with contextual theme support
+[33m9de4f0c[m Modernize evaluation workspace with responsive theme handling
+[33m4b6ffbd[m Improve syllabus tracking interface consistency across themes
+[33m369111e[m Standardize adaptive theming across user-facing workflows
+[33m91ff913[m Implement profile storage schema migration and persistence isolation
+[33m135cf92[m Enhance application pipeline management with status-aware navigation
+[33m704cd41[m Strengthen local data layer and model interoperability
+[33md33afb5[m Improve domain model integrity across persistence workflows
+[33m29250e6[m Introduce comprehensive certification management interface
+[33m7ca183b[m Improve resume rendering with detailed certification presentation
+[33m0f0ffc7[m Extend profile schema with structured certification records
+[33m1670692[m Refine resume content architecture for broader candidate applicability
+[33m3cc2505[m Restore centralized navigation and route management
+[33me0f6108[m feat: complete career builder feature, fix profile layout bugs & add PDF resume generator
+[33mcfcd276[m Introduce project portfolio module for comprehensive candidate profiling
+[33mf38cbc9[m Strengthen profile orchestration for advanced resume customization
+[33mffd2448[m Improve resume review workflow with ATS and visual preview modes
+[33mf352ff1[m Introduce dual-format resume generation and adaptive content synthesis
+[33mf5a3643[m Extend candidate profile schema for project-centric resume generation
+[33mf91d4e9[m Enhance AI-driven resume content generation and candidate profiling
+[33m2dafd04[m Implement adaptive theming across core application modules
+[33mf33d95e[m Enhance resume optimization experience and career insights workflow
+[33m6a3efd2[m Enhance job targeting workflow and resume generation experience
+[33m2645ac9[m Enhance master profile management and career data workflows
+[33mf3c4cbd[m Refine career builder experience and unified theme architecture
+[33m47a52c0[m Enhance syllabus management workflows with adaptive theme integration
+[33m47b20ba[m Enhance answer evaluation workflow with adaptive UI rendering
+[33mb786d93[m Enhance exam blueprint workflow with adaptive UI architecture
+[33meacf696[m Implement adaptive theming across study workflow interfaces
+[33m6dcdf3e[m Finalize adaptive theming across lecture review and note visualization workflows
+[33mc19db91[m Enhance recording workflow UI with adaptive theme integration
+[33mc7d22c2[m Implement dynamic appearance support across core application modules
+[33m8a89b90[m Implement adaptive theming across core application modules
+[33me2fdaac[m Refine dashboard presentation and navigation experience
+[33m20f14cc[m Improve dashboard interactions and user engagement
+[33m202d052[m Develop provider layer for career growth and job tracking
+[33m02829e2[m Add user-scoped storage for career profile management
+[33m0068e9b[m Implement local persistence for career application tracking
+[33m72cafe7[m Add syllabus tracking and exam prediction providers
+[33m0855ff2[m Build provider architecture for exam preparation features
+[33m6352f3d[m Enhance learning analytics and syllabus monitoring
+[33ma1e4328[m Develop academic progress management workflows
+[33md72ddd1[m Add bottom navigation shell and application settings management
+[33m1fbf872[m Implement authentication enhancements and user-scoped career data
+[33m7f14139[m Polish UI with theme persistence and light mode support with settings
+[33m5ba4542[m Fix job box to scope data by user UID
+[33me33f19f[m Fix profile box to scope data by user UID
+[33m61719d7[m Add dynamic theme management with light and dark mode support
+[33ma7d4b5e[m Enhance authentication flow with Google Sign-In and profile management
+[33m1c715ed[m Enhance authentication flow with registration validation and profile integration
+[33meb3c672[m Integrate Career Builder workflow from profile to job targeting
+[33m020e26b[m Enable dynamic resume regeneration based on profile updates
+[33m7762797[m Introduce AI-assisted professional experience enhancement
+[33m348b070[m Build resume optimization and match score dashboard
+[33mb182933[m Add company-specific resume tone adaptation engine
+[33m0369d00[m Implement job description parsing and skill gap analysis
+[33m4e36e4c[m Develop AI-powered ATS resume generation pipeline
+[33mae574ec[m Add skill synchronization from lecture insights to career profile
+[33m6af1803[m Implement master profile management and career data models
+[33mae728df[m Initialize Career Builder module architecture
+[33m640bca0[m Improve syllabus PDF import with scan detection and error handling
+[33mde7d961[m Fix PDF syllabus extraction and improve parser reliability
+[33m517c49d[m Expand DraftIt with adaptive learning and exam preparation features
+[33m260e3f9[m Add Study Buddy academic workflow and evaluation engine with pdf extracter
+[33mc2bd8f0[m Implement AI-assisted syllabus tracking and exam prediction system
+[33m5cd155c[m Add Phase 2 Study Buddy feature set with AI evaluation pipeline
+[33m45ef4e5[m Add AI-powered exam prediction and answer evaluation services
+[33mfd7410f[m Implement Study Buddy module architecture for Phase 2
+[33m67ea71e[m Completed the PHASE ONE
+[33ma264142[m Integrate Groq Whisper and Llama 3 for DraftIt AI processing
+[33me954474[m Implement secure API key management using dotenv
+[33m49768e7[m Integrate secure environment-based AI configuration
+[33mf90dbf9[m Refactor notes generation state management
+[33m75a3cba[m Clean and optimize AI service processing pipeline
+[33m0a2c780[m Improve Hugging Face API client authentication flow
+[33m508fa66[m Refactor DraftIt Phase 1 and migrate to Provider architecture
+[33m7c87569[m Implement audio recording workflow
+[33m0c0cf19[m Configure Firebase and Hive local storage
+[33m4886494[m Initial commit - DraftIt Phase 1

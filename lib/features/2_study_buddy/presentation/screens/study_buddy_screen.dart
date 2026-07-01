@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../../../../core/services/onboarding_service.dart';
+import '../../../../core/widgets/tooltip_overlay.dart';
 import '../../../1_voice_to_notes/data/models/lecture_model.dart';
 import '../../../1_voice_to_notes/providers/lectures_provider.dart';
 import '../../providers/exam_predictor_provider.dart';
@@ -100,13 +102,32 @@ class _StudyBuddyScreenState extends State<StudyBuddyScreen>
                           SliverPadding(
                             padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
                             sliver: SliverList(
+                              // delegate: SliverChildBuilderDelegate(
+                              //       (ctx, i) => _LectureStudyCard(
+                              //     lecture: lectures.lectures[i],
+                              //     onTap: () => _openExamBlueprint(
+                              //       lectures.lectures[i],
+                              //     ),),
+                              //
+                              //   childCount: lectures.lectures.length,
+                              // ),
+
                               delegate: SliverChildBuilderDelegate(
-                                    (ctx, i) => _LectureStudyCard(
-                                  lecture: lectures.lectures[i],
-                                  onTap: () => _openExamBlueprint(
-                                    lectures.lectures[i],
-                                  ),
-                                ),
+                                    (ctx, i) {
+                                  final card = _LectureStudyCard(
+                                    lecture: lectures.lectures[i],
+                                    onTap: () => _openExamBlueprint(lectures.lectures[i]),
+                                  );
+                                  if (i == 0) {
+                                    return OnboardingTooltip(
+                                      tooltipKey: OnboardingService.tooltipExam,
+                                      message: 'Tap a lecture to generate exam questions 🧠',
+                                      direction: TooltipDirection.below,
+                                      child: card,
+                                    );
+                                  }
+                                  return card;
+                                },
                                 childCount: lectures.lectures.length,
                               ),
                             ),

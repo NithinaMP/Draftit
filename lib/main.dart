@@ -7,12 +7,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'core/router/app_router.dart';
+import 'core/services/onboarding_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
 import 'core/constants/app_constants.dart';
 import 'core/utils/app_info.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/auth/presentation/login_screen.dart';
+import 'features/onboarding/onboarding_screen.dart';
 import 'features/shell/main_shell.dart';
 import 'features/1_voice_to_notes/data/models/lecture_model.dart';
 import 'features/1_voice_to_notes/providers/audio_recording_provider.dart';
@@ -62,6 +64,7 @@ void main() async {
   Hive.registerAdapter(JobApplicationAdapter());
 
   await AppInfo.init();
+  await OnboardingService.instance.init();
 
   runApp(const DraftItApp());
 }
@@ -152,6 +155,14 @@ class _AppBootstrapState extends State<AppBootstrap> {
     }
 
     if (auth.user == null) return const LoginScreen();
+
+    if (!OnboardingService.instance.onboardingDone) {
+      return OnboardingScreen(
+        onDone: () => setState(() {}),
+      );
+    }
+
     return const MainShell();
   }
+
 }

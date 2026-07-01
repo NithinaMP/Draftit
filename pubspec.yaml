@@ -79,6 +79,8 @@ dependencies:
   package_info_plus: ^8.0.0
 
 
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -125,7 +127,7 @@ flutter:
   assets:
     - .env
 
-    - assets/lottie/
+#    - assets/lottie/
     - assets/images/
 
 
